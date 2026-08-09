@@ -1,0 +1,277 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --azul: #1d3b8b;
+  --azul-escuro: #142a63;
+  --fundo: #f4f6fb;
+  --borda: #dde3ef;
+  --texto: #1f2937;
+  --texto-suave: #6b7280;
+  --vermelho: #b3261e;
+  --verde: #1a7f37;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+}
+
+/* login */
+.tela-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--azul) 0%, var(--azul-escuro) 100%);
+}
+
+.cartao-login {
+  background: #fff;
+  padding: 40px 36px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* layout */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.menu-lateral {
+  width: 220px;
+  background: var(--azul);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 700;
+  padding: 0 24px 24px;
+}
+
+.logo::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 3px;
+  transform: rotate(45deg);
+}
+
+.menu-lateral a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  padding: 12px 24px;
+  border-left: 3px solid transparent;
+}
+
+.menu-lateral a:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.menu-lateral a.ativo {
+  color: #fff;
+  border-left-color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  font-weight: 600;
+}
+
+.conteudo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.topo {
+  background: #fff;
+  border-bottom: 1px solid var(--borda);
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pagina {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* componentes */
+.cartao {
+  background: #fff;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.cartoes-resumo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.cartao-resumo .valor {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--azul);
+}
+
+.cartao-resumo .rotulo {
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+
+h1 {
+  font-size: 22px;
+}
+
+h2 {
+  font-size: 16px;
+  margin-bottom: 14px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--borda);
+}
+
+th {
+  color: var(--texto-suave);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.formulario {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+input,
+select {
+  padding: 9px 10px;
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  color: var(--texto);
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid var(--azul);
+  outline-offset: 1px;
+}
+
+.botao {
+  background: var(--azul);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.botao:hover {
+  background: var(--azul-escuro);
+}
+
+.botao:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.botao-secundario {
+  background: transparent;
+  color: var(--azul);
+  border: 1px solid var(--azul);
+}
+
+.botao-secundario:hover {
+  background: #eef2fb;
+}
+
+.selo {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.selo-critico {
+  background: #fdecec;
+  color: var(--vermelho);
+}
+
+.selo-ok {
+  background: #e7f5ec;
+  color: var(--verde);
+}
+
+.selo-entrada {
+  background: #e7f5ec;
+  color: var(--verde);
+}
+
+.selo-saida {
+  background: #fff4e0;
+  color: #b45309;
+}
+
+.mensagem-erro {
+  background: #fdecec;
+  color: var(--vermelho);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.mensagem-sucesso {
+  background: #e7f5ec;
+  color: var(--verde);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.texto-suave {
+  color: var(--texto-suave);
+  font-size: 14px;
+}

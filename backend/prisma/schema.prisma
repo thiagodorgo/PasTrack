@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PerfilUsuario {
+  ADMINISTRADOR
+  GESTOR
+  OPERADOR
+  COMPRADOR
+}
+
+enum TipoMovimentacao {
+  ENTRADA
+  SAIDA
+}
+
+enum StatusAlerta {
+  ABERTO
+  RESOLVIDO
+}
+
+model Usuario {
+  id            Int            @id @default(autoincrement())
+  nome          String
+  email         String         @unique
+  senhaHash     String         @map("senha_hash")
+  perfil        PerfilUsuario  @default(OPERADOR)
+  ativo         Boolean        @default(true)
+  movimentacoes Movimentacao[]
+
+  @@map("usuario")
+}
+
+model Fabricante {
+  id        Int        @id @default(autoincrement())
+  nome      String     @unique
+  pastilhas Pastilha[]
+
+  @@map("fabricante")
+}
+
+model Fornecedor {
+  id            Int            @id @default(autoincrement())
+  nome          String
+  cnpj          String?        @unique
+  contato       String?
+  movimentacoes Movimentacao[]
+
+  @@map("fornecedor")
+}
+
+model Pastilha {
+  id            Int            @id @default(autoincrement())
+  codigo        String         @unique
+  descricao     String
+  modelo        String?
+  aplicacao     String?
+  unidade       String         @default("un")
+  estoqueMinimo Int            @default(0) @map("estoque_minimo")
+  saldoAtual    Int            @default(0) @map("saldo_atual")
+  fabricanteId  Int            @map("id_fabricante")
+  fabricante    Fabricante     @relation(fields: [fabricanteId], references: [id])
+  movimentacoes Movimentacao[]
+  alertas       Alerta[]
+
+  @@map("pastilha")
+}
+
+model Movimentacao {
+  id           Int              @id @default(autoincrement())
+  tipo         TipoMovimentacao
+  quantidade   Int
+  dataHora     DateTime         @default(now()) @map("data_hora")
+  documento    String?
+  observacao   String?
+  pastilhaId   Int              @map("id_pastilha")
+  pastilha     Pastilha         @relation(fields: [pastilhaId], references: [id])
+  usuarioId    Int              @map("id_usuario")
+  usuario      Usuario          @relation(fields: [usuarioId], references: [id])
+  fornecedorId Int?             @map("id_fornecedor")
+  fornecedor   Fornecedor?      @relation(fields: [fornecedorId], references: [id])
+
+  @@map("movimentacao")
+}
+
+model Alerta {
+  id          Int          @id @default(autoincrement())
+  dataGeracao DateTime     @default(now()) @map("data_geracao")
+  situacao    StatusAlerta @default(ABERTO)
+  pastilhaId  Int          @map("id_pastilha")
+  pastilha    Pastilha     @relation(fields: [pastilhaId], references: [id])
+
+  @@map("alerta")
+}

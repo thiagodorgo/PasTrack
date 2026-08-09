@@ -77,7 +77,7 @@ docs/      diagramas do projeto (MER conceitual, MER lógico e arquitetura)
 
 ## Equipe
 
-- Thiago Araujo
-- Fabricio Alves
-- Péttrin Miranda
+- Thiago Araújo
+- Fabrício Alves
 - Joseph Correa
+- Péttrin Miranda

@@ -4,6 +4,29 @@ Sistema web para controle de estoque de pastilhas industriais, desenvolvido na U
 
 O sistema substitui o controle em planilhas por registros centralizados: cadastro de pastilhas, fabricantes e fornecedores, entradas e saídas de estoque com validação de saldo, alertas automáticos de estoque mínimo, painel com a situação geral e histórico completo das movimentações.
 
+## Modelagem de dados
+
+O banco do PasTrack foi modelado em duas etapas: primeiro o modelo conceitual,
+na notação de Peter Chen, e depois o modelo lógico, já no formato relacional
+com as chaves primárias e estrangeiras definidas.
+
+O modelo tem seis entidades. A pastilha é o centro: cada uma pertence a um
+fabricante e guarda o estoque mínimo configurado e o saldo atual. A
+movimentacao registra tanto as entradas quanto as saídas (campo tipo), sempre
+com o usuario responsável pelo lançamento; nas entradas, ela também pode
+indicar o fornecedor de origem. Quando o saldo de um item chega ao estoque
+mínimo, o sistema gera um registro em alerta, que fica aberto até a reposição.
+
+### Modelo conceitual
+
+![Modelo conceitual do banco de dados](docs/mer_conceitual.png)
+
+### Modelo lógico
+
+![Modelo lógico do banco de dados](docs/mer_logico.png)
+
+A arquitetura em três camadas da aplicação está em [docs/arquitetura.png](docs/arquitetura.png).
+
 ## Tecnologias
 
 - Front-end: React + TypeScript (Vite), React Router e Recharts
@@ -54,7 +77,7 @@ docs/      diagramas do projeto (MER conceitual, MER lógico e arquitetura)
 
 ## Equipe
 
-- Thiago <sobrenome>
-- <Integrante 2>
-- <Integrante 3>
-- <Integrante 4>
+- Thiago Araujo
+- Fabricio Alves
+- Péttrin Miranda
+- Joseph Correa

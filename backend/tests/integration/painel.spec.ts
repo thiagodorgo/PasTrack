@@ -115,3 +115,21 @@ describe("GET /api/painel/resumo", () => {
     expect(resposta.status).toBe(401);
   });
 });
+
+describe("desempate dos itens críticos do painel", () => {
+  it("pastilhas com o mesmo saldo saem do id menor para o maior", async () => {
+    const { token } = await criarUsuario();
+    const empatadas: number[] = [];
+    for (let i = 0; i < 3; i++) {
+      empatadas.push((await criarPastilha({ saldoAtual: 2, estoqueMinimo: 5 })).id);
+    }
+    const menorSaldo = await criarPastilha({ saldoAtual: 1, estoqueMinimo: 5 });
+
+    const resposta = await buscarResumo(token);
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.itensCriticos.map((p: { id: number }) => p.id)).toEqual([
+      menorSaldo.id,
+      ...empatadas,
+    ]);
+  });
+});

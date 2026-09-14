@@ -14,5 +14,5 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true
   },
-  "include": ["src", "tests", "prisma/**/*.ts", "vitest.config.ts"]
+  "include": ["src", "tests", "vitest.config.mts"]
 }

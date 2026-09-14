@@ -1,7 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 import { prisma } from "../../src/config/prisma";
 import { api, autorizacao } from "../helpers/api";
-import { criarMovimentacoes, DadosMovimentacao, registrarMovimentacao } from "../helpers/estoque";
+import {
+  criarMovimentacoes,
+  DadosMovimentacao,
+  registrarMovimentacao,
+  registrarSaida,
+} from "../helpers/estoque";
 import { criarFabricante, criarFornecedor, criarPastilha, criarUsuario } from "../helpers/fabricas";
 
 async function saldoDe(pastilhaId: number) {
@@ -256,7 +261,7 @@ describe("regras do registro", () => {
       fornecedorId: 9999,
     });
     expect(entrada.status).toBe(404);
-    expect(entrada.body).toEqual({ erro: "Pastilha não encontrada" });
+    expect(entrada.body).toEqual({ erro: "Pastilha não encontrada", codigo: "NAO_ENCONTRADO" });
     const saida = await registrarMovimentacao(token, { tipo: "SAIDA", pastilhaId: 9999, quantidade: 1 });
     expect(saida.status).toBe(404);
   });
@@ -684,5 +689,16 @@ describe("saldo máximo do banco", () => {
     expect(mais.status).toBe(400);
     expect(mais.body.erro).toMatch(/há 2147483647 un em estoque$/);
     expect(await prisma.movimentacao.count()).toBe(1);
+  });
+});
+
+describe("estoque mínimo 0 nas movimentações", () => {
+  it("a saída que zera o saldo de uma pastilha sem mínimo não abre alerta", async () => {
+    const { token } = await criarUsuario({ perfil: "OPERADOR" });
+    const pastilha = await criarPastilha({ saldoAtual: 2, estoqueMinimo: 0 });
+    const resposta = await registrarSaida(token, pastilha.id, 2);
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.saldoAtual).toBe(0);
+    expect(await prisma.alerta.count({ where: { pastilhaId: pastilha.id } })).toBe(0);
   });
 });

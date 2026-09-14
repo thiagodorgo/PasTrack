@@ -21,7 +21,7 @@ interface DadosAtualizacao {
 }
 
 function naoEncontrado() {
-  return new AppError("Usuário não encontrado", 404);
+  return new AppError("Usuário não encontrado", 404, "NAO_ENCONTRADO");
 }
 
 function conflito(mensagem: string) {

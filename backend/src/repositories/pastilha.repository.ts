@@ -11,8 +11,9 @@ type CamposEditaveis = "descricao" | "modelo" | "aplicacao" | "unidade" | "estoq
 export type NovaPastilha = Pick<Prisma.PastilhaUncheckedCreateInput, "codigo" | CamposEditaveis>;
 export type AlteracaoPastilha = Pick<Prisma.PastilhaUncheckedUpdateInput, CamposEditaveis>;
 
-/** Saldo no estoque mínimo ou abaixo dele. */
+/** Mínimo definido (maior que zero) e saldo no mínimo ou abaixo dele. */
 const CRITICAS: Prisma.PastilhaWhereInput = {
+  estoqueMinimo: { gt: 0 },
   saldoAtual: { lte: prisma.pastilha.fields.estoqueMinimo },
 };
 

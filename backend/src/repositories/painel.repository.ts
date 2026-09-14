@@ -16,10 +16,10 @@ export const painelRepository = {
     return prisma.alerta.count({ where: { situacao: "ABERTO" } });
   },
 
-  /** Pastilhas no estoque mínimo ou abaixo dele, das de menor saldo para as de maior. */
+  /** Pastilhas com mínimo definido e saldo no mínimo ou abaixo dele, das de menor saldo para as de maior. */
   listarItensCriticos() {
     return prisma.pastilha.findMany({
-      where: { saldoAtual: { lte: prisma.pastilha.fields.estoqueMinimo } },
+      where: { estoqueMinimo: { gt: 0 }, saldoAtual: { lte: prisma.pastilha.fields.estoqueMinimo } },
       select: { id: true, codigo: true, descricao: true, saldoAtual: true, estoqueMinimo: true },
       orderBy: [{ saldoAtual: "asc" }, { id: "asc" }],
       take: LIMITE_ITENS_CRITICOS,

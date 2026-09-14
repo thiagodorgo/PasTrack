@@ -62,32 +62,36 @@ describe("POST /api/pastilhas", () => {
       .set(cabecalho)
       .send(await corpoValido());
     const registros = await auditoriasDe("pastilha", resposta.body.id);
-    expect(registros.map((registro) => registro.acao)).toEqual(["pastilha.criada", "alerta.aberto"]);
+    expect(registros.map((registro) => registro.acao)).toEqual(["pastilha.criada"]);
     expect(registros[0]).toMatchObject({ acao: "pastilha.criada", usuarioId: usuario.id, antes: null });
     expect(registros[0].depois).toMatchObject({ id: resposta.body.id, codigo: "CNMG 120408", saldoAtual: 0 });
     expect(registros[0].depois).not.toHaveProperty("fabricante");
   });
 
-  it.each([5, 0])(
-    "com estoque mínimo %i já abre o alerta na mesma transação, porque o saldo nasce 0",
-    async (estoqueMinimo) => {
-      const { usuario, cabecalho } = await entrarComo("GESTOR");
-      const resposta = await api()
-        .post("/api/pastilhas")
-        .set(cabecalho)
-        .send({ ...(await corpoValido()), estoqueMinimo });
-      expect(resposta.status).toBe(201);
-      const alertas = await prisma.alerta.findMany({ where: { pastilhaId: resposta.body.id } });
-      expect(alertas).toHaveLength(1);
-      expect(alertas[0]).toMatchObject({ situacao: "ABERTO", dataResolucao: null, resolvidoPorId: null });
-      const registro = await prisma.auditoria.findFirstOrThrow({ where: { acao: "alerta.aberto" } });
-      expect(registro).toMatchObject({
-        usuarioId: usuario.id,
-        entidade: "pastilha",
-        entidadeId: resposta.body.id,
-      });
-    }
-  );
+  it("com estoque mínimo acima de 0 já abre o alerta na mesma transação, porque o saldo nasce 0", async () => {
+    const { usuario, cabecalho } = await entrarComo("GESTOR");
+    const resposta = await api()
+      .post("/api/pastilhas")
+      .set(cabecalho)
+      .send({ ...(await corpoValido()), estoqueMinimo: 5 });
+    expect(resposta.status).toBe(201);
+    const alertas = await prisma.alerta.findMany({ where: { pastilhaId: resposta.body.id } });
+    expect(alertas).toHaveLength(1);
+    expect(alertas[0]).toMatchObject({ situacao: "ABERTO" });
+    const registros = await auditoriasDe("pastilha", resposta.body.id);
+    expect(registros.map((registro) => registro.acao)).toEqual(["pastilha.criada", "alerta.aberto"]);
+    expect(registros[1]).toMatchObject({ usuarioId: usuario.id });
+  });
+
+  it("com estoque mínimo 0 não abre alerta, porque o mínimo zerado desliga a reposição", async () => {
+    const { cabecalho } = await entrarComo("GESTOR");
+    const resposta = await api()
+      .post("/api/pastilhas")
+      .set(cabecalho)
+      .send({ ...(await corpoValido()), estoqueMinimo: 0 });
+    expect(resposta.status).toBe(201);
+    expect(await prisma.alerta.count({ where: { pastilhaId: resposta.body.id } })).toBe(0);
+  });
 
   it("a primeira entrada acima do mínimo fecha o alerta aberto na criação", async () => {
     const { cabecalho } = await entrarComo("GESTOR");
@@ -390,6 +394,20 @@ describe("PUT /api/pastilhas/:id contra mass assignment", () => {
 });
 
 describe("estoque mínimo e alerta na edição da pastilha", () => {
+  it("zerar o mínimo fecha o alerta aberto, sem responsável", async () => {
+    const { cabecalho } = await entrarComo("GESTOR");
+    const pastilha = await criarPastilha({ saldoAtual: 3, estoqueMinimo: 5 });
+    const aberto = await prisma.alerta.create({ data: { pastilhaId: pastilha.id } });
+    const resposta = await api()
+      .put(`/api/pastilhas/${pastilha.id}`)
+      .set(cabecalho)
+      .send({ estoqueMinimo: 0 });
+    expect(resposta.status).toBe(200);
+    const depois = await prisma.alerta.findUniqueOrThrow({ where: { id: aberto.id } });
+    expect(depois).toMatchObject({ situacao: "RESOLVIDO", resolvidoPorId: null });
+    expect(await prisma.alerta.count({ where: { situacao: "ABERTO" } })).toBe(0);
+  });
+
   it("subir o mínimo até o saldo abre o alerta e baixar de novo fecha", async () => {
     const { usuario, cabecalho } = await entrarComo("GESTOR");
     const pastilha = await criarPastilha({ saldoAtual: 5, estoqueMinimo: 2 });
@@ -463,6 +481,15 @@ describe("GET /api/pastilhas", () => {
   it("criticas=true devolve só as pastilhas no mínimo ou abaixo", async () => {
     const { cabecalho } = await entrarComo("OPERADOR");
     const { abaixo, noMinimo } = await criarEstoque();
+    const resposta = await api().get("/api/pastilhas?criticas=true").set(cabecalho);
+    expect(resposta.status).toBe(200);
+    expect(ids(resposta.body)).toEqual(ids([abaixo, noMinimo]));
+  });
+
+  it("criticas=true ignora pastilhas com estoque mínimo 0, mesmo com saldo zerado", async () => {
+    const { cabecalho } = await entrarComo("OPERADOR");
+    const { abaixo, noMinimo } = await criarEstoque();
+    await criarPastilha({ codigo: "Z-0", descricao: "Sem mínimo definido", saldoAtual: 0, estoqueMinimo: 0 });
     const resposta = await api().get("/api/pastilhas?criticas=true").set(cabecalho);
     expect(resposta.status).toBe(200);
     expect(ids(resposta.body)).toEqual(ids([abaixo, noMinimo]));

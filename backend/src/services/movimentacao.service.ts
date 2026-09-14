@@ -90,7 +90,7 @@ export const movimentacaoService = {
         select: { id: true },
       });
       if (!pastilha) {
-        throw new AppError("Pastilha não encontrada", 404);
+        throw new AppError("Pastilha não encontrada", 404, "NAO_ENCONTRADO");
       }
 
       if (dados.tipo === "ENTRADA") {

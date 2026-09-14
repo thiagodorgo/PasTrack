@@ -16,6 +16,8 @@ export default defineConfig({
     reporters: ["default", ["junit", { outputFile: resultados("frontend-junit.xml") }]],
     coverage: {
       provider: "v8",
+      // grava a cobertura mesmo quando algum teste falha, para o snapshot de evidência ficar completo
+      reportOnFailure: true,
       include: ["src/**/*.{ts,tsx}"],
       exclude: ["src/main.tsx", "src/vite-env.d.ts", "src/types.ts"],
       reporter: ["text-summary", "json-summary", "html"],

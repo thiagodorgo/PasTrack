@@ -62,10 +62,46 @@ describe("POST /api/pastilhas", () => {
       .set(cabecalho)
       .send(await corpoValido());
     const registros = await auditoriasDe("pastilha", resposta.body.id);
-    expect(registros).toHaveLength(1);
+    expect(registros.map((registro) => registro.acao)).toEqual(["pastilha.criada", "alerta.aberto"]);
     expect(registros[0]).toMatchObject({ acao: "pastilha.criada", usuarioId: usuario.id, antes: null });
     expect(registros[0].depois).toMatchObject({ id: resposta.body.id, codigo: "CNMG 120408", saldoAtual: 0 });
     expect(registros[0].depois).not.toHaveProperty("fabricante");
+  });
+
+  it.each([5, 0])(
+    "com estoque mínimo %i já abre o alerta na mesma transação, porque o saldo nasce 0",
+    async (estoqueMinimo) => {
+      const { usuario, cabecalho } = await entrarComo("GESTOR");
+      const resposta = await api()
+        .post("/api/pastilhas")
+        .set(cabecalho)
+        .send({ ...(await corpoValido()), estoqueMinimo });
+      expect(resposta.status).toBe(201);
+      const alertas = await prisma.alerta.findMany({ where: { pastilhaId: resposta.body.id } });
+      expect(alertas).toHaveLength(1);
+      expect(alertas[0]).toMatchObject({ situacao: "ABERTO", dataResolucao: null, resolvidoPorId: null });
+      const registro = await prisma.auditoria.findFirstOrThrow({ where: { acao: "alerta.aberto" } });
+      expect(registro).toMatchObject({
+        usuarioId: usuario.id,
+        entidade: "pastilha",
+        entidadeId: resposta.body.id,
+      });
+    }
+  );
+
+  it("a primeira entrada acima do mínimo fecha o alerta aberto na criação", async () => {
+    const { cabecalho } = await entrarComo("GESTOR");
+    const criada = await api()
+      .post("/api/pastilhas")
+      .set(cabecalho)
+      .send({ ...(await corpoValido()), estoqueMinimo: 5 });
+    const entrada = await api()
+      .post("/api/movimentacoes")
+      .set(cabecalho)
+      .send({ tipo: "ENTRADA", pastilhaId: criada.body.id, quantidade: 10 });
+    expect(entrada.status).toBe(201);
+    const alerta = await prisma.alerta.findFirstOrThrow({ where: { pastilhaId: criada.body.id } });
+    expect(alerta.situacao).toBe("RESOLVIDO");
   });
 
   it.each<[string, Corpo, string]>([

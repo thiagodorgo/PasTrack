@@ -18,6 +18,7 @@ export const pastilhaService = {
     return pastilha;
   },
 
+  /** A pastilha nasce com saldo 0. O alerta é avaliado na mesma transação e abre se o saldo estiver no mínimo. */
   criar(dados: CriarPastilha, usuarioId: number) {
     return prisma.$transaction(async (tx) => {
       const { fabricante, ...pastilha } = await pastilhaRepository.criar(tx, {
@@ -36,6 +37,7 @@ export const pastilhaService = {
         entidadeId: pastilha.id,
         depois: pastilha,
       });
+      await avaliarAlerta(tx, pastilha.id, usuarioId);
       return { ...pastilha, fabricante };
     });
   },

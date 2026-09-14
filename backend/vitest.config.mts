@@ -12,6 +12,8 @@ const ambienteDeTeste = {
   TRUST_PROXY: "0",
   BCRYPT_CUSTO: "4",
   LOG_LEVEL: "silent",
+  // o limite geral não pode interferir nos testes; o limite de login fica no padrão (5)
+  RATE_LIMIT_GLOBAL_MAX: "100000",
 };
 
 export default defineConfig({

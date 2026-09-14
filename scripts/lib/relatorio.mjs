@@ -41,13 +41,40 @@ function aberturasDaTag(xml, tag) {
 }
 
 // Comentários e CDATA podem conter texto parecido com tags (saída de console, por exemplo).
-// Repete até não sobrar nada: um comentário montado por aninhamento só aparece depois da primeira remoção.
+const BLOCOS_LITERAIS = [
+  ["<!--", "-->"],
+  ["<![CDATA[", "]]>"],
+];
+
+// Uma passada: descarta cada bloco literal. Um bloco sem fechamento descarta o resto do texto,
+// porque tudo depois dele faz parte do bloco.
+function removerBlocosUmaVez(xml) {
+  let saida = "";
+  let posicao = 0;
+  for (;;) {
+    let achado = null;
+    for (const [abertura, fechamento] of BLOCOS_LITERAIS) {
+      const inicio = xml.indexOf(abertura, posicao);
+      if (inicio !== -1 && (achado === null || inicio < achado.inicio)) {
+        achado = { inicio, abertura, fechamento };
+      }
+    }
+    if (achado === null) return saida + xml.slice(posicao);
+    saida += xml.slice(posicao, achado.inicio);
+    const fim = xml.indexOf(achado.fechamento, achado.inicio + achado.abertura.length);
+    if (fim === -1) return saida;
+    posicao = fim + achado.fechamento.length;
+  }
+}
+
+// Repete até não mudar: um comentário montado por aninhamento só aparece depois da primeira passada.
+// Cada passada que muda o texto o encurta, então o laço sempre termina.
 function removerTrechosLiterais(xml) {
   let atual = xml;
   let anterior;
   do {
     anterior = atual;
-    atual = atual.replace(/<!--[\s\S]*?-->/g, "").replace(/<!\[CDATA\[[\s\S]*?\]\]>/g, "");
+    atual = removerBlocosUmaVez(atual);
   } while (atual !== anterior);
   return atual;
 }

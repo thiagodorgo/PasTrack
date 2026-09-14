@@ -128,3 +128,47 @@ jobs:
           path: tests/results/latest/
           if-no-files-found: ignore
           retention-days: 30
+
+  compose:
+    name: compose-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepara um .env descartável para esta execução
+        run: |
+          cp .env.example .env
+          sed -i "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=$(openssl rand -hex 16)|" .env
+          sed -i "s|^JWT_SECRET=.*|JWT_SECRET=$(openssl rand -hex 32)|" .env
+          sed -i "s|^SEED_ADMIN_SENHA=.*|SEED_ADMIN_SENHA=Ci$(openssl rand -hex 8)x9|" .env
+
+      - name: Sobe banco, API e web
+        run: docker compose up -d --build --wait
+
+      - name: Health check pelo nginx
+        run: curl -fsS http://localhost:8080/api/health
+
+      - name: Login do administrador inicial
+        run: |
+          SENHA=$(grep '^SEED_ADMIN_SENHA=' .env | cut -d= -f2)
+          STATUS=$(curl -s -o /tmp/login.json -w '%{http_code}' -X POST http://localhost:8080/api/auth/login             -H 'Content-Type: application/json' -d "{\"email\":\"admin@pastrack.local\",\"senha\":\"$SENHA\"}")
+          echo "status do login: $STATUS"
+          test "$STATUS" = "200"
+
+      - name: Cabeçalhos de segurança e fallback da SPA
+        run: |
+          curl -sI http://localhost:8080/ | tee /tmp/cabecalhos.txt
+          grep -qi '^content-security-policy:' /tmp/cabecalhos.txt
+          grep -qi '^x-content-type-options: nosniff' /tmp/cabecalhos.txt
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/pastilhas)" = "200"
+
+      - name: Logs em caso de falha
+        if: failure()
+        run: docker compose logs --no-color
+
+      - name: Derruba o ambiente
+        if: always()
+        run: docker compose down -v
+

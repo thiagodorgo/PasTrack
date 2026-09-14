@@ -383,3 +383,27 @@ describe("erros do banco viram respostas claras", () => {
     expect(resposta.body).toMatchObject({ codigo: "NAO_ENCONTRADO" });
   });
 });
+
+describe("id do alerta no limite do INT4", () => {
+  const ID_MAXIMO = 2_147_483_647;
+
+  it("2147483647 é aceito: responde 404 sem o alerta e 200 com ele", async () => {
+    const { token } = await criarUsuario({ perfil: "GESTOR" });
+    const inexistente = await resolver(token, ID_MAXIMO);
+    expect(inexistente.status).toBe(404);
+    expect(inexistente.body.codigo).toBe("NAO_ENCONTRADO");
+
+    const pastilha = await criarPastilha();
+    await prisma.alerta.create({ data: { id: ID_MAXIMO, pastilhaId: pastilha.id } });
+    const resolvido = await resolver(token, ID_MAXIMO);
+    expect(resolvido.status).toBe(200);
+    expect(resolvido.body).toMatchObject({ id: ID_MAXIMO, situacao: "RESOLVIDO" });
+  });
+
+  it("2147483648 responde 400", async () => {
+    const { token } = await criarUsuario({ perfil: "GESTOR" });
+    const resposta = await resolver(token, "2147483648");
+    expect(resposta.status).toBe(400);
+    expect(resposta.body.campos).toEqual([{ caminho: "id", mensagem: "Informe o alerta pelo id numérico" }]);
+  });
+});

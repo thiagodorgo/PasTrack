@@ -3,8 +3,7 @@ import { alertaController } from "../controllers/alerta.controller";
 import { autorizar } from "../middlewares/auth";
 import { capturar } from "../middlewares/erros";
 import { validar } from "../middlewares/validar";
-import { listarAlertasQuery } from "../schemas/alerta.schema";
-import { idParam } from "../schemas/comum.schema";
+import { alertaIdParam, listarAlertasQuery } from "../schemas/alerta.schema";
 
 export const alertaRotas = Router();
 
@@ -12,6 +11,6 @@ alertaRotas.get("/", validar({ query: listarAlertasQuery }), capturar(alertaCont
 alertaRotas.patch(
   "/:id/resolver",
   autorizar("resolverAlerta"),
-  validar({ params: idParam }),
+  validar({ params: alertaIdParam }),
   capturar(alertaController.resolver)
 );

@@ -3,6 +3,9 @@ import { z } from "zod";
 /** Maior quantidade aceita numa única movimentação. */
 export const QUANTIDADE_MAXIMA = 1_000_000;
 
+/** Maior id que cabe na coluna INT4 do banco; acima dele, a consulta falharia no banco. */
+export const ID_MAXIMO = 2_147_483_647;
+
 /** Objeto que recusa campos fora do esquema e diz quais foram enviados. */
 function objetoEstrito<Forma extends z.core.$ZodLooseShape>(forma: Forma) {
   return z.strictObject(forma, {
@@ -12,7 +15,7 @@ function objetoEstrito<Forma extends z.core.$ZodLooseShape>(forma: Forma) {
 }
 
 function identificador(mensagem: string) {
-  return z.number(mensagem).int(mensagem).positive(mensagem);
+  return z.number(mensagem).int(mensagem).positive(mensagem).max(ID_MAXIMO, mensagem);
 }
 
 const camposComuns = {
@@ -77,6 +80,7 @@ export const listarMovimentacoesQuery = objetoEstrito({
     .number("Informe a pastilha pelo id numérico")
     .int("Informe a pastilha pelo id numérico")
     .positive("Informe a pastilha pelo id numérico")
+    .max(ID_MAXIMO, "Informe a pastilha pelo id numérico")
     .optional(),
   tipo: z.enum(["ENTRADA", "SAIDA"], "Use o tipo ENTRADA ou SAIDA").optional(),
   de: inicioDoPeriodo.optional(),

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { prisma } from "../../src/config/prisma";
 import { api, autorizacao } from "../helpers/api";
 import { criarMovimentacoes, DadosMovimentacao, registrarMovimentacao } from "../helpers/estoque";
-import { criarFornecedor, criarPastilha, criarUsuario } from "../helpers/fabricas";
+import { criarFabricante, criarFornecedor, criarPastilha, criarUsuario } from "../helpers/fabricas";
 
 async function saldoDe(pastilhaId: number) {
   return (await prisma.pastilha.findUniqueOrThrow({ where: { id: pastilhaId } })).saldoAtual;
@@ -471,5 +471,81 @@ describe("GET /api/movimentacoes", () => {
     expect(invertido.body.campos).toEqual([
       { caminho: "ate", mensagem: "A data final deve ser igual ou posterior à inicial" },
     ]);
+  });
+});
+
+describe("ids no limite do INT4", () => {
+  const ID_MAXIMO = 2_147_483_647;
+
+  /** Pastilha e fornecedor gravados com o maior id que o banco aceita. */
+  async function criarNoLimite() {
+    const fabricante = await criarFabricante();
+    await prisma.pastilha.create({
+      data: {
+        id: ID_MAXIMO,
+        codigo: "PT-LIMITE",
+        descricao: "Pastilha no limite",
+        fabricanteId: fabricante.id,
+        saldoAtual: 5,
+      },
+    });
+    await prisma.fornecedor.create({ data: { id: ID_MAXIMO, nome: "Fornecedor no limite" } });
+  }
+
+  it("aceita 2147483647 como pastilhaId e fornecedorId", async () => {
+    const { token } = await criarUsuario({ perfil: "GESTOR" });
+    await criarNoLimite();
+    const entrada = await registrarMovimentacao(token, {
+      tipo: "ENTRADA",
+      pastilhaId: ID_MAXIMO,
+      quantidade: 2,
+      fornecedorId: ID_MAXIMO,
+    });
+    expect(entrada.status).toBe(201);
+    expect(entrada.body.saldoAtual).toBe(7);
+    const saida = await registrarMovimentacao(token, { tipo: "SAIDA", pastilhaId: ID_MAXIMO, quantidade: 1 });
+    expect(saida.status).toBe(201);
+    expect(saida.body.saldoAtual).toBe(6);
+  });
+
+  it("pastilha inexistente com id 2147483647 responde 404", async () => {
+    const { token } = await criarUsuario({ perfil: "GESTOR" });
+    const resposta = await registrarMovimentacao(token, {
+      tipo: "SAIDA",
+      pastilhaId: ID_MAXIMO,
+      quantidade: 1,
+    });
+    expect(resposta.status).toBe(404);
+  });
+
+  it.each(["pastilhaId", "fornecedorId"])("recusa %s igual a 2147483648 com 400", async (campo) => {
+    const { token } = await criarUsuario({ perfil: "GESTOR" });
+    await criarNoLimite();
+    const resposta = await registrarMovimentacao(token, {
+      tipo: "ENTRADA",
+      pastilhaId: ID_MAXIMO,
+      quantidade: 1,
+      fornecedorId: ID_MAXIMO,
+      [campo]: ID_MAXIMO + 1,
+    });
+    expect(resposta.status).toBe(400);
+    expect(resposta.body.campos).toEqual([expect.objectContaining({ caminho: campo })]);
+    expect(await prisma.movimentacao.count()).toBe(0);
+  });
+
+  it("o filtro pastilhaId aceita 2147483647 e recusa 2147483648", async () => {
+    const { token } = await criarUsuario();
+    const noLimite = await api()
+      .get("/api/movimentacoes")
+      .set(autorizacao(token))
+      .query({ pastilhaId: ID_MAXIMO });
+    expect(noLimite.status).toBe(200);
+    expect(noLimite.body).toEqual([]);
+    const acima = await api()
+      .get("/api/movimentacoes")
+      .set(autorizacao(token))
+      .query({ pastilhaId: ID_MAXIMO + 1 });
+    expect(acima.status).toBe(400);
+    expect(acima.body.campos[0].caminho).toBe("pastilhaId");
   });
 });

@@ -1,4 +1,4 @@
-import { Request } from "express";
+import { Request, Response } from "express";
 import rateLimit, { ipKeyGenerator, Options } from "express-rate-limit";
 import { env } from "../config/env";
 import { logger } from "../config/logger";
@@ -37,6 +37,31 @@ export const limitarLogin = rateLimit({
   legacyHeaders: false,
   handler: responderLimite(
     "Muitas tentativas de login. Aguarde alguns minutos e tente de novo.",
+    "MUITAS_TENTATIVAS"
+  ),
+  logger: logDoLimitador,
+});
+
+/** Marca a resposta como senha atual errada: a única falha que conta no limite da troca de senha. */
+export function marcarFalhaDeCredencial(res: Response) {
+  res.locals.falhaDeCredencial = true;
+}
+
+/**
+ * Senha atual errada na troca de senha, por usuário, com os mesmos limites do login. Sem isso, quem
+ * obtivesse um token poderia descobrir a senha atual por tentativa e tomar a conta de vez.
+ * Erros de política ou de validação não contam, para não punir quem só escolheu uma senha fraca.
+ */
+export const limitarTrocaDeSenha = rateLimit({
+  windowMs: env.RATE_LIMIT_LOGIN_JANELA_MIN * MINUTO_MS,
+  limit: env.RATE_LIMIT_LOGIN_MAX,
+  keyGenerator: (req) => "usuario:" + String(req.usuario?.id),
+  skipSuccessfulRequests: true,
+  requestWasSuccessful: (_req, res) => res.locals.falhaDeCredencial !== true,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  handler: responderLimite(
+    "Muitas tentativas com a senha atual errada. Aguarde alguns minutos e tente de novo.",
     "MUITAS_TENTATIVAS"
   ),
   logger: logDoLimitador,

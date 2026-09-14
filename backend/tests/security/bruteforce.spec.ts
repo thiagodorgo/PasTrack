@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { env } from "../../src/config/env";
-import { api } from "../helpers/api";
+import { api, autorizacao } from "../helpers/api";
 import { criarUsuario, SENHA_PADRAO } from "../helpers/fabricas";
 
 const SENHA_ERRADA = "SenhaErrada999";
@@ -81,5 +81,28 @@ describe("limite de tentativas de login", () => {
       expect((await tentarLogin(email, SENHA_ERRADA, "203.0.113." + tentativa)).status).toBe(401);
     }
     expect((await tentarLogin(email, SENHA_ERRADA, "198.51.100.77")).status).toBe(429);
+  });
+});
+
+describe("limite de tentativas na troca de senha", () => {
+  function trocarSenha(token: string, senhaAtual: string, novaSenha: string) {
+    return api().patch("/api/auth/senha").set(autorizacao(token)).send({ senhaAtual, novaSenha });
+  }
+
+  it("a 6ª senha atual errada responde 429; senha fraca não conta", async () => {
+    const limite = env.RATE_LIMIT_LOGIN_MAX;
+    const { token } = await criarUsuario();
+    for (let tentativa = 1; tentativa <= limite + 2; tentativa++) {
+      expect((await trocarSenha(token, SENHA_PADRAO, "fraca")).body.codigo).toBe("SENHA_FRACA");
+    }
+    for (let tentativa = 1; tentativa <= limite; tentativa++) {
+      const resposta = await trocarSenha(token, SENHA_ERRADA, "OutraSenhaForte2026");
+      expect(resposta.body.codigo).toBe("SENHA_ATUAL_INCORRETA");
+    }
+
+    const bloqueada = await trocarSenha(token, SENHA_PADRAO, "OutraSenhaForte2026");
+    expect(bloqueada.status).toBe(429);
+    expect(bloqueada.body.codigo).toBe("MUITAS_TENTATIVAS");
+    expect(Number(bloqueada.headers["retry-after"])).toBeGreaterThan(0);
   });
 });

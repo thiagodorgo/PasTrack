@@ -1,8 +1,11 @@
 import bcrypt from "bcryptjs";
-import { randomBytes } from "node:crypto";
+
 import { env, Env } from "../config/env";
 import { prisma } from "../config/prisma";
-import { validarPoliticaDeSenha } from "../services/politica-senha";
+import { gerarSenhaAleatoria, validarPoliticaDeSenha } from "../services/politica-senha";
+
+// continua exportada daqui para quem já importava deste módulo, como o seed-demo.ts
+export { gerarSenhaAleatoria };
 
 export interface OpcoesAdministrador {
   email: string;
@@ -16,11 +19,6 @@ export interface ResultadoAdministrador {
   email: string;
   /** Preenchida só quando a senha foi gerada aqui; deve ser exibida uma única vez. */
   senhaGerada?: string;
-}
-
-/** Gera uma senha aleatória que sempre atende à política (letra e número garantidos). */
-export function gerarSenhaAleatoria(): string {
-  return `${randomBytes(15).toString("base64url")}a1`;
 }
 
 /**
@@ -44,7 +42,7 @@ export async function criarAdministradorInicial(
     if (ambiente === "production") {
       throw new Error("Defina SEED_ADMIN_SENHA para criar o administrador inicial em produção.");
     }
-    senha = gerarSenhaAleatoria();
+    senha = gerarSenhaAleatoria(email);
     senhaGerada = senha;
   }
 

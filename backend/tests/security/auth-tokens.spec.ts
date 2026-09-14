@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { env } from "../../src/config/env";
 import { prisma } from "../../src/config/prisma";
 import { api, autorizacao } from "../helpers/api";
-import { criarUsuario } from "../helpers/fabricas";
+import { criarUsuario, SENHA_PADRAO } from "../helpers/fabricas";
 
 const SESSAO_INVALIDA = { erro: "Sessão expirada. Entre novamente.", codigo: "SESSAO_INVALIDA" };
 const OPCOES_VALIDAS: jwt.SignOptions = {
@@ -129,10 +129,17 @@ describe("tokens recusados nas rotas protegidas", () => {
     await esperarSessaoInvalida(assinar({ ...payload, ...alteracao }));
   });
 
-  it("12. versão antiga depois que a versão do usuário mudou", async () => {
+  it("12. versão antiga depois da troca de senha", async () => {
     const { usuario, token } = await usuarioComPayload();
-    await prisma.usuario.update({ where: { id: usuario.id }, data: { versaoToken: { increment: 1 } } });
+    const troca = await api()
+      .patch("/api/auth/senha")
+      .set(autorizacao(token))
+      .send({ senhaAtual: SENHA_PADRAO, novaSenha: "OutraSenhaForte2026" });
+    expect(troca.status).toBe(200);
     await esperarSessaoInvalida(token);
+    expect((await acessarComToken(troca.body.token)).status).toBe(200);
+    const atual = await prisma.usuario.findUniqueOrThrow({ where: { id: usuario.id } });
+    expect(atual.versaoToken).toBe(1);
   });
 
   it("13. versão diferente da do banco, mesmo que maior", async () => {

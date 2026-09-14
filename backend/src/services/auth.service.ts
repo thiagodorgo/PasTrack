@@ -4,8 +4,11 @@ import jwt from "jsonwebtoken";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { env } from "../config/env";
+import { prisma } from "../config/prisma";
 import { AppError } from "../middlewares/erros";
 import { usuarioRepository } from "../repositories/usuario.repository";
+import { registrarAuditoria } from "./auditoria.service";
+import { validarPoliticaDeSenha } from "./politica-senha";
 
 const ALGORITMO = "HS256";
 export const EMISSOR_TOKEN = "pastrack-api";
@@ -87,5 +90,54 @@ export const authService = {
         deveTrocarSenha: usuario.deveTrocarSenha,
       },
     };
+  },
+
+  /** Dados do usuário logado, no mesmo formato do login. */
+  async me(id: number) {
+    const usuario = await usuarioRepository.buscarPorId(id);
+    if (!usuario) {
+      throw sessaoInvalida();
+    }
+    const { nome, email, perfil, deveTrocarSenha } = usuario;
+    return { id, nome, email, perfil, deveTrocarSenha };
+  },
+
+  /**
+   * Troca a senha do próprio usuário: confere a senha atual, aplica a política, encerra a troca obrigatória
+   * e incrementa a versão do token, o que derruba as outras sessões. Devolve um token novo.
+   */
+  async trocarSenha(id: number, senhaAtual: string, novaSenha: string) {
+    const usuario = await usuarioRepository.buscarCredenciaisPorId(id);
+    if (!usuario) {
+      throw sessaoInvalida();
+    }
+    if (!(await bcrypt.compare(senhaAtual, usuario.senhaHash))) {
+      // 400 e não 401: um 401 faria o frontend encerrar a sessão
+      throw new AppError("A senha atual não confere", 400, "SENHA_ATUAL_INCORRETA");
+    }
+    if (novaSenha === senhaAtual) {
+      throw new AppError("A nova senha precisa ser diferente da atual", 400, "SENHA_REPETIDA");
+    }
+    const problemas = validarPoliticaDeSenha(novaSenha, usuario.email);
+    if (problemas.length > 0) {
+      throw new AppError(
+        "A nova senha não atende à política de senha: " + problemas.join("; ") + ".",
+        400,
+        "SENHA_FRACA"
+      );
+    }
+
+    const senhaHash = await bcrypt.hash(novaSenha, env.BCRYPT_CUSTO);
+    const atualizado = await prisma.$transaction(async (tx) => {
+      const dados = await usuarioRepository.trocarSenha(id, senhaHash, tx);
+      await registrarAuditoria(tx, {
+        usuarioId: id,
+        acao: "usuario.senha_alterada",
+        entidade: "usuario",
+        entidadeId: id,
+      });
+      return dados;
+    });
+    return { token: gerarToken(atualizado) };
   },
 };

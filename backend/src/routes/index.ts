@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { autenticar } from "../middlewares/auth";
+import { exigirSenhaAtualizada } from "../middlewares/exigir-senha-atualizada";
 import { alertaRotas } from "./alerta.routes";
 import { authRotas } from "./auth.routes";
 import { fabricanteRotas } from "./fabricante.routes";
@@ -12,12 +13,12 @@ import { usuarioRotas } from "./usuario.routes";
 
 export const rotas = Router();
 
-// rotas públicas
+// rotas públicas; as de sessão (/auth/me e /auth/senha) declaram o próprio autenticar
 rotas.use(saudeRotas);
 rotas.use("/auth", authRotas);
 
-// tudo abaixo exige usuário autenticado
-rotas.use(autenticar);
+// tudo abaixo exige usuário autenticado e com a senha já trocada
+rotas.use(autenticar, exigirSenhaAtualizada);
 rotas.use("/painel", painelRotas);
 rotas.use("/pastilhas", pastilhaRotas);
 rotas.use("/fabricantes", fabricanteRotas);

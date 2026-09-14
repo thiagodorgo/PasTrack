@@ -1,17 +1,47 @@
-import { TipoMovimentacao } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../config/prisma";
 import { AppError } from "../middlewares/erros";
 import { movimentacaoRepository } from "../repositories/movimentacao.repository";
+import { RegistrarMovimentacao } from "../schemas/movimentacao.schema";
 import { avaliarAlerta } from "./estoque/avaliar-alerta";
 
-interface RegistrarMovimentacaoDTO {
-  tipo: TipoMovimentacao;
-  pastilhaId: number;
-  quantidade: number;
-  usuarioId: number;
-  fornecedorId?: number;
-  documento?: string;
-  observacao?: string;
+type RegistrarMovimentacaoDTO = RegistrarMovimentacao & { usuarioId: number };
+
+/** ENTRADA: o fornecedor precisa existir; o incremento trava a linha da pastilha. */
+async function aplicarEntrada(
+  tx: Prisma.TransactionClient,
+  pastilhaId: number,
+  dados: { fornecedorId: number; quantidade: number }
+) {
+  const fornecedor = await tx.fornecedor.findUnique({
+    where: { id: dados.fornecedorId },
+    select: { id: true },
+  });
+  if (!fornecedor) {
+    throw new AppError("Fornecedor não encontrado", 400, "REFERENCIA_INVALIDA");
+  }
+  await tx.pastilha.update({
+    where: { id: pastilhaId },
+    data: { saldoAtual: { increment: dados.quantidade } },
+  });
+}
+
+/**
+ * SAÍDA: o decremento só acontece se ainda houver saldo, numa única instrução.
+ * Não há janela entre ler e gravar, então SAÍDAs simultâneas nunca deixam o saldo negativo.
+ */
+async function aplicarSaida(tx: Prisma.TransactionClient, pastilhaId: number, quantidade: number) {
+  const { count } = await tx.pastilha.updateMany({
+    where: { id: pastilhaId, saldoAtual: { gte: quantidade } },
+    data: { saldoAtual: { decrement: quantidade } },
+  });
+  if (count === 0) {
+    const atual = await tx.pastilha.findUniqueOrThrow({
+      where: { id: pastilhaId },
+      select: { saldoAtual: true, unidade: true },
+    });
+    throw new AppError(`Saldo insuficiente: há ${atual.saldoAtual} ${atual.unidade} em estoque`);
+  }
 }
 
 export const movimentacaoService = {
@@ -19,43 +49,47 @@ export const movimentacaoService = {
     return movimentacaoRepository.listar(pastilhaId);
   },
 
-  // registra a movimentação, atualiza o saldo e gera alerta, tudo na mesma transação
+  /**
+   * Registra a movimentação, atualiza o saldo e avalia o alerta na mesma transação.
+   * A atualização do saldo vem primeiro: ela trava a linha da pastilha e serializa as
+   * movimentações concorrentes até o fim da transação.
+   */
   registrar(dados: RegistrarMovimentacaoDTO) {
-    if (dados.quantidade <= 0) {
-      throw new AppError("A quantidade deve ser maior que zero");
-    }
-
     return prisma.$transaction(async (tx) => {
-      const pastilha = await tx.pastilha.findUnique({ where: { id: dados.pastilhaId } });
+      const pastilha = await tx.pastilha.findUnique({
+        where: { id: dados.pastilhaId },
+        select: { id: true },
+      });
       if (!pastilha) {
-        throw new AppError("Pastilha não encontrada", 404);
+        throw new AppError("Pastilha não encontrada", 404, "NAO_ENCONTRADO");
       }
 
-      if (dados.tipo === "SAIDA" && pastilha.saldoAtual < dados.quantidade) {
-        throw new AppError(`Saldo insuficiente: há ${pastilha.saldoAtual} ${pastilha.unidade} em estoque`);
+      if (dados.tipo === "ENTRADA") {
+        await aplicarEntrada(tx, pastilha.id, dados);
+      } else {
+        await aplicarSaida(tx, pastilha.id, dados.quantidade);
       }
 
       const movimentacao = await tx.movimentacao.create({
         data: {
           tipo: dados.tipo,
           quantidade: dados.quantidade,
-          pastilhaId: dados.pastilhaId,
+          pastilhaId: pastilha.id,
           usuarioId: dados.usuarioId,
-          fornecedorId: dados.tipo === "ENTRADA" ? dados.fornecedorId : undefined,
+          fornecedorId: dados.tipo === "ENTRADA" ? dados.fornecedorId : null,
           documento: dados.documento,
           observacao: dados.observacao,
         },
       });
 
-      const delta = dados.tipo === "ENTRADA" ? dados.quantidade : -dados.quantidade;
-      const atualizada = await tx.pastilha.update({
-        where: { id: dados.pastilhaId },
-        data: { saldoAtual: { increment: delta } },
+      await avaliarAlerta(tx, pastilha.id, dados.usuarioId);
+
+      // a linha continua travada por esta transação: o saldo lido é o que acabou de ser gravado
+      const { saldoAtual } = await tx.pastilha.findUniqueOrThrow({
+        where: { id: pastilha.id },
+        select: { saldoAtual: true },
       });
-
-      await avaliarAlerta(tx, dados.pastilhaId, dados.usuarioId);
-
-      return { movimentacao, saldoAtual: atualizada.saldoAtual };
+      return { movimentacao, saldoAtual };
     });
   },
 };

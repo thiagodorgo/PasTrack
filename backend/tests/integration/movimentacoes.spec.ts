@@ -218,3 +218,84 @@ describe("validação do corpo de POST /api/movimentacoes", () => {
     expect(resposta.body.codigo).toBe("DADOS_INVALIDOS");
   });
 });
+
+describe("regras do registro", () => {
+  it("ENTRADA com fornecedor inexistente devolve 400 REFERENCIA_INVALIDA sem gravar nada", async () => {
+    const { token } = await criarUsuario({ perfil: "GESTOR" });
+    const pastilha = await criarPastilha({ saldoAtual: 4, estoqueMinimo: 5 });
+    const resposta = await registrarMovimentacao(token, {
+      tipo: "ENTRADA",
+      pastilhaId: pastilha.id,
+      quantidade: 3,
+      fornecedorId: 9999,
+    });
+    expect(resposta.status).toBe(400);
+    expect(resposta.body).toEqual({ erro: "Fornecedor não encontrado", codigo: "REFERENCIA_INVALIDA" });
+    expect(await saldoDe(pastilha.id)).toBe(4);
+    expect(await prisma.movimentacao.count()).toBe(0);
+    expect(await prisma.alerta.count()).toBe(0);
+    expect(await prisma.auditoria.count()).toBe(0);
+  });
+
+  it("pastilha inexistente responde 404 antes de conferir o fornecedor", async () => {
+    const { token } = await criarUsuario({ perfil: "GESTOR" });
+    const entrada = await registrarMovimentacao(token, {
+      tipo: "ENTRADA",
+      pastilhaId: 9999,
+      quantidade: 1,
+      fornecedorId: 9999,
+    });
+    expect(entrada.status).toBe(404);
+    expect(entrada.body).toEqual({ erro: "Pastilha não encontrada", codigo: "NAO_ENCONTRADO" });
+    const saida = await registrarMovimentacao(token, { tipo: "SAIDA", pastilhaId: 9999, quantidade: 1 });
+    expect(saida.status).toBe(404);
+  });
+
+  it("SAÍDA de todo o saldo é aceita e zera o estoque", async () => {
+    const { token } = await criarUsuario({ perfil: "OPERADOR" });
+    const pastilha = await criarPastilha({ saldoAtual: 4 });
+    const resposta = await registrarMovimentacao(token, {
+      tipo: "SAIDA",
+      pastilhaId: pastilha.id,
+      quantidade: 4,
+    });
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.saldoAtual).toBe(0);
+    expect(await saldoDe(pastilha.id)).toBe(0);
+  });
+
+  it("saldo insuficiente informa o saldo atual e a unidade da pastilha", async () => {
+    const { token } = await criarUsuario({ perfil: "OPERADOR" });
+    const pastilha = await criarPastilha({ saldoAtual: 3, unidade: "cx" });
+    const resposta = await registrarMovimentacao(token, {
+      tipo: "SAIDA",
+      pastilhaId: pastilha.id,
+      quantidade: 4,
+    });
+    expect(resposta.status).toBe(400);
+    expect(resposta.body).toEqual({ erro: "Saldo insuficiente: há 3 cx em estoque" });
+  });
+
+  it("devolve só a movimentação criada e o saldo atual", async () => {
+    const { usuario, token } = await criarUsuario({ perfil: "OPERADOR" });
+    const pastilha = await criarPastilha({ saldoAtual: 9 });
+    const resposta = await registrarMovimentacao(token, {
+      tipo: "SAIDA",
+      pastilhaId: pastilha.id,
+      quantidade: 2,
+      observacao: "troca de turno",
+    });
+    expect(resposta.status).toBe(201);
+    expect(Object.keys(resposta.body).sort()).toEqual(["movimentacao", "saldoAtual"]);
+    const gravada = await prisma.movimentacao.findUniqueOrThrow({
+      where: { id: resposta.body.movimentacao.id },
+    });
+    expect(resposta.body.movimentacao).toEqual({ ...gravada, dataHora: gravada.dataHora.toISOString() });
+    expect(gravada).toMatchObject({
+      usuarioId: usuario.id,
+      fornecedorId: null,
+      observacao: "troca de turno",
+    });
+    expect(resposta.body.saldoAtual).toBe(7);
+  });
+});

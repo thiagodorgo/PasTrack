@@ -4,7 +4,7 @@ import { api, autorizacao } from "../helpers/api";
 import { criarUsuario, SENHA_PADRAO } from "../helpers/fabricas";
 
 const NOVA_SENHA = "PastilhaNova2026";
-const TROCA_OBRIGATORIA = { erro: "Troque a sua senha para continuar.", codigo: "TROCA_SENHA_OBRIGATORIA" };
+const TROCA_OBRIGATORIA = { erro: "Troque a sua senha para continuar", codigo: "TROCA_SENHA_OBRIGATORIA" };
 const SESSAO_INVALIDA = { erro: "Sessão expirada. Entre novamente.", codigo: "SESSAO_INVALIDA" };
 
 function entrar(email: string, senha: string) {
@@ -100,9 +100,18 @@ describe("primeiro acesso com troca obrigatória de senha", () => {
       entidadeId: usuario.id,
     });
     const conteudo = JSON.stringify(registros);
-    expect(conteudo).not.toContain(SENHA_PADRAO);
-    expect(conteudo).not.toContain(NOVA_SENHA);
-    expect(conteudo).not.toMatch(/senha(Hash|Atual)?"|novaSenha|\$2[aby]\$/);
+    for (const proibido of [
+      SENHA_PADRAO,
+      NOVA_SENHA,
+      '"senha":',
+      "senhaHash",
+      "senhaAtual",
+      "novaSenha",
+      "$2a$",
+      "$2b$",
+    ]) {
+      expect(conteudo).not.toContain(proibido);
+    }
   });
 
   it("recusa a senha atual errada com 400, e não 401, e mantém a sessão", async () => {
@@ -115,27 +124,34 @@ describe("primeiro acesso com troca obrigatória de senha", () => {
     expect(depois).toMatchObject({ deveTrocarSenha: true, versaoToken: 0 });
   });
 
-  it("recusa nova senha igual à atual", async () => {
+  it("recusa nova senha igual à atual, apontando o campo", async () => {
     const { token } = await criarUsuario({ deveTrocarSenha: true });
     const resposta = await trocarSenha(token, SENHA_PADRAO, SENHA_PADRAO);
     expect(resposta.status).toBe(400);
-    expect(resposta.body.codigo).toBe("SENHA_REPETIDA");
+    expect(resposta.body).toEqual({
+      erro: "Dados inválidos",
+      codigo: "DADOS_INVALIDOS",
+      campos: [{ caminho: "novaSenha", mensagem: "a nova senha precisa ser diferente da atual" }],
+    });
   });
 
   it.each([
-    ["curta", "abc123"],
-    ["sem número", "SomenteLetrasAqui"],
-    ["sem letra", "12345678901"],
-    ["com o nome do e-mail", "fraca2026abc"],
-    ["comum demais", "pastrack123"],
-  ])("recusa nova senha fora da política: %s", async (_caso, novaSenha) => {
+    ["curta", "abc123", "use pelo menos 10 caracteres"],
+    ["sem número", "SomenteLetrasAqui", "inclua pelo menos um número"],
+    ["sem letra", "12345678901", "inclua pelo menos uma letra"],
+    ["com o nome do e-mail", "fraca2026abc", "não use o seu e-mail na senha"],
+    ["comum demais", "pastrack123", "essa senha é comum demais"],
+  ])("recusa nova senha fora da política: %s", async (_caso, novaSenha, problema) => {
     const { usuario, token } = await criarUsuario({ email: "fraca@teste.local", deveTrocarSenha: true });
     const resposta = await trocarSenha(token, SENHA_PADRAO, novaSenha);
     expect(resposta.status).toBe(400);
-    expect(resposta.body.codigo).toBe("SENHA_FRACA");
-    expect(resposta.body.erro).toContain("política de senha");
+    expect(resposta.body.codigo).toBe("DADOS_INVALIDOS");
+    expect(resposta.body.campos).toContainEqual({ caminho: "novaSenha", mensagem: problema });
+    for (const campo of resposta.body.campos) {
+      expect(campo.caminho).toBe("novaSenha");
+    }
     const depois = await prisma.usuario.findUniqueOrThrow({ where: { id: usuario.id } });
-    expect(depois.deveTrocarSenha).toBe(true);
+    expect(depois).toMatchObject({ deveTrocarSenha: true, versaoToken: 0 });
   });
 
   it.each([

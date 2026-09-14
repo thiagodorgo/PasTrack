@@ -5,7 +5,7 @@ import { env } from "../../src/config/env";
 import { api, autorizacao } from "../helpers/api";
 import { criarUsuario } from "../helpers/fabricas";
 
-const CREDENCIAIS_INVALIDAS = { erro: "E-mail ou senha inválidos", codigo: "CREDENCIAIS_INVALIDAS" };
+const CREDENCIAIS_INVALIDAS = { erro: "E-mail ou senha inválidos" };
 
 describe("POST /api/auth/login", () => {
   it("devolve token e apenas os dados públicos do usuário", async () => {
@@ -102,13 +102,13 @@ describe("acesso às rotas protegidas", () => {
   it("recusa requisição sem token", async () => {
     const resposta = await api().get("/api/pastilhas");
     expect(resposta.status).toBe(401);
-    expect(resposta.body).toEqual({ erro: "Token não informado", codigo: "TOKEN_AUSENTE" });
+    expect(resposta.body).toEqual({ erro: "Token não informado" });
   });
 
   it("recusa token malformado", async () => {
     const resposta = await api().get("/api/pastilhas").set(autorizacao("nao-e-um-jwt"));
     expect(resposta.status).toBe(401);
-    expect(resposta.body.codigo).toBe("SESSAO_INVALIDA");
+    expect(resposta.body).toEqual({ erro: "Token inválido ou expirado" });
   });
 
   it("recusa token assinado com outra chave", async () => {

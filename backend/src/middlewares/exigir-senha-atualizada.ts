@@ -8,7 +8,7 @@ import { AppError } from "./erros";
  */
 export function exigirSenhaAtualizada(req: Request, _res: Response, next: NextFunction) {
   if (usuarioDaRequisicao(req).deveTrocarSenha) {
-    throw new AppError("Troque a sua senha para continuar.", 403, "TROCA_SENHA_OBRIGATORIA");
+    throw new AppError("Troque a sua senha para continuar", 403, "TROCA_SENHA_OBRIGATORIA");
   }
   next();
 }

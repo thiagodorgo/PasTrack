@@ -67,12 +67,12 @@ export const limitarTrocaDeSenha = rateLimit({
   logger: logDoLimitador,
 });
 
-/** Limite geral por IP em /api, contra abuso e varreduras. */
+/** Limite geral por IP em /api, contra abuso e varreduras. Responde 429 com o mesmo código do login. */
 export const limitarGlobal = rateLimit({
   windowMs: MINUTO_MS,
   limit: env.RATE_LIMIT_GLOBAL_MAX,
   standardHeaders: "draft-8",
   legacyHeaders: false,
-  handler: responderLimite("Muitas requisições. Aguarde um instante e tente de novo.", "MUITAS_REQUISICOES"),
+  handler: responderLimite("Muitas requisições. Aguarde um instante e tente de novo.", "MUITAS_TENTATIVAS"),
   logger: logDoLimitador,
 });

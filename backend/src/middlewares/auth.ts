@@ -18,19 +18,20 @@ const CABECALHO_BEARER = /^Bearer\s+(\S+)$/i;
 /**
  * Exige um token válido e revalida a sessão no banco: o usuário precisa existir, estar ativo e ter a
  * mesma versão de token. Trocar a senha, mudar o perfil ou desativar o usuário incrementa a versão e
- * derruba os tokens emitidos antes.
+ * derruba os tokens emitidos antes. Como no contrato da API, token ausente ou inválido responde 401 sem
+ * código, e sessão revogada responde 401 SESSAO_INVALIDA.
  */
 export const autenticar = capturar(async (req: Request, _res: Response, next: NextFunction) => {
   const token = CABECALHO_BEARER.exec(req.headers.authorization ?? "")?.[1];
   if (!token) {
-    throw new AppError("Token não informado", 401, "TOKEN_AUSENTE");
+    throw new AppError("Token não informado", 401);
   }
 
   let sessao: { id: number; versaoToken: number };
   try {
     sessao = verificarToken(token);
   } catch {
-    throw sessaoInvalida();
+    throw new AppError("Token inválido ou expirado", 401);
   }
 
   const usuario = await usuarioRepository.buscarSessao(sessao.id);

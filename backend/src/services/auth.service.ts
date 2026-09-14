@@ -67,8 +67,26 @@ export function verificarToken(token: string): { id: number; versaoToken: number
 // o login compara contra ele e responde no mesmo tempo de uma senha errada, sem revelar quem tem conta.
 const hashFalso = bcrypt.hash(randomBytes(32).toString("base64url"), env.BCRYPT_CUSTO);
 
+/**
+ * Nova senha diferente da atual e dentro da política. As falhas saem como 400 DADOS_INVALIDOS, cada
+ * problema em campos apontando novaSenha, para o frontend mostrar junto do campo.
+ */
+function esquemaNovaSenha(senhaAtual: string, email: string) {
+  return z.object({
+    novaSenha: z.string().superRefine((valor, contexto) => {
+      const problemas =
+        valor === senhaAtual
+          ? ["a nova senha precisa ser diferente da atual"]
+          : validarPoliticaDeSenha(valor, email);
+      for (const problema of problemas) {
+        contexto.addIssue({ code: "custom", message: problema });
+      }
+    }),
+  });
+}
+
 function credenciaisInvalidas() {
-  return new AppError("E-mail ou senha inválidos", 401, "CREDENCIAIS_INVALIDAS");
+  return new AppError("E-mail ou senha inválidos", 401);
 }
 
 export const authService = {
@@ -115,17 +133,7 @@ export const authService = {
       // 400 e não 401: um 401 faria o frontend encerrar a sessão
       throw new AppError("A senha atual não confere", 400, "SENHA_ATUAL_INCORRETA");
     }
-    if (novaSenha === senhaAtual) {
-      throw new AppError("A nova senha precisa ser diferente da atual", 400, "SENHA_REPETIDA");
-    }
-    const problemas = validarPoliticaDeSenha(novaSenha, usuario.email);
-    if (problemas.length > 0) {
-      throw new AppError(
-        "A nova senha não atende à política de senha: " + problemas.join("; ") + ".",
-        400,
-        "SENHA_FRACA"
-      );
-    }
+    esquemaNovaSenha(senhaAtual, usuario.email).parse({ novaSenha });
 
     const senhaHash = await bcrypt.hash(novaSenha, env.BCRYPT_CUSTO);
     const atualizado = await prisma.$transaction(async (tx) => {

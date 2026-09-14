@@ -30,7 +30,7 @@ describe("exigirSenhaAtualizada", () => {
     const resposta = await request(montarApp({ ...base, deveTrocarSenha: true })).get("/protegida");
     expect(resposta.status).toBe(403);
     expect(resposta.body).toEqual({
-      erro: "Troque a sua senha para continuar.",
+      erro: "Troque a sua senha para continuar",
       codigo: "TROCA_SENHA_OBRIGATORIA",
     });
   });

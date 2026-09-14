@@ -93,7 +93,7 @@ describe("limite de tentativas na troca de senha", () => {
     const limite = env.RATE_LIMIT_LOGIN_MAX;
     const { token } = await criarUsuario();
     for (let tentativa = 1; tentativa <= limite + 2; tentativa++) {
-      expect((await trocarSenha(token, SENHA_PADRAO, "fraca")).body.codigo).toBe("SENHA_FRACA");
+      expect((await trocarSenha(token, SENHA_PADRAO, "fraca")).body.codigo).toBe("DADOS_INVALIDOS");
     }
     for (let tentativa = 1; tentativa <= limite; tentativa++) {
       const resposta = await trocarSenha(token, SENHA_ERRADA, "OutraSenhaForte2026");

@@ -5,6 +5,9 @@ import { prisma } from "../../src/config/prisma";
 import { api, autorizacao } from "../helpers/api";
 import { criarUsuario, SENHA_PADRAO } from "../helpers/fabricas";
 
+/** Como no contrato: token ausente ou inválido sai sem código; sessão revogada sai com SESSAO_INVALIDA. */
+const TOKEN_AUSENTE = { erro: "Token não informado" };
+const TOKEN_INVALIDO = { erro: "Token inválido ou expirado" };
 const SESSAO_INVALIDA = { erro: "Sessão expirada. Entre novamente.", codigo: "SESSAO_INVALIDA" };
 const OPCOES_VALIDAS: jwt.SignOptions = {
   algorithm: "HS256",
@@ -36,39 +39,45 @@ function acessarComToken(token: string) {
   return api().get("/api/pastilhas").set(autorizacao(token));
 }
 
-async function esperarSessaoInvalida(token: string) {
+async function esperar401(token: string, corpo: object) {
   const resposta = await acessarComToken(token);
   expect(resposta.status).toBe(401);
-  expect(resposta.body).toEqual(SESSAO_INVALIDA);
+  expect(resposta.body).toEqual(corpo);
 }
 
 describe("tokens recusados nas rotas protegidas", () => {
-  it("controle: o token legítimo é aceito", async () => {
+  it("controle: o token legítimo é aceito, com o esquema Bearer em qualquer caixa", async () => {
     const { payload } = await usuarioComPayload();
-    expect((await acessarComToken(assinar(payload))).status).toBe(200);
+    const token = assinar(payload);
+    expect((await acessarComToken(token)).status).toBe(200);
+    expect(
+      (
+        await api()
+          .get("/api/pastilhas")
+          .set("Authorization", "bearer " + token)
+      ).status
+    ).toBe(200);
   });
 
   it("1. token ausente", async () => {
     const resposta = await api().get("/api/pastilhas");
     expect(resposta.status).toBe(401);
-    expect(resposta.body.codigo).toBe("TOKEN_AUSENTE");
+    expect(resposta.body).toEqual(TOKEN_AUSENTE);
   });
 
   it("2. token sem o prefixo Bearer", async () => {
     const { token } = await usuarioComPayload();
-    const semBearer = await api().get("/api/pastilhas").set("Authorization", token);
-    const basic = await api()
-      .get("/api/pastilhas")
-      .set("Authorization", "Basic " + token);
-    expect(semBearer.status).toBe(401);
-    expect(basic.status).toBe(401);
-    expect(semBearer.body.codigo).toBe("TOKEN_AUSENTE");
+    for (const cabecalho of [token, "Basic " + token, "Bearer"]) {
+      const resposta = await api().get("/api/pastilhas").set("Authorization", cabecalho);
+      expect(resposta.status).toBe(401);
+      expect(resposta.body).toEqual(TOKEN_AUSENTE);
+    }
   });
 
   it.each(["nao-e-um-jwt", "abc.def.ghi", "eyJhbGciOiJIUzI1NiJ9.e30"])(
     "3. token malformado: %s",
     async (token) => {
-      await esperarSessaoInvalida(token);
+      await esperar401(token, TOKEN_INVALIDO);
     }
   );
 
@@ -80,42 +89,41 @@ describe("tokens recusados nas rotas protegidas", () => {
       "." +
       base64url({ ...payload, iss: "pastrack-api", aud: "pastrack-web", iat: agora, exp: agora + 3600 }) +
       ".";
-    await esperarSessaoInvalida(semAssinatura);
+    await esperar401(semAssinatura, TOKEN_INVALIDO);
   });
 
   it("5. assinado com outro segredo", async () => {
     const { payload } = await usuarioComPayload();
-    await esperarSessaoInvalida(
-      assinar(payload, OPCOES_VALIDAS, "outro-segredo-com-mais-de-32-caracteres-xyz")
-    );
+    const forjado = assinar(payload, OPCOES_VALIDAS, "outro-segredo-com-mais-de-32-caracteres-xyz");
+    await esperar401(forjado, TOKEN_INVALIDO);
   });
 
   it("6. assinado com algoritmo fora da lista (HS512), mesmo com o segredo certo", async () => {
     const { payload } = await usuarioComPayload();
-    await esperarSessaoInvalida(assinar(payload, { ...OPCOES_VALIDAS, algorithm: "HS512" }));
+    await esperar401(assinar(payload, { ...OPCOES_VALIDAS, algorithm: "HS512" }), TOKEN_INVALIDO);
   });
 
   it("7. expirado", async () => {
     const { payload } = await usuarioComPayload();
     const { expiresIn: _ignorado, ...semValidade } = OPCOES_VALIDAS;
     const expirado = assinar({ ...payload, exp: Math.floor(Date.now() / 1000) - 60 }, semValidade);
-    await esperarSessaoInvalida(expirado);
+    await esperar401(expirado, TOKEN_INVALIDO);
   });
 
   it("8. emissor errado", async () => {
     const { payload } = await usuarioComPayload();
-    await esperarSessaoInvalida(assinar(payload, { ...OPCOES_VALIDAS, issuer: "outra-api" }));
+    await esperar401(assinar(payload, { ...OPCOES_VALIDAS, issuer: "outra-api" }), TOKEN_INVALIDO);
   });
 
   it("9. público errado", async () => {
     const { payload } = await usuarioComPayload();
-    await esperarSessaoInvalida(assinar(payload, { ...OPCOES_VALIDAS, audience: "outro-app" }));
+    await esperar401(assinar(payload, { ...OPCOES_VALIDAS, audience: "outro-app" }), TOKEN_INVALIDO);
   });
 
   it("10. payload sem sub", async () => {
     const { payload } = await usuarioComPayload();
     const { sub: _sub, ...semSub } = payload;
-    await esperarSessaoInvalida(assinar(semSub));
+    await esperar401(assinar(semSub), TOKEN_INVALIDO);
   });
 
   it.each([
@@ -126,7 +134,7 @@ describe("tokens recusados nas rotas protegidas", () => {
     ["perfil desconhecido", { perfil: "SUPERUSUARIO" }],
   ])("11. payload inválido: %s", async (_caso, alteracao) => {
     const { payload } = await usuarioComPayload();
-    await esperarSessaoInvalida(assinar({ ...payload, ...alteracao }));
+    await esperar401(assinar({ ...payload, ...alteracao }), TOKEN_INVALIDO);
   });
 
   it("12. versão antiga depois da troca de senha", async () => {
@@ -136,7 +144,7 @@ describe("tokens recusados nas rotas protegidas", () => {
       .set(autorizacao(token))
       .send({ senhaAtual: SENHA_PADRAO, novaSenha: "OutraSenhaForte2026" });
     expect(troca.status).toBe(200);
-    await esperarSessaoInvalida(token);
+    await esperar401(token, SESSAO_INVALIDA);
     expect((await acessarComToken(troca.body.token)).status).toBe(200);
     const atual = await prisma.usuario.findUniqueOrThrow({ where: { id: usuario.id } });
     expect(atual.versaoToken).toBe(1);
@@ -144,13 +152,13 @@ describe("tokens recusados nas rotas protegidas", () => {
 
   it("13. versão diferente da do banco, mesmo que maior", async () => {
     const { payload } = await usuarioComPayload();
-    await esperarSessaoInvalida(assinar({ ...payload, v: payload.v + 5 }));
+    await esperar401(assinar({ ...payload, v: payload.v + 5 }), SESSAO_INVALIDA);
   });
 
   it("14. usuário apagado", async () => {
     const { usuario, token } = await usuarioComPayload();
     await prisma.usuario.delete({ where: { id: usuario.id } });
-    await esperarSessaoInvalida(token);
+    await esperar401(token, SESSAO_INVALIDA);
   });
 
   it("15. o perfil do token não vale: o perfil vem do banco", async () => {

@@ -4,7 +4,7 @@ import { prisma } from "../../src/config/prisma";
 import { pastilhaRepository } from "../../src/repositories/pastilha.repository";
 import { api, autorizacao } from "../helpers/api";
 import { auditoriasDe, entrarComo } from "../helpers/cadastros";
-import { criarFabricante, criarPastilha, criarUsuario } from "../helpers/fabricas";
+import { criarFabricante, criarFornecedor, criarPastilha, criarUsuario } from "../helpers/fabricas";
 
 type Corpo = Record<string, unknown>;
 
@@ -95,10 +95,11 @@ describe("POST /api/pastilhas", () => {
       .post("/api/pastilhas")
       .set(cabecalho)
       .send({ ...(await corpoValido()), estoqueMinimo: 5 });
+    const fornecedor = await criarFornecedor();
     const entrada = await api()
       .post("/api/movimentacoes")
       .set(cabecalho)
-      .send({ tipo: "ENTRADA", pastilhaId: criada.body.id, quantidade: 10 });
+      .send({ tipo: "ENTRADA", pastilhaId: criada.body.id, quantidade: 10, fornecedorId: fornecedor.id });
     expect(entrada.status).toBe(201);
     const alerta = await prisma.alerta.findFirstOrThrow({ where: { pastilhaId: criada.body.id } });
     expect(alerta.situacao).toBe("RESOLVIDO");

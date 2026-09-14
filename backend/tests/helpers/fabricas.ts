@@ -15,6 +15,7 @@ interface DadosUsuario {
   senha?: string;
   perfil?: PerfilUsuario;
   ativo?: boolean;
+  deveTrocarSenha?: boolean;
 }
 
 export async function criarUsuario(dados: DadosUsuario = {}) {
@@ -27,6 +28,7 @@ export async function criarUsuario(dados: DadosUsuario = {}) {
       senhaHash: await bcrypt.hash(senha, env.BCRYPT_CUSTO),
       perfil: dados.perfil ?? "OPERADOR",
       ativo: dados.ativo ?? true,
+      deveTrocarSenha: dados.deveTrocarSenha ?? false,
     },
   });
   return { usuario, senha, token: gerarToken(usuario) };

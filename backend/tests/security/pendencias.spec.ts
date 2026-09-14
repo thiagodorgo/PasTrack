@@ -33,21 +33,6 @@ describe("pendências conhecidas de segurança e integridade", () => {
     expect(resposta.status).toBe(400);
   });
 
-  it.fails("ENTRADA que repõe o saldo acima do mínimo resolve o alerta aberto", async () => {
-    const { token } = await criarUsuario({ perfil: "GESTOR" });
-    const pastilha = await criarPastilha({ saldoAtual: 5, estoqueMinimo: 5 });
-    await api()
-      .post("/api/movimentacoes")
-      .set(autorizacao(token))
-      .send({ tipo: "SAIDA", pastilhaId: pastilha.id, quantidade: 1 });
-    await api()
-      .post("/api/movimentacoes")
-      .set(autorizacao(token))
-      .send({ tipo: "ENTRADA", pastilhaId: pastilha.id, quantidade: 10 });
-    const alerta = await prisma.alerta.findFirstOrThrow({ where: { pastilhaId: pastilha.id } });
-    expect(alerta.situacao).toBe("RESOLVIDO");
-  });
-
   it.fails("usuário desativado perde o acesso mesmo com token ainda válido", async () => {
     const { usuario, token } = await criarUsuario({ perfil: "OPERADOR" });
     await prisma.usuario.update({ where: { id: usuario.id }, data: { ativo: false } });

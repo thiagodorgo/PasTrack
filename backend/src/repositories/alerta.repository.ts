@@ -4,7 +4,9 @@ export const alertaRepository = {
   listarAbertos() {
     return prisma.alerta.findMany({
       where: { situacao: "ABERTO" },
-      include: { pastilha: { select: { codigo: true, descricao: true, saldoAtual: true, estoqueMinimo: true } } },
+      include: {
+        pastilha: { select: { codigo: true, descricao: true, saldoAtual: true, estoqueMinimo: true } },
+      },
       orderBy: { dataGeracao: "desc" },
     });
   },

@@ -44,13 +44,7 @@ export function Login() {
 
         <label style={{ marginBottom: 12 }}>
           E-mail
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoFocus
-          />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
 
         <label style={{ marginBottom: 20 }}>

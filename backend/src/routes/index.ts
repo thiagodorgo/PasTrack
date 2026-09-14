@@ -37,4 +37,8 @@ rotas.post(
 );
 
 rotas.get("/alertas", capturar(alertaController.listar));
-rotas.patch("/alertas/:id/resolver", autorizar("ADMINISTRADOR", "GESTOR"), capturar(alertaController.resolver));
+rotas.patch(
+  "/alertas/:id/resolver",
+  autorizar("ADMINISTRADOR", "GESTOR"),
+  capturar(alertaController.resolver)
+);

@@ -31,16 +31,44 @@ async function main() {
 
   await prisma.fornecedor.createMany({
     data: [
-      { nome: "Ferramentaria Sul Ltda", cnpj: "11.222.333/0001-44", contato: "vendas@ferramentariasul.com.br" },
+      {
+        nome: "Ferramentaria Sul Ltda",
+        cnpj: "11.222.333/0001-44",
+        contato: "vendas@ferramentariasul.com.br",
+      },
       { nome: "TecCorte Suprimentos", cnpj: "55.666.777/0001-88", contato: "(47) 3333-2222" },
     ],
     skipDuplicates: true,
   });
 
   const pastilhas = [
-    { codigo: "CNMG 120408-PM", descricao: "Pastilha de torneamento CNMG", modelo: "120408", aplicacao: "Torneamento de aço", estoqueMinimo: 10, saldoAtual: 24, fabricanteId: sandvik.id },
-    { codigo: "WNMG 080408-TF", descricao: "Pastilha de torneamento WNMG", modelo: "080408", aplicacao: "Torneamento de inox", estoqueMinimo: 8, saldoAtual: 6, fabricanteId: iscar.id },
-    { codigo: "APMT 1604 PDER", descricao: "Pastilha de fresamento APMT", modelo: "1604", aplicacao: "Fresamento de topo", estoqueMinimo: 12, saldoAtual: 30, fabricanteId: iscar.id },
+    {
+      codigo: "CNMG 120408-PM",
+      descricao: "Pastilha de torneamento CNMG",
+      modelo: "120408",
+      aplicacao: "Torneamento de aço",
+      estoqueMinimo: 10,
+      saldoAtual: 24,
+      fabricanteId: sandvik.id,
+    },
+    {
+      codigo: "WNMG 080408-TF",
+      descricao: "Pastilha de torneamento WNMG",
+      modelo: "080408",
+      aplicacao: "Torneamento de inox",
+      estoqueMinimo: 8,
+      saldoAtual: 6,
+      fabricanteId: iscar.id,
+    },
+    {
+      codigo: "APMT 1604 PDER",
+      descricao: "Pastilha de fresamento APMT",
+      modelo: "1604",
+      aplicacao: "Fresamento de topo",
+      estoqueMinimo: 12,
+      saldoAtual: 30,
+      fabricanteId: iscar.id,
+    },
   ];
 
   for (const dados of pastilhas) {

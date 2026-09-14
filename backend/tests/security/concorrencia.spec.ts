@@ -1,16 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { prisma } from "../../src/config/prisma";
-import { registrarEntrada, registrarSaida } from "../helpers/estoque";
+import { aquecerConexoes, registrarEntrada, registrarSaida } from "../helpers/estoque";
 import { criarFornecedor, criarPastilha, criarUsuario } from "../helpers/fabricas";
-
-/**
- * Abre de antemão as conexões que as requisições simultâneas vão usar. Abrir uma conexão pode
- * levar segundos em algumas máquinas, e o Prisma espera só 2 s para iniciar uma transação:
- * o que se testa aqui é a concorrência sobre o saldo, não a latência de conexão.
- */
-async function aquecerConexoes(quantidade: number) {
-  await Promise.all(Array.from({ length: quantidade }, () => prisma.$executeRaw`SELECT pg_sleep(0.05)`));
-}
 
 beforeEach(async () => {
   await aquecerConexoes(11);

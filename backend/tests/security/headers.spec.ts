@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { env } from "../../src/config/env";
 import { api } from "../helpers/api";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
@@ -46,6 +47,12 @@ describe("cabeçalhos de segurança HTTP", () => {
     expect(seguro.headers["x-request-id"]).toBe("painel-2026-abc");
     const inseguro = await api().get("/api/health").set("X-Request-Id", "id com espaço");
     expect(inseguro.headers["x-request-id"]).toMatch(UUID);
+  });
+
+  it("aplica o limite geral por IP antes da autenticação", async () => {
+    const resposta = await api().get("/api/pastilhas");
+    expect(resposta.status).toBe(401);
+    expect(resposta.headers["ratelimit-policy"]).toContain("q=" + env.RATE_LIMIT_GLOBAL_MAX);
   });
 
   it("deixa o frontend ler X-Request-Id e Retry-After via CORS", async () => {

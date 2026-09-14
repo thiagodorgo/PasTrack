@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { autenticar } from "../middlewares/auth";
 import { exigirSenhaAtualizada } from "../middlewares/exigir-senha-atualizada";
+import { limitarGlobal } from "../middlewares/rate-limit";
 import { alertaRotas } from "./alerta.routes";
 import { authRotas } from "./auth.routes";
 import { fabricanteRotas } from "./fabricante.routes";
@@ -12,6 +13,9 @@ import { saudeRotas } from "./saude.routes";
 import { usuarioRotas } from "./usuario.routes";
 
 export const rotas = Router();
+
+// limite geral por IP antes de tudo, inclusive do autenticar, que consulta o banco a cada requisição
+rotas.use(limitarGlobal);
 
 // rotas públicas; as de sessão (/auth/me e /auth/senha) declaram o próprio autenticar
 rotas.use(saudeRotas);

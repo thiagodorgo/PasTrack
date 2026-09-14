@@ -9,8 +9,9 @@ import { Pastilhas } from "./pages/Pastilhas";
 
 export function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    // o AuthProvider fica dentro do roteador: ao expirar a sessão, ele navega até o login
+    <BrowserRouter>
+      <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route
@@ -26,7 +27,7 @@ export function App() {
             <Route path="movimentacoes" element={<Movimentacoes />} />
           </Route>
         </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }

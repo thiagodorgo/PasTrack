@@ -9,13 +9,16 @@ interface OpcoesDeRenderizacao {
   initialEntries?: string[];
 }
 
-/** Renderiza dentro de AuthProvider + MemoryRouter e devolve também a instância do userEvent. */
+/**
+ * Renderiza dentro de MemoryRouter + AuthProvider e devolve também a instância do userEvent.
+ * O AuthProvider fica dentro do roteador porque navega ao ouvir os eventos de sessão.
+ */
 export function renderizar(ui: ReactElement, { initialEntries = ["/"] }: OpcoesDeRenderizacao = {}) {
   const usuario = userEvent.setup();
   const resultado = render(
-    <AuthProvider>
-      <MemoryRouter initialEntries={initialEntries}>{ui}</MemoryRouter>
-    </AuthProvider>
+    <MemoryRouter initialEntries={initialEntries}>
+      <AuthProvider>{ui}</AuthProvider>
+    </MemoryRouter>
   );
   return { usuario, ...resultado };
 }

@@ -156,18 +156,47 @@ describe("POST /api/pastilhas", () => {
     expect(await prisma.movimentacao.count()).toBe(0);
   });
 
-  it("código repetido responde 409, mesmo com espaços nas pontas", async () => {
+  it("grava o código em maiúsculas, sem os espaços das pontas", async () => {
     const { cabecalho } = await entrarComo("GESTOR");
-    const existente = await criarPastilha({ codigo: "CNMG 120408" });
     const resposta = await api()
       .post("/api/pastilhas")
       .set(cabecalho)
-      .send({ codigo: " CNMG 120408 ", descricao: "Outra pastilha", fabricanteId: existente.fabricanteId });
-    expect(resposta.status).toBe(409);
-    expect(resposta.body).toEqual({ erro: "Já existe uma pastilha com este código", codigo: "DUPLICADO" });
-    expect(await prisma.pastilha.count()).toBe(1);
-    expect(await prisma.auditoria.count()).toBe(0);
+      .send({ ...(await corpoValido()), codigo: "  cnmg 120408-pm  " });
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.codigo).toBe("CNMG 120408-PM");
   });
+
+  it("cnmg 120408 e CNMG 120408 colidem em 409 DUPLICADO", async () => {
+    const { cabecalho } = await entrarComo("GESTOR");
+    const primeira = await api()
+      .post("/api/pastilhas")
+      .set(cabecalho)
+      .send({ ...(await corpoValido()), codigo: "cnmg 120408" });
+    expect(primeira.status).toBe(201);
+    const segunda = await api()
+      .post("/api/pastilhas")
+      .set(cabecalho)
+      .send({ ...(await corpoValido()), codigo: "CNMG 120408" });
+    expect(segunda.status).toBe(409);
+    expect(segunda.body).toEqual({ erro: "Já existe uma pastilha com este código", codigo: "DUPLICADO" });
+    expect(await prisma.pastilha.count()).toBe(1);
+  });
+
+  it.each(["CNMG 120408", " CNMG 120408 ", "cnmg 120408", "Cnmg 120408 "])(
+    "código repetido %j responde 409, sem diferenciar maiúsculas nem espaços nas pontas",
+    async (codigo) => {
+      const { cabecalho } = await entrarComo("GESTOR");
+      const existente = await criarPastilha({ codigo: "CNMG 120408" });
+      const resposta = await api()
+        .post("/api/pastilhas")
+        .set(cabecalho)
+        .send({ codigo, descricao: "Outra pastilha", fabricanteId: existente.fabricanteId });
+      expect(resposta.status).toBe(409);
+      expect(resposta.body).toEqual({ erro: "Já existe uma pastilha com este código", codigo: "DUPLICADO" });
+      expect(await prisma.pastilha.count()).toBe(1);
+      expect(await prisma.auditoria.count()).toBe(0);
+    }
+  );
 
   it("fabricante inexistente responde 400 sem gravar nada", async () => {
     const { cabecalho } = await entrarComo("GESTOR");

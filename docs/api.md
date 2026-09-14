@@ -350,7 +350,7 @@ Os limites de 20 itens críticos e 5 movimentações são aplicados na consulta 
 
 ## 7. Pastilhas
 
-A pastilha nas respostas é `{ id, codigo, descricao, modelo, aplicacao, unidade, estoqueMinimo, saldoAtual, fabricanteId, criadoEm, atualizadoEm, fabricante }`, com `fabricante` no formato da seção de fabricantes. `modelo` e `aplicacao` podem ser `null`, e `codigo` é único. O `saldoAtual` só muda por movimentação, e o banco recusa `saldoAtual` e `estoqueMinimo` negativos.
+A pastilha nas respostas é `{ id, codigo, descricao, modelo, aplicacao, unidade, estoqueMinimo, saldoAtual, fabricanteId, criadoEm, atualizadoEm, fabricante }`, com `fabricante` no formato da seção de fabricantes. `modelo` e `aplicacao` podem ser `null`, e `codigo` é único e gravado em maiúsculas. O `saldoAtual` só muda por movimentação, e o banco recusa `saldoAtual` e `estoqueMinimo` negativos.
 
 Nas rotas de pastilha, os textos chegam sem os espaços das pontas, e qualquer campo fora dos listados em cada rota, na query ou no corpo, responde `400` com `codigo: "DADOS_INVALIDOS"`. O `:id` precisa ser um inteiro positivo de até 2147483647; fora disso, `400`. A criação e a edição ficam registradas na auditoria (`pastilha.criada` e `pastilha.atualizada`), com o estado anterior e o novo.
 
@@ -409,7 +409,7 @@ ADMINISTRADOR e GESTOR (ação `gerenciarPastilhas`). Existente.
 
 Corpo:
 
-- `codigo`: obrigatório, de 1 a 40 caracteres;
+- `codigo`: obrigatório, de 1 a 40 caracteres, gravado em maiúsculas;
 - `descricao`: obrigatória, de 1 a 200 caracteres;
 - `fabricanteId`: obrigatório, inteiro positivo;
 - `modelo`: opcional, até 60 caracteres;
@@ -428,7 +428,7 @@ Erros:
 - `400` com `codigo: "DADOS_INVALIDOS"` e `campos` para campo ausente, inválido ou não permitido;
 - `400` com `codigo: "REFERENCIA_INVALIDA"` para `fabricanteId` inexistente;
 - `403`;
-- `409` com `codigo: "DUPLICADO"` (`"Já existe uma pastilha com este código"`). O código é comparado já sem os espaços das pontas.
+- `409` com `codigo: "DUPLICADO"` (`"Já existe uma pastilha com este código"`). O código é comparado já normalizado, sem os espaços das pontas e em maiúsculas: `cnmg 120408` e `CNMG 120408` colidem.
 
 ```json
 {

@@ -28,7 +28,8 @@ const camposEditaveis = {
 };
 
 export const criarPastilhaSchema = z.strictObject({
-  codigo: z.string().trim().min(1).max(40),
+  // gravado em maiúsculas: "cnmg 120408" e "CNMG 120408" são o mesmo código
+  codigo: z.string().trim().toUpperCase().min(1).max(40),
   ...camposEditaveis,
   unidade: camposEditaveis.unidade.default("un"),
   estoqueMinimo: camposEditaveis.estoqueMinimo.default(0),

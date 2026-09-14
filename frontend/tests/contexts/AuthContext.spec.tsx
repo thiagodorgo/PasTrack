@@ -2,6 +2,7 @@ import { act, render, screen } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { Protegido } from "../../src/components/Protegido";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { api, EVENTO_SESSAO_EXPIRADA, EVENTO_TROCA_SENHA_OBRIGATORIA } from "../../src/services/api";
 import { usuarioSalvo } from "../../src/services/auth";
@@ -51,9 +52,39 @@ function renderizarSessao() {
   );
 }
 
+function renderizarRotaProtegida() {
+  return renderizar(
+    <Routes>
+      <Route path="/login" element={<TelaDeLogin />} />
+      <Route
+        path="/"
+        element={
+          <Protegido>
+            <TelaDaSessao />
+          </Protegido>
+        }
+      />
+    </Routes>
+  );
+}
+
 describe("AuthContext", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
+  });
+
+  // o roteador aplica a navegação como transição; se o usuário sumisse antes dela, a rota protegida
+  // redirecionaria de novo para o login e o motivo se perderia
+  it("numa rota protegida, a sessão expirada leva ao login sem perder o motivo", async () => {
+    iniciarSessao();
+    renderizarRotaProtegida();
+    expect(screen.getByText("Sessão de Administrador")).toBeInTheDocument();
+
+    act(() => {
+      window.dispatchEvent(new Event(EVENTO_SESSAO_EXPIRADA));
+    });
+
+    expect(await screen.findByText("Tela de login: sessao-expirada")).toBeInTheDocument();
   });
 
   it("o evento de sessão expirada limpa a sessão e leva ao login com o motivo, sem recarregar a página", async () => {

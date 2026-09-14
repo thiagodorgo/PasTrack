@@ -1,4 +1,12 @@
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  type ReactNode,
+  startTransition,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { EVENTO_SESSAO_EXPIRADA, EVENTO_TROCA_SENHA_OBRIGATORIA } from "../services/api";
 import * as authService from "../services/auth";
@@ -33,8 +41,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const sair = useCallback(
     (motivo?: MotivoSaida) => {
       authService.sair();
-      setUsuario(null);
       navegar("/login", { replace: true, state: motivo ? { motivo } : null });
+      // O roteador aplica a navegação como transição. Limpar o usuário na mesma transição evita que a rota
+      // protegida atual renderize sem usuário antes da troca de rota e redirecione de novo, sem o motivo.
+      startTransition(() => setUsuario(null));
     },
     [navegar]
   );

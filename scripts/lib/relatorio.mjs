@@ -41,8 +41,15 @@ function aberturasDaTag(xml, tag) {
 }
 
 // Comentários e CDATA podem conter texto parecido com tags (saída de console, por exemplo).
+// Repete até não sobrar nada: um comentário montado por aninhamento só aparece depois da primeira remoção.
 function removerTrechosLiterais(xml) {
-  return xml.replace(/<!--[\s\S]*?-->/g, "").replace(/<!\[CDATA\[[\s\S]*?\]\]>/g, "");
+  let atual = xml;
+  let anterior;
+  do {
+    anterior = atual;
+    atual = atual.replace(/<!--[\s\S]*?-->/g, "").replace(/<!\[CDATA\[[\s\S]*?\]\]>/g, "");
+  } while (atual !== anterior);
+  return atual;
 }
 
 export function lerJUnit(xml) {
@@ -358,11 +365,14 @@ function tracos(largura, alinhamento) {
   return alinhamento === "direita" ? `${"-".repeat(largura - 1)}:` : "-".repeat(largura);
 }
 
+// Escapa a barra invertida antes da barra vertical, para o conteúdo não quebrar a célula da tabela.
+export function escaparCelulaMd(texto) {
+  return texto.replace(/\\/g, "\\\\").replace(/\|/g, "\\|");
+}
+
 // Tabela com colunas alinhadas, no mesmo formato que o Prettier produz.
 function tabelaMd(cabecalho, linhas, alinhamentos = []) {
-  const celulas = [cabecalho, ...linhas].map((linha) =>
-    linha.map((texto) => String(texto).replace(/\|/g, "\\|"))
-  );
+  const celulas = [cabecalho, ...linhas].map((linha) => linha.map((texto) => escaparCelulaMd(String(texto))));
   const larguras = cabecalho.map((_, coluna) => Math.max(3, ...celulas.map((linha) => linha[coluna].length)));
   const montar = (linha) =>
     `| ${linha.map((texto, coluna) => alinhar(texto, larguras[coluna], alinhamentos[coluna])).join(" | ")} |`;

@@ -38,6 +38,20 @@ A arquitetura em três camadas da aplicação está em [docs/arquitetura.png](do
 
 - Node.js 20 ou superior
 - PostgreSQL 15 ou superior
+- Ou apenas Docker com Compose v2, para rodar tudo em containers
+
+## Como rodar com Docker
+
+Sobe o banco, a API e o front-end (servido pelo nginx) com um único comando. Requer Docker com Compose v2.
+
+```bash
+cp .env.example .env   # preencha POSTGRES_PASSWORD, JWT_SECRET e SEED_ADMIN_SENHA (instruções no próprio arquivo)
+docker compose up -d --build --wait
+```
+
+Abra http://localhost:8080 e entre com o e-mail de `SEED_ADMIN_EMAIL` e a senha definida em `SEED_ADMIN_SENHA`. Outros computadores da rede acessam pelo IP desta máquina, na mesma porta (`WEB_PORTA`). A cada subida, a API aplica as migrations pendentes e confere o administrador inicial, sem alterar um que já exista.
+
+O banco fica acessível só nesta máquina, em `localhost:5432` (`DB_PORTA`), para quem quiser rodar a API em modo de desenvolvimento. Para parar, use `docker compose down`; os dados continuam no volume `dados-banco`, que só é apagado com `docker compose down -v`.
 
 ## Como rodar o back-end
 
@@ -50,7 +64,7 @@ npm run db:seed        # cria o administrador inicial
 npm run dev
 ```
 
-A API sobe em http://localhost:3333. O banco pode ser um PostgreSQL local ou o do Docker Compose.
+A API sobe em http://localhost:3333. O banco pode ser um PostgreSQL local ou o do Docker Compose (`docker compose up -d banco`, com a senha de `POSTGRES_PASSWORD` na `DATABASE_URL`).
 
 ## Como rodar o front-end
 
@@ -61,7 +75,7 @@ npm install
 npm run dev
 ```
 
-A aplicação abre em http://localhost:5173.
+A aplicação abre em http://localhost:5173 e encaminha as chamadas de `/api` para a API em http://localhost:3333.
 
 ## Acesso inicial
 

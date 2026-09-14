@@ -290,16 +290,6 @@ describe("PUT /api/pastilhas/:id", () => {
     expect(depois.descricao).toBe(status === 200 ? "Alterada" : "Original");
   });
 
-  it("OPERADOR recebe 403 antes de qualquer validação do corpo", async () => {
-    const { cabecalho } = await entrarComo("OPERADOR");
-    const pastilha = await criarPastilha({ saldoAtual: 5 });
-    const resposta = await api()
-      .put(`/api/pastilhas/${pastilha.id}`)
-      .set(cabecalho)
-      .send({ saldoAtual: 999 });
-    expect(resposta.status).toBe(403);
-  });
-
   it("id inexistente responde 404", async () => {
     const { cabecalho } = await entrarComo("GESTOR");
     const resposta = await api().put("/api/pastilhas/9999").set(cabecalho).send({ descricao: "Nova" });

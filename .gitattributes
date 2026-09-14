@@ -1,0 +1,11 @@
+# normaliza fim de linha para LF (scripts e configs rodam em Linux nos containers e no CI)
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.pdf binary
+*.woff binary
+*.woff2 binary

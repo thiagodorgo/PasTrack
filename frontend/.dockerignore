@@ -1,0 +1,11 @@
+# contexto de build mínimo: só o que a imagem precisa
+*
+!package.json
+!package-lock.json
+!tsconfig.json
+!tsconfig.node.json
+!vite.config.ts
+!index.html
+!src
+!public
+!nginx.conf

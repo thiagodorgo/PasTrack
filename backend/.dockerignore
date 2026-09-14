@@ -1,0 +1,9 @@
+# contexto de build mínimo: só o que a imagem precisa
+*
+!package.json
+!package-lock.json
+!tsconfig.json
+!tsconfig.build.json
+!prisma
+!src
+!docker-entrypoint.sh

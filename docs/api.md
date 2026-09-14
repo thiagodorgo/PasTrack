@@ -350,16 +350,20 @@ Os limites de 20 itens críticos e 5 movimentações são aplicados na consulta 
 
 ## 7. Pastilhas
 
-A pastilha nas respostas é `{ id, codigo, descricao, modelo, aplicacao, unidade, estoqueMinimo, saldoAtual, fabricanteId, criadoEm, atualizadoEm, fabricante }`, com `fabricante` no formato da seção de fabricantes. `modelo` e `aplicacao` podem ser `null`, e `codigo` é único. O banco recusa `saldoAtual` e `estoqueMinimo` negativos.
+A pastilha nas respostas é `{ id, codigo, descricao, modelo, aplicacao, unidade, estoqueMinimo, saldoAtual, fabricanteId, criadoEm, atualizadoEm, fabricante }`, com `fabricante` no formato da seção de fabricantes. `modelo` e `aplicacao` podem ser `null`, e `codigo` é único. O `saldoAtual` só muda por movimentação, e o banco recusa `saldoAtual` e `estoqueMinimo` negativos.
+
+Nas rotas de pastilha, os textos chegam sem os espaços das pontas, e qualquer campo fora dos listados em cada rota, na query ou no corpo, responde `400` com `codigo: "DADOS_INVALIDOS"`. O `:id` precisa ser um inteiro positivo de até 2147483647; fora disso, `400`. A criação e a edição ficam registradas na auditoria (`pastilha.criada` e `pastilha.atualizada`), com o estado anterior e o novo.
 
 ### `GET /api/pastilhas`
 
 Todos os perfis. Existente.
 
-Query:
+Query, toda opcional:
 
-- `busca`: filtra por trecho de `codigo` ou de `descricao`, sem diferenciar maiúsculas;
-- `criticas=true` **(em implementação)**: só as pastilhas com `saldoAtual <= estoqueMinimo`, o mesmo critério do painel.
+- `busca`: até 100 caracteres; filtra por trecho de `codigo` ou de `descricao`, sem diferenciar maiúsculas;
+- `criticas`: `true` devolve só as pastilhas com `saldoAtual <= estoqueMinimo`, o mesmo critério do painel; `false` equivale a não enviar o filtro.
+
+`busca` e `criticas` podem ser combinados. Outro valor de `criticas`, parâmetro repetido ou parâmetro desconhecido responde `400`.
 
 Resposta `200`: array de pastilhas em ordem alfabética de `descricao`, sem paginação.
 
@@ -393,27 +397,38 @@ Todos os perfis. Existente.
 
 Resposta `200`: a pastilha, no formato acima.
 
-Erros: `404` `"Pastilha não encontrada"`, sem `codigo`.
+Erros: `400` para `:id` inválido; `404` com `codigo: "NAO_ENCONTRADO"` (`"Pastilha não encontrada"`).
 
 ```json
-{ "erro": "Pastilha não encontrada" }
+{ "erro": "Pastilha não encontrada", "codigo": "NAO_ENCONTRADO" }
 ```
 
 ### `POST /api/pastilhas`
 
 ADMINISTRADOR e GESTOR (ação `gerenciarPastilhas`). Existente.
 
-Corpo: `codigo`, `descricao` e `fabricanteId` obrigatórios; `modelo`, `aplicacao`, `unidade` (padrão `"un"`) e `estoqueMinimo` (padrão `0`) opcionais. Outros campos, inclusive `saldoAtual`, são ignorados: a pastilha nasce com saldo `0`.
+Corpo:
+
+- `codigo`: obrigatório, de 1 a 40 caracteres;
+- `descricao`: obrigatória, de 1 a 200 caracteres;
+- `fabricanteId`: obrigatório, inteiro positivo;
+- `modelo`: opcional, até 60 caracteres;
+- `aplicacao`: opcional, até 200 caracteres;
+- `unidade`: opcional, de 1 a 10 caracteres, padrão `"un"`;
+- `estoqueMinimo`: opcional, inteiro de 0 a 1.000.000, padrão `0`.
+
+Em `modelo` e `aplicacao`, `null` e texto vazio (ou só com espaços) gravam `null`. Qualquer outro campo, inclusive `saldoAtual`, `id` e relações como `movimentacoes`, responde `400`: a pastilha sempre nasce com saldo `0`.
+
+A criação grava a auditoria e avalia o alerta na mesma transação. Como o saldo nasce `0` e o `estoqueMinimo` nunca é negativo, a pastilha nasce com um alerta `ABERTO`, que fecha sozinho quando uma entrada leva o saldo acima do mínimo.
 
 Resposta `201`: a pastilha criada.
 
 Erros:
 
-- `400` `"Código, descrição e fabricante são obrigatórios"`;
+- `400` com `codigo: "DADOS_INVALIDOS"` e `campos` para campo ausente, inválido ou não permitido;
 - `400` com `codigo: "REFERENCIA_INVALIDA"` para `fabricanteId` inexistente;
 - `403`;
-- `409` com `codigo: "DUPLICADO"` (`"Já existe uma pastilha com este código"`);
-- `500` para `estoqueMinimo` negativo, barrado pelo banco.
+- `409` com `codigo: "DUPLICADO"` (`"Já existe uma pastilha com este código"`). O código é comparado já sem os espaços das pontas.
 
 ```json
 {
@@ -427,17 +442,20 @@ Erros:
 
 ### `PUT /api/pastilhas/:id`
 
-ADMINISTRADOR e GESTOR (ação `gerenciarPastilhas`). Existente, com as regras novas marcadas.
+ADMINISTRADOR e GESTOR (ação `gerenciarPastilhas`). Existente.
 
-Corpo **(em implementação)**: só `descricao`, `modelo`, `aplicacao`, `unidade`, `estoqueMinimo` e `fabricanteId`, todos opcionais. O `saldoAtual` nunca é aceito: o saldo só muda por movimentação. Qualquer outro campo, inclusive `saldoAtual` e `codigo`, responde `400`.
+Corpo: só `descricao`, `modelo`, `aplicacao`, `unidade`, `estoqueMinimo` e `fabricanteId`, com as mesmas regras do `POST`. Todos são opcionais, mas pelo menos um precisa vir. Campo ausente mantém o valor atual; em `modelo` e `aplicacao`, `null` e texto vazio limpam o valor. `codigo` e `saldoAtual` nunca são aceitos: o saldo só muda por movimentação. Qualquer outro campo, inclusive `saldoAtual`, `codigo`, `id` e escritas aninhadas como `{ "movimentacoes": { "deleteMany": {} } }`, responde `400` sem alterar nada.
 
-Hoje a rota repassa o corpo sem filtro, inclusive `saldoAtual`. É um defeito conhecido, registrado em `backend/tests/security/pendencias.spec.ts`.
-
-**(em implementação)** Mudar `estoqueMinimo` abre o alerta quando o saldo fica menor ou igual ao novo mínimo, e fecha o alerta aberto quando o saldo fica acima dele.
+Mudar `estoqueMinimo` reavalia o alerta na mesma transação: abre o alerta quando o saldo fica menor ou igual ao novo mínimo e fecha o alerta aberto quando o saldo fica acima dele.
 
 Resposta `200`: a pastilha atualizada.
 
-Erros: `400`, inclusive `REFERENCIA_INVALIDA` para `fabricanteId` inexistente; `403`; `404` `"Pastilha não encontrada"`.
+Erros:
+
+- `400` com `codigo: "DADOS_INVALIDOS"` para corpo vazio (`"Informe ao menos um campo para atualizar"`), campo inválido ou não permitido, ou `:id` inválido;
+- `400` com `codigo: "REFERENCIA_INVALIDA"` para `fabricanteId` inexistente;
+- `403`, verificado antes do corpo;
+- `404` com `codigo: "NAO_ENCONTRADO"` (`"Pastilha não encontrada"`).
 
 ```json
 { "descricao": "Pastilha CNMG 120408 para aço", "estoqueMinimo": 12 }
@@ -445,11 +463,15 @@ Erros: `400`, inclusive `REFERENCIA_INVALIDA` para `fabricanteId` inexistente; `
 
 ## 8. Fabricantes
 
-O fabricante nas respostas é `{ id, nome, criadoEm, atualizadoEm }`, com `nome` único.
+O fabricante nas respostas é `{ id, nome, criadoEm, atualizadoEm }`, com `nome` único. O `nome` tem de 2 a 100 caracteres e chega sem os espaços das pontas, e a unicidade vale para o nome já sem esses espaços. A criação e a edição ficam registradas na auditoria (`fabricante.criado` e `fabricante.atualizado`).
+
+Qualquer campo não listado, na query ou no corpo, responde `400` com `codigo: "DADOS_INVALIDOS"`. O `:id` precisa ser um inteiro positivo de até 2147483647.
 
 ### `GET /api/fabricantes`
 
 Todos os perfis. Existente.
+
+Sem query: qualquer parâmetro responde `400`.
 
 Resposta `200`: array em ordem alfabética de `nome`.
 
@@ -464,15 +486,31 @@ Resposta `200`: array em ordem alfabética de `nome`.
 ]
 ```
 
+### `GET /api/fabricantes/:id`
+
+Todos os perfis. Existente.
+
+Resposta `200`: o fabricante.
+
+Erros: `400` para `:id` inválido; `404` com `codigo: "NAO_ENCONTRADO"` (`"Fabricante não encontrado"`).
+
+```json
+{ "erro": "Fabricante não encontrado", "codigo": "NAO_ENCONTRADO" }
+```
+
 ### `POST /api/fabricantes`
 
 ADMINISTRADOR e GESTOR (ação `gerenciarFabricantes`). Existente.
 
-Corpo: `{ nome }`, obrigatório.
+Corpo: `{ nome }`, obrigatório. Qualquer outro campo, inclusive `id` e relações como `pastilhas`, responde `400`.
 
 Resposta `201`: o fabricante criado.
 
-Erros: `400` `"Informe o nome do fabricante"`; `403`; `409` com `codigo: "DUPLICADO"` (`"Já existe um fabricante com este nome"`).
+Erros:
+
+- `400` com `codigo: "DADOS_INVALIDOS"` e `campos` para nome ausente, fora do tamanho ou campo não permitido;
+- `403`;
+- `409` com `codigo: "DUPLICADO"` (`"Já existe um fabricante com este nome"`).
 
 ```json
 { "nome": "Sandvik" }
@@ -480,13 +518,18 @@ Erros: `400` `"Informe o nome do fabricante"`; `403`; `409` com `codigo: "DUPLIC
 
 ### `PUT /api/fabricantes/:id`
 
-ADMINISTRADOR e GESTOR (ação `gerenciarFabricantes`). **(em implementação)**
+ADMINISTRADOR e GESTOR (ação `gerenciarFabricantes`). Existente.
 
-Corpo: `{ nome }`.
+Corpo: `{ nome }`, obrigatório, com as mesmas regras do `POST`. Qualquer outro campo, inclusive escritas aninhadas como `{ "pastilhas": { "deleteMany": {} } }`, responde `400` sem alterar nada.
 
 Resposta `200`: o fabricante atualizado.
 
-Erros: `400`; `403`; `404` para fabricante inexistente; `409` com `codigo: "DUPLICADO"` para nome já cadastrado.
+Erros:
+
+- `400` com `codigo: "DADOS_INVALIDOS"`;
+- `403`, verificado antes do corpo;
+- `404` com `codigo: "NAO_ENCONTRADO"` (`"Fabricante não encontrado"`);
+- `409` com `codigo: "DUPLICADO"` para nome já cadastrado.
 
 ```json
 { "nome": "Sandvik Coromant" }
@@ -494,13 +537,23 @@ Erros: `400`; `403`; `404` para fabricante inexistente; `409` com `codigo: "DUPL
 
 ## 9. Fornecedores
 
-O fornecedor nas respostas é `{ id, nome, cnpj, contato, criadoEm, atualizadoEm }`. `cnpj` e `contato` podem ser `null`, e `cnpj` é único.
+O fornecedor nas respostas é `{ id, nome, cnpj, contato, criadoEm, atualizadoEm }`. `cnpj` e `contato` podem ser `null`, e `cnpj` é único. A criação e a edição ficam registradas na auditoria (`fornecedor.criado` e `fornecedor.atualizado`).
 
-**(em implementação)** O CNPJ é aceito com ou sem máscara, validado pelos dígitos verificadores e devolvido sempre formatado como `00.000.000/0000-00`. Hoje ele é gravado e devolvido como foi enviado, sem validação, e a duplicidade só é detectada quando o texto é idêntico.
+Campos, com os textos sem os espaços das pontas:
+
+- `nome`: de 2 a 150 caracteres;
+- `cnpj`: opcional, numérico ou alfanumérico, com ou sem máscara;
+- `contato`: opcional, até 150 caracteres.
+
+No CNPJ, as 12 primeiras posições aceitam `0-9` e `A-Z`, em maiúsculas ou minúsculas, e os 2 dígitos verificadores são numéricos. Os dígitos são calculados pelo módulo 11, com os pesos de sempre e cada posição valendo o seu código ASCII menos 48. CNPJ com dígito verificador errado ou com todos os dígitos iguais responde `400` (`"CNPJ inválido"`). O CNPJ é gravado e devolvido em maiúsculas, no formato `XX.XXX.XXX/XXXX-XX`, e a duplicidade é conferida nesse formato: `11222333000181` e `11.222.333/0001-81` são o mesmo CNPJ, e `12abc34501de35` vira `12.ABC.345/01DE-35`.
+
+Em `cnpj` e `contato`, `null` e texto vazio (ou só com espaços) gravam `null`. Qualquer campo não listado, na query ou no corpo, responde `400` com `codigo: "DADOS_INVALIDOS"`. O `:id` precisa ser um inteiro positivo de até 2147483647.
 
 ### `GET /api/fornecedores`
 
 Todos os perfis. Existente.
+
+Sem query: qualquer parâmetro responde `400`.
 
 Resposta `200`: array em ordem alfabética de `nome`.
 
@@ -517,18 +570,29 @@ Resposta `200`: array em ordem alfabética de `nome`.
 ]
 ```
 
+### `GET /api/fornecedores/:id`
+
+Todos os perfis. Existente.
+
+Resposta `200`: o fornecedor.
+
+Erros: `400` para `:id` inválido; `404` com `codigo: "NAO_ENCONTRADO"` (`"Fornecedor não encontrado"`).
+
+```json
+{ "erro": "Fornecedor não encontrado", "codigo": "NAO_ENCONTRADO" }
+```
+
 ### `POST /api/fornecedores`
 
 ADMINISTRADOR, GESTOR e COMPRADOR (ação `gerenciarFornecedores`). Existente.
 
-Corpo: `{ nome, cnpj?, contato? }`, com `nome` obrigatório.
+Corpo: `{ nome, cnpj?, contato? }`, com `nome` obrigatório. Qualquer outro campo, inclusive `id` e relações como `movimentacoes`, responde `400`.
 
-Resposta `201`: o fornecedor criado.
+Resposta `201`: o fornecedor criado, com o CNPJ formatado.
 
 Erros:
 
-- `400` `"Informe o nome do fornecedor"`;
-- `400` **(em implementação)** para CNPJ com dígitos verificadores inválidos;
+- `400` com `codigo: "DADOS_INVALIDOS"` e `campos` para nome ausente ou fora do tamanho, CNPJ inválido, contato longo demais ou campo não permitido;
 - `403`;
 - `409` com `codigo: "DUPLICADO"` (`"Já existe um fornecedor com este CNPJ"`).
 
@@ -538,13 +602,18 @@ Erros:
 
 ### `PUT /api/fornecedores/:id`
 
-ADMINISTRADOR, GESTOR e COMPRADOR (ação `gerenciarFornecedores`). **(em implementação)**
+ADMINISTRADOR, GESTOR e COMPRADOR (ação `gerenciarFornecedores`). Existente.
 
-Corpo: os mesmos campos e regras do `POST`, com o CNPJ aceito com ou sem máscara.
+Corpo: `nome`, `cnpj` e `contato`, com as mesmas regras do `POST`. Todos são opcionais, mas pelo menos um precisa vir. Campo ausente mantém o valor atual; em `cnpj` e `contato`, `null` e texto vazio limpam o valor. Qualquer outro campo, inclusive escritas aninhadas como `{ "movimentacoes": { "deleteMany": {} } }`, responde `400` sem alterar nada.
 
 Resposta `200`: o fornecedor atualizado, com o CNPJ formatado.
 
-Erros: `400`; `403`; `404` para fornecedor inexistente; `409` com `codigo: "DUPLICADO"` para CNPJ já cadastrado.
+Erros:
+
+- `400` com `codigo: "DADOS_INVALIDOS"` para corpo vazio (`"Informe ao menos um campo para atualizar"`), campo inválido ou não permitido, ou `:id` inválido;
+- `403`, verificado antes do corpo;
+- `404` com `codigo: "NAO_ENCONTRADO"` (`"Fornecedor não encontrado"`);
+- `409` com `codigo: "DUPLICADO"` para CNPJ já cadastrado.
 
 ```json
 { "nome": "Distribuidora Alfa Ltda", "cnpj": "11.222.333/0001-81", "contato": "(47) 3333-0000" }

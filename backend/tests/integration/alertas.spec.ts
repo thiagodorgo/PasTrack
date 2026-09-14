@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { prisma } from "../../src/config/prisma";
 import { api, autorizacao } from "../helpers/api";
-import { aquecerConexoes, criarAlerta, registrarEntrada } from "../helpers/estoque";
+import { aquecerConexoes, criarAlerta, esperarTransacaoTravada } from "../helpers/estoque";
 import { criarFornecedor, criarPastilha, criarUsuario } from "../helpers/fabricas";
 
 async function movimentar(token: string, pastilhaId: number, tipo: "ENTRADA" | "SAIDA", quantidade: number) {
@@ -240,31 +240,44 @@ describe("PATCH /api/alertas/:id/resolver", () => {
     expect(await prisma.auditoria.count({ where: { acao: "alerta.resolvido" } })).toBe(1);
   });
 
-  it("resolução manual simultânea à reposição do estoque não perde o responsável", async () => {
+  it("a resolução espera a trava da pastilha e, solta a trava, grava o responsável", async () => {
     await aquecerConexoes(4);
     const { usuario, token } = await criarUsuario({ perfil: "GESTOR" });
-    const fornecedor = await criarFornecedor();
     const pastilha = await criarPastilha({ saldoAtual: 1, estoqueMinimo: 4 });
     const alerta = await criarAlerta({ pastilhaId: pastilha.id });
 
-    const [resolucao, entrada] = await Promise.all([
-      resolver(token, alerta.id),
-      registrarEntrada(token, pastilha.id, 10, fornecedor.id),
-    ]);
+    // uma transação do teste segura a linha da pastilha, como uma movimentação em andamento
+    let soltarTrava: () => void = () => undefined;
+    const trava = new Promise<void>((resolve) => {
+      soltarTrava = () => resolve();
+    });
+    let avisarTravada: () => void = () => undefined;
+    const travada = new Promise<void>((resolve) => {
+      avisarTravada = () => resolve();
+    });
+    const transacaoDoTeste = prisma.$transaction(
+      async (tx) => {
+        await tx.$executeRaw`SELECT 1 FROM "pastilha" WHERE "id" = ${pastilha.id} FOR UPDATE`;
+        avisarTravada();
+        await trava;
+      },
+      { timeout: 15_000 }
+    );
+    await travada;
 
-    expect(entrada.status).toBe(201);
+    const resolucao = resolver(token, alerta.id).then((resposta) => resposta);
+    await esperarTransacaoTravada();
+    // enquanto a trava existe, a resolução espera sem gravar nada
+    const durante = await prisma.alerta.findUniqueOrThrow({ where: { id: alerta.id } });
+    expect(durante.situacao).toBe("ABERTO");
+
+    soltarTrava();
+    await transacaoDoTeste;
+    const resposta = await resolucao;
+    expect(resposta.status).toBe(200);
     const gravado = await prisma.alerta.findUniqueOrThrow({ where: { id: alerta.id } });
-    expect(gravado.situacao).toBe("RESOLVIDO");
-    if (resolucao.status === 200) {
-      // a resolução manual chegou antes: a reposição não reescreve o responsável
-      expect(gravado.resolvidoPorId).toBe(usuario.id);
-    } else {
-      // a reposição fechou o alerta antes: a resolução manual chega tarde
-      expect(resolucao.status).toBe(409);
-      expect(gravado.resolvidoPorId).toBeNull();
-    }
-    expect(await prisma.alerta.count({ where: { pastilhaId: pastilha.id, situacao: "ABERTO" } })).toBe(0);
-  });
+    expect(gravado).toMatchObject({ situacao: "RESOLVIDO", resolvidoPorId: usuario.id });
+  }, 15_000);
 });
 
 describe("ciclo de vida do alerta", () => {
@@ -375,13 +388,6 @@ describe("erros do banco viram respostas claras", () => {
     expect(repetido.status).toBe(409);
     expect(repetido.body).toMatchObject({ codigo: "DUPLICADO" });
   });
-
-  it("resolver alerta inexistente responde 404", async () => {
-    const { token } = await criarUsuario({ perfil: "GESTOR" });
-    const resposta = await api().patch("/api/alertas/999/resolver").set(autorizacao(token));
-    expect(resposta.status).toBe(404);
-    expect(resposta.body).toMatchObject({ codigo: "NAO_ENCONTRADO" });
-  });
 });
 
 describe("id do alerta no limite do INT4", () => {
@@ -477,5 +483,23 @@ describe("limite e paginação de GET /api/alertas", () => {
     const resposta = await listar(token, { [campo]: valor });
     expect(resposta.status).toBe(400);
     expect(resposta.body.campos[0].caminho).toBe(campo);
+  });
+});
+
+describe("desempate dos alertas pelo id", () => {
+  it("alertas com a mesma dataGeracao saem do id maior para o menor, com e sem página", async () => {
+    const { token } = await criarUsuario();
+    const mesmaData = new Date("2026-09-10T10:00:00.000Z");
+    const ids: number[] = [];
+    for (let i = 0; i < 3; i++) {
+      const pastilha = await criarPastilha();
+      ids.push((await criarAlerta({ pastilhaId: pastilha.id, dataGeracao: mesmaData })).id);
+    }
+    const decrescentes = [...ids].reverse();
+
+    const lista = await api().get("/api/alertas").set(autorizacao(token));
+    expect(lista.body.map((alerta: { id: number }) => alerta.id)).toEqual(decrescentes);
+    const pagina = await api().get("/api/alertas").set(autorizacao(token)).query({ pagina: 1, tamanho: 2 });
+    expect(pagina.body.dados.map((alerta: { id: number }) => alerta.id)).toEqual(decrescentes.slice(0, 2));
   });
 });

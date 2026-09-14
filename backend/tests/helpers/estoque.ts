@@ -78,3 +78,18 @@ export function criarAlerta(dados: DadosAlerta) {
 export async function aquecerConexoes(quantidade: number) {
   await Promise.all(Array.from({ length: quantidade }, () => prisma.$executeRaw`SELECT pg_sleep(0.05)`));
 }
+
+/**
+ * Espera até alguma conexão deste banco ficar parada numa trava, como a transação que tenta
+ * travar uma linha já travada por outra. Falha se isso não acontecer em 5 s.
+ */
+export async function esperarTransacaoTravada() {
+  for (let tentativa = 0; tentativa < 100; tentativa++) {
+    const [{ travadas }] = await prisma.$queryRaw<{ travadas: number }[]>`
+      SELECT count(*)::int AS travadas FROM pg_stat_activity
+      WHERE datname = current_database() AND wait_event_type = 'Lock'`;
+    if (travadas > 0) return;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  throw new Error("Nenhuma transação ficou esperando uma trava em 5 s");
+}

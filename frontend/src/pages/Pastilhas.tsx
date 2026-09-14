@@ -21,15 +21,11 @@ export function Pastilhas() {
   const [estoqueMinimo, setEstoqueMinimo] = useState("0");
   const [fabricanteId, setFabricanteId] = useState("");
 
-  async function carregar(filtro?: string) {
-    setErro("");
-    try {
-      setPastilhas(await listarPastilhas(filtro));
-    } catch (e) {
-      setErro(mensagemDeErro(e));
-    } finally {
-      setCarregando(false);
-    }
+  function carregar(filtro?: string) {
+    return listarPastilhas(filtro)
+      .then(setPastilhas)
+      .catch((e) => setErro(mensagemDeErro(e)))
+      .finally(() => setCarregando(false));
   }
 
   useEffect(() => {
@@ -41,6 +37,7 @@ export function Pastilhas() {
 
   async function aoBuscar(evento: FormEvent) {
     evento.preventDefault();
+    setErro("");
     setCarregando(true);
     await carregar(busca || undefined);
   }

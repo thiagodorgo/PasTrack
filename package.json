@@ -1,0 +1,22 @@
+{
+  "name": "pastrack",
+  "version": "0.2.0",
+  "private": true,
+  "description": "PasTrack: controle de estoque de pastilhas industriais (backend, frontend e testes ponta a ponta)",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "instalar": "npm ci --prefix backend && npm ci --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "lint": "npm run lint --prefix backend && npm run lint --prefix frontend",
+    "format": "npm run format --prefix backend && npm run format --prefix frontend",
+    "format:check": "npm run format:check --prefix backend && npm run format:check --prefix frontend",
+    "typecheck": "npm run typecheck --prefix backend && npm run typecheck --prefix frontend",
+    "build": "npm run build --prefix backend && npm run build --prefix frontend",
+    "test:tudo": "npm test --prefix backend && npm test --prefix frontend",
+    "test:relatorio": "node scripts/relatorio-testes.mjs",
+    "e2e": "npm test --prefix e2e"
+  }
+}

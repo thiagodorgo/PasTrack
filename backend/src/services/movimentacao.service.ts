@@ -31,9 +31,7 @@ export const movimentacaoService = {
       }
 
       if (dados.tipo === "SAIDA" && pastilha.saldoAtual < dados.quantidade) {
-        throw new AppError(
-          `Saldo insuficiente: há ${pastilha.saldoAtual} ${pastilha.unidade} em estoque`
-        );
+        throw new AppError(`Saldo insuficiente: há ${pastilha.saldoAtual} ${pastilha.unidade} em estoque`);
       }
 
       const movimentacao = await tx.movimentacao.create({

@@ -20,22 +20,15 @@ export function Movimentacoes() {
   const [fornecedorId, setFornecedorId] = useState("");
   const [documento, setDocumento] = useState("");
 
-  async function carregar() {
-    setErro("");
-    try {
-      const [listaMov, listaPastilhas, listaFornecedores] = await Promise.all([
-        listarMovimentacoes(),
-        listarPastilhas(),
-        listarFornecedores(),
-      ]);
-      setMovimentacoes(listaMov);
-      setPastilhas(listaPastilhas);
-      setFornecedores(listaFornecedores);
-    } catch (e) {
-      setErro(mensagemDeErro(e));
-    } finally {
-      setCarregando(false);
-    }
+  function carregar() {
+    return Promise.all([listarMovimentacoes(), listarPastilhas(), listarFornecedores()])
+      .then(([listaMov, listaPastilhas, listaFornecedores]) => {
+        setMovimentacoes(listaMov);
+        setPastilhas(listaPastilhas);
+        setFornecedores(listaFornecedores);
+      })
+      .catch((e) => setErro(mensagemDeErro(e)))
+      .finally(() => setCarregando(false));
   }
 
   useEffect(() => {

@@ -1,14 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { mensagemDeErro } from "../services/api";
 import { buscarResumo } from "../services/painel";
 import { ResumoPainel } from "../types";

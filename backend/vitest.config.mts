@@ -21,6 +21,8 @@ export default defineConfig({
     reporters: ["default", ["junit", { outputFile: "../tests/results/latest/backend-junit.xml" }]],
     coverage: {
       provider: "v8",
+      // grava a cobertura mesmo quando algum teste falha, para o snapshot de evidência ficar completo
+      reportOnFailure: true,
       reporter: ["text-summary", "json-summary", "html"],
       reportsDirectory: "../tests/results/latest/backend-coverage",
       include: ["src/**/*.ts"],

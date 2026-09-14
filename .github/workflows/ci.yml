@@ -68,6 +68,10 @@ jobs:
       - name: Testes com cobertura
         run: npm run test:cov
 
+      - name: Testes dos scripts do repositório
+        working-directory: .
+        run: node --test scripts/
+
       - name: Build
         run: npm run build
 

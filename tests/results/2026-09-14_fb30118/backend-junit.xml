@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="123" failures="0" errors="0" time="18.0867604">
+    <testsuite name="tests/unit/auditoria.spec.ts" timestamp="2026-09-14T12:50:16.874Z" tests="3" failures="0" errors="0" skipped="0" time="0.0114571">
+        <testcase classname="tests/unit/auditoria.spec.ts" name="paraJsonSeguro &gt; remove campos sensíveis em qualquer nível" time="0.0056502">
+        </testcase>
+        <testcase classname="tests/unit/auditoria.spec.ts" name="paraJsonSeguro &gt; converte datas em texto ISO" time="0.0016735">
+        </testcase>
+        <testcase classname="tests/unit/auditoria.spec.ts" name="paraJsonSeguro &gt; ignora valores ausentes" time="0.0004416">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/env.spec.ts" timestamp="2026-09-14T12:50:16.879Z" tests="13" failures="0" errors="0" skipped="0" time="0.0220632">
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; aceita a configuração mínima e aplica os padrões" time="0.0065996">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; separa a lista de origens do CORS e ignora espaços" time="0.0005096">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa JWT_SECRET ausente e cita a variável" time="0.0031014">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa JWT_SECRET curto e cita a variável" time="0.0008977">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa JWT_SECRET do exemplo e cita a variável" time="0.0006797">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa DATABASE_URL ausente e cita a variável" time="0.0004709">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa DATABASE_URL de outro banco e cita a variável" time="0.0004422">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa PORT não numérica e cita a variável" time="0.0012048">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa PORT fora da faixa e cita a variável" time="0.0006369">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa JWT_EXPIRES_IN sem unidade e cita a variável" time="0.0005799">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa NODE_ENV desconhecido e cita a variável" time="0.0007511">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa custo do bcrypt baixo em produção e cita a variável" time="0.0005352">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; aceita custo 12 em produção" time="0.0001937">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/erros-banco.spec.ts" timestamp="2026-09-14T12:50:16.882Z" tests="10" failures="0" errors="0" skipped="0" time="0.0965562">
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; duplicidade em Fabricante vira 409 com mensagem clara" time="0.0341424">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; duplicidade em Pastilha vira 409 com mensagem clara" time="0.0070038">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; duplicidade em Fornecedor vira 409 com mensagem clara" time="0.0064992">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; duplicidade em Usuario vira 409 com mensagem clara" time="0.0082707">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; duplicidade sem modelo conhecido usa mensagem genérica" time="0.0050508">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; registro inexistente vira 404" time="0.0033976">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; referência inválida vira 400" time="0.0036122">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; outros códigos do banco viram 500 sem detalhes" time="0.0056654">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com códigos estáveis &gt; AppError com código devolve o código" time="0.0045947">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com códigos estáveis &gt; dados inválidos trazem o código DADOS_INVALIDOS" time="0.0156366">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/permissoes.spec.ts" timestamp="2026-09-14T12:50:16.884Z" tests="33" failures="0" errors="0" skipped="0" time="0.0135328">
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; tem exatamente as ações previstas" time="0.0053794">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode consultar" time="0.0005946">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode consultar" time="0.0001897">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR pode consultar" time="0.0001445">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR pode consultar" time="0.0001407">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode gerenciarPastilhas" time="0.0001224">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode gerenciarPastilhas" time="0.0001229">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR não pode gerenciarPastilhas" time="0.0001173">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR não pode gerenciarPastilhas" time="0.000106">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode gerenciarFabricantes" time="0.0001067">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode gerenciarFabricantes" time="0.0001122">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR não pode gerenciarFabricantes" time="0.0001182">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR não pode gerenciarFabricantes" time="0.0001098">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode gerenciarFornecedores" time="0.0001094">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode gerenciarFornecedores" time="0.0001108">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR não pode gerenciarFornecedores" time="0.0001158">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR pode gerenciarFornecedores" time="0.0001106">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode registrarEntrada" time="0.0001106">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode registrarEntrada" time="0.0001096">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR pode registrarEntrada" time="0.0001144">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR pode registrarEntrada" time="0.0001168">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode registrarSaida" time="0.0001154">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode registrarSaida" time="0.000113">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR pode registrarSaida" time="0.0001086">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR não pode registrarSaida" time="0.0001043">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode resolverAlerta" time="0.0001027">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode resolverAlerta" time="0.000125">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR não pode resolverAlerta" time="0.0001134">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR não pode resolverAlerta" time="0.0001072">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode gerenciarUsuarios" time="0.0001043">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR não pode gerenciarUsuarios" time="0.0001148">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR não pode gerenciarUsuarios" time="0.0001166">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR não pode gerenciarUsuarios" time="0.0001137">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/politica-senha.spec.ts" timestamp="2026-09-14T12:50:16.888Z" tests="8" failures="0" errors="0" skipped="0" time="0.0168631">
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; aceita uma senha forte" time="0.0071997">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha curta" time="0.0026729">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha sem número" time="0.0003277">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha sem letra" time="0.0002373">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha comum" time="0.000225">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha acima de 72 bytes por causa de acentos" time="0.00021">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; aceita exatamente 72 bytes" time="0.0003043">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha que contém o e-mail" time="0.0011384">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/validar-e-erros.spec.ts" timestamp="2026-09-14T12:50:16.890Z" tests="9" failures="0" errors="0" skipped="0" time="0.3377018">
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="validar() &gt; converte e repassa os dados válidos" time="0.2819469">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="validar() &gt; recusa id não numérico com 400 e aponta o campo" time="0.0078416">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="validar() &gt; recusa campos fora do esquema" time="0.0058856">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="validar() &gt; recusa valores inválidos e aponta o campo" time="0.0063492">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="tratarErros() &gt; usa o status do AppError" time="0.0061142">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="tratarErros() &gt; captura erros de handlers assíncronos" time="0.0048507">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="tratarErros() &gt; devolve 500 sem vazar detalhes internos" time="0.0088645">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="tratarErros() &gt; devolve 400 para JSON malformado" time="0.0080223">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="tratarErros() &gt; devolve 413 para corpo grande demais" time="0.0047397">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security/pendencias.spec.ts" timestamp="2026-09-14T12:50:16.891Z" tests="3" failures="0" errors="0" skipped="0" time="2.2503546">
+        <testcase classname="tests/security/pendencias.spec.ts" name="pendências conhecidas de segurança e integridade &gt; PUT /api/pastilhas/:id não aceita saldoAtual (mass assignment)" time="2.1659604">
+        </testcase>
+        <testcase classname="tests/security/pendencias.spec.ts" name="pendências conhecidas de segurança e integridade &gt; quantidade não numérica em POST /api/movimentacoes devolve 400" time="0.0368294">
+        </testcase>
+        <testcase classname="tests/security/pendencias.spec.ts" name="pendências conhecidas de segurança e integridade &gt; usuário desativado perde o acesso mesmo com token ainda válido" time="0.0298327">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/alertas.spec.ts" timestamp="2026-09-14T12:50:16.892Z" tests="11" failures="0" errors="0" skipped="0" time="2.8456264">
+        <testcase classname="tests/integration/alertas.spec.ts" name="ciclo de vida do alerta &gt; SAÍDA que atinge o mínimo abre alerta e registra na auditoria" time="2.2113532">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="ciclo de vida do alerta &gt; ENTRADA que repõe o saldo acima do mínimo fecha o alerta automaticamente" time="0.1122424">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="ciclo de vida do alerta &gt; ENTRADA que não passa do mínimo mantém o alerta aberto" time="0.0885674">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="ciclo de vida do alerta &gt; abre um novo alerta quando o saldo volta a cair depois da reposição" time="0.1388339">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="integridade garantida pelo banco &gt; não permite saldo negativo" time="0.0410911">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="integridade garantida pelo banco &gt; não permite estoque mínimo negativo" time="0.0266435">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="integridade garantida pelo banco &gt; não permite movimentação com quantidade zero" time="0.0559133">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="integridade garantida pelo banco &gt; não permite dois alertas abertos para a mesma pastilha" time="0.031514">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="integridade garantida pelo banco &gt; permite vários alertas resolvidos para a mesma pastilha" time="0.0343908">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="erros do banco viram respostas claras &gt; fabricante com nome repetido responde 409" time="0.0502451">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="erros do banco viram respostas claras &gt; resolver alerta inexistente responde 404" time="0.0354636">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/auth.spec.ts" timestamp="2026-09-14T12:50:16.894Z" tests="10" failures="0" errors="0" skipped="0" time="2.4112486">
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; devolve token e apenas os dados públicos do usuário" time="2.1539256">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; aceita o e-mail com maiúsculas e espaços" time="0.0281621">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; recusa senha errada com a mesma mensagem genérica" time="0.0313405">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; recusa e-mail inexistente com a mesma mensagem genérica" time="0.0331665">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; bloqueia usuário inativo" time="0.0262709">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; exige e-mail e senha" time="0.0185292">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="acesso às rotas protegidas &gt; recusa requisição sem token" time="0.0215509">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="acesso às rotas protegidas &gt; recusa token malformado" time="0.0188206">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="acesso às rotas protegidas &gt; recusa token assinado com outra chave" time="0.0203313">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="acesso às rotas protegidas &gt; aceita token válido" time="0.0378639">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/movimentacoes.spec.ts" timestamp="2026-09-14T12:50:16.895Z" tests="5" failures="0" errors="0" skipped="0" time="2.438108">
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="POST /api/movimentacoes &gt; ENTRADA soma ao saldo e registra o responsável" time="2.190543">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="POST /api/movimentacoes &gt; SAÍDA desconta do saldo" time="0.0662382">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="POST /api/movimentacoes &gt; recusa SAÍDA maior que o saldo sem alterar nada" time="0.058121">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="POST /api/movimentacoes &gt; recusa pastilha inexistente com 404" time="0.0293743">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="POST /api/movimentacoes &gt; abre um único alerta quando o saldo chega ao mínimo" time="0.0702936">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/permissoes.spec.ts" timestamp="2026-09-14T12:50:16.896Z" tests="6" failures="0" errors="0" skipped="0" time="2.3382932">
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; OPERADOR não cadastra pastilha" time="2.1353443">
+        </testcase>
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; GESTOR cadastra fabricante e pastilha" time="0.0354188">
+        </testcase>
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; COMPRADOR cadastra fornecedor e OPERADOR não" time="0.0324501">
+        </testcase>
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; COMPRADOR registra entrada, mas não registra saída" time="0.051699">
+        </testcase>
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; OPERADOR não resolve alerta" time="0.0313892">
+        </testcase>
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; só ADMINISTRADOR passa pela porta de /api/usuarios" time="0.0281979">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/saude.spec.ts" timestamp="2026-09-14T12:50:16.898Z" tests="6" failures="0" errors="0" skipped="0" time="2.7506972">
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; GET /api/health responde ok com o banco disponível" time="2.285719">
+        </testcase>
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; não expõe o cabeçalho X-Powered-By" time="0.1270307">
+        </testcase>
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; responde 404 em JSON fora da API" time="0.0578528">
+        </testcase>
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; recusa JSON malformado com 400" time="0.1214776">
+        </testcase>
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; recusa corpo acima de 100 kB com 413" time="0.0835509">
+        </testcase>
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; libera CORS só para as origens configuradas" time="0.0648462">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/seed.spec.ts" timestamp="2026-09-14T12:50:16.899Z" tests="6" failures="0" errors="0" skipped="0" time="2.5542582">
+        <testcase classname="tests/integration/seed.spec.ts" name="criarAdministradorInicial &gt; cria o administrador uma vez e nunca troca a senha depois" time="2.1180754">
+        </testcase>
+        <testcase classname="tests/integration/seed.spec.ts" name="criarAdministradorInicial &gt; recusa senha fraca sem criar nada" time="0.0221644">
+        </testcase>
+        <testcase classname="tests/integration/seed.spec.ts" name="criarAdministradorInicial &gt; gera uma senha aleatória válida em desenvolvimento" time="0.076511">
+        </testcase>
+        <testcase classname="tests/integration/seed.spec.ts" name="criarAdministradorInicial &gt; exige a senha em produção" time="0.0347377">
+        </testcase>
+        <testcase classname="tests/integration/seed.spec.ts" name="criarDadosDeDemonstracao &gt; é idempotente e abre alerta só para o item abaixo do mínimo" time="0.271168">
+        </testcase>
+        <testcase classname="tests/integration/seed.spec.ts" name="criarDadosDeDemonstracao &gt; recusa senha fraca para os usuários de demonstração" time="0.0190646">
+        </testcase>
+    </testsuite>
+</testsuites>

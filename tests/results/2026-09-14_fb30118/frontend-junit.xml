@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="29" failures="0" errors="0" time="5.6629822">
+    <testsuite name="tests/pendencias.spec.tsx" timestamp="2026-09-14T12:51:06.407Z" tests="3" failures="0" errors="0" skipped="0" time="0.0808394">
+        <testcase classname="tests/pendencias.spec.tsx" name="pendências conhecidas &gt; o token expirado usado nas pendências é um JWT bem formado com exp no passado" time="0.0044807">
+        </testcase>
+        <testcase classname="tests/pendencias.spec.tsx" name="pendências conhecidas &gt; (a) Protegido recusa um token JWT expirado e redireciona para /login" time="0.0642525">
+        </testcase>
+        <testcase classname="tests/pendencias.spec.tsx" name="pendências conhecidas &gt; (b) usuarioSalvo não lança exceção quando pastrack:usuario contém JSON inválido" time="0.0033423">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/components/Protegido.spec.tsx" timestamp="2026-09-14T12:51:06.410Z" tests="2" failures="0" errors="0" skipped="0" time="0.0680563">
+        <testcase classname="tests/components/Protegido.spec.tsx" name="Protegido &gt; sem token, redireciona para /login" time="0.0546847">
+        </testcase>
+        <testcase classname="tests/components/Protegido.spec.tsx" name="Protegido &gt; com token, renderiza o conteúdo" time="0.0044017">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/pages/Login.spec.tsx" timestamp="2026-09-14T12:51:06.411Z" tests="4" failures="0" errors="0" skipped="0" time="2.9317931">
+        <testcase classname="tests/pages/Login.spec.tsx" name="página de login &gt; renderiza os campos de e-mail e senha" time="0.3358007">
+        </testcase>
+        <testcase classname="tests/pages/Login.spec.tsx" name="página de login &gt; com credenciais válidas, grava a sessão e leva ao painel" time="1.1598271">
+        </testcase>
+        <testcase classname="tests/pages/Login.spec.tsx" name="página de login &gt; com resposta 401, mostra a mensagem &apos;E-mail ou senha inválidos&apos; vinda do servidor" time="0.6493886">
+        </testcase>
+        <testcase classname="tests/pages/Login.spec.tsx" name="página de login &gt; desabilita o botão enquanto o envio está em andamento" time="0.773802">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/pages/Movimentacoes.spec.tsx" timestamp="2026-09-14T12:51:06.412Z" tests="3" failures="0" errors="0" skipped="0" time="1.4611003">
+        <testcase classname="tests/pages/Movimentacoes.spec.tsx" name="página de movimentações &gt; carrega o histórico, as pastilhas e os fornecedores" time="0.6290868">
+        </testcase>
+        <testcase classname="tests/pages/Movimentacoes.spec.tsx" name="página de movimentações &gt; registra uma SAÍDA e mostra o saldo atualizado" time="0.5011581">
+        </testcase>
+        <testcase classname="tests/pages/Movimentacoes.spec.tsx" name="página de movimentações &gt; mostra a mensagem de saldo insuficiente devolvida pelo servidor" time="0.3203888">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/pages/Painel.spec.tsx" timestamp="2026-09-14T12:51:06.414Z" tests="3" failures="0" errors="0" skipped="0" time="0.8363094">
+        <testcase classname="tests/pages/Painel.spec.tsx" name="página do painel &gt; mostra os totais e os itens críticos vindos da API" time="0.760672">
+        </testcase>
+        <testcase classname="tests/pages/Painel.spec.tsx" name="página do painel &gt; mostra a mensagem de erro do servidor quando a API falha" time="0.0482739">
+        </testcase>
+        <testcase classname="tests/pages/Painel.spec.tsx" name="página do painel &gt; mostra a falha de comunicação quando o servidor não responde" time="0.0152269">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/services/api.spec.ts" timestamp="2026-09-14T12:51:06.416Z" tests="9" failures="0" errors="0" skipped="0" time="0.1981845">
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de requisição &gt; injeta Authorization: Bearer &lt;token&gt; quando há token" time="0.0805579">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de requisição &gt; não envia Authorization quando não há token" time="0.0067892">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de resposta &gt; uma resposta 401 limpa pastrack:token e pastrack:usuario e redireciona para /login" time="0.0096292">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de resposta &gt; na própria tela de login, um 401 não mexe na sessão nem redireciona" time="0.0057346">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de resposta &gt; erros diferentes de 401 preservam a sessão" time="0.0059675">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="mensagemDeErro &gt; devolve a mensagem enviada pelo servidor" time="0.0063311">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="mensagemDeErro &gt; sem resposta do servidor, devolve a mensagem de falha de comunicação" time="0.0358454">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="mensagemDeErro &gt; com resposta sem o campo erro, também devolve a mensagem de falha de comunicação" time="0.0351085">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="mensagemDeErro &gt; para erros que não vêm do axios, devolve a mensagem de erro inesperado" time="0.00048">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/services/auth.spec.ts" timestamp="2026-09-14T12:51:06.419Z" tests="5" failures="0" errors="0" skipped="0" time="0.0866992">
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; login grava o token e o usuário devolvidos pelo servidor" time="0.074856">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; sair remove o token e o usuário" time="0.0007774">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; usuarioSalvo lê o usuário gravado" time="0.0004584">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; usuarioSalvo devolve null quando não há sessão" time="0.0002287">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; estaAutenticado indica se há token gravado" time="0.0004417">
+        </testcase>
+    </testsuite>
+</testsuites>

@@ -57,7 +57,7 @@ export async function criarDadosDeDemonstracao(senhaUsuarios: string): Promise<v
     await prisma.usuario.upsert({
       where: { email: usuario.email },
       update: {},
-      create: { ...usuario, senhaHash },
+      create: { ...usuario, senhaHash, deveTrocarSenha: false },
     });
   }
 

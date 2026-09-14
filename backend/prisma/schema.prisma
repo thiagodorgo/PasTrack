@@ -25,21 +25,31 @@ enum StatusAlerta {
 }
 
 model Usuario {
-  id            Int            @id @default(autoincrement())
-  nome          String
-  email         String         @unique
-  senhaHash     String         @map("senha_hash")
-  perfil        PerfilUsuario  @default(OPERADOR)
-  ativo         Boolean        @default(true)
-  movimentacoes Movimentacao[]
+  id                Int            @id @default(autoincrement())
+  nome              String
+  email             String         @unique
+  senhaHash         String         @map("senha_hash")
+  perfil            PerfilUsuario  @default(OPERADOR)
+  ativo             Boolean        @default(true)
+  /// Obriga a troca de senha no próximo acesso (senha inicial ou redefinida por um administrador).
+  deveTrocarSenha   Boolean        @default(true) @map("deve_trocar_senha")
+  /// Incrementada a cada troca de senha, desativação ou mudança de perfil: invalida os tokens emitidos antes.
+  versaoToken       Int            @default(0) @map("versao_token")
+  criadoEm          DateTime       @default(now()) @map("criado_em")
+  atualizadoEm      DateTime       @default(now()) @updatedAt @map("atualizado_em")
+  movimentacoes     Movimentacao[]
+  alertasResolvidos Alerta[]       @relation("AlertasResolvidos")
+  auditorias        Auditoria[]
 
   @@map("usuario")
 }
 
 model Fabricante {
-  id        Int        @id @default(autoincrement())
-  nome      String     @unique
-  pastilhas Pastilha[]
+  id           Int        @id @default(autoincrement())
+  nome         String     @unique
+  criadoEm     DateTime   @default(now()) @map("criado_em")
+  atualizadoEm DateTime   @default(now()) @updatedAt @map("atualizado_em")
+  pastilhas    Pastilha[]
 
   @@map("fabricante")
 }
@@ -49,6 +59,8 @@ model Fornecedor {
   nome          String
   cnpj          String?        @unique
   contato       String?
+  criadoEm      DateTime       @default(now()) @map("criado_em")
+  atualizadoEm  DateTime       @default(now()) @updatedAt @map("atualizado_em")
   movimentacoes Movimentacao[]
 
   @@map("fornecedor")
@@ -62,18 +74,23 @@ model Pastilha {
   aplicacao     String?
   unidade       String         @default("un")
   estoqueMinimo Int            @default(0) @map("estoque_minimo")
+  /// Só muda por movimentação. O banco garante que nunca fica negativo (CHECK na migration).
   saldoAtual    Int            @default(0) @map("saldo_atual")
   fabricanteId  Int            @map("id_fabricante")
   fabricante    Fabricante     @relation(fields: [fabricanteId], references: [id])
+  criadoEm      DateTime       @default(now()) @map("criado_em")
+  atualizadoEm  DateTime       @default(now()) @updatedAt @map("atualizado_em")
   movimentacoes Movimentacao[]
   alertas       Alerta[]
 
+  @@index([fabricanteId])
   @@map("pastilha")
 }
 
 model Movimentacao {
   id           Int              @id @default(autoincrement())
   tipo         TipoMovimentacao
+  /// Sempre positiva (CHECK na migration).
   quantidade   Int
   dataHora     DateTime         @default(now()) @map("data_hora")
   documento    String?
@@ -85,15 +102,43 @@ model Movimentacao {
   fornecedorId Int?             @map("id_fornecedor")
   fornecedor   Fornecedor?      @relation(fields: [fornecedorId], references: [id])
 
+  @@index([pastilhaId, dataHora])
+  @@index([usuarioId])
+  @@index([dataHora])
   @@map("movimentacao")
 }
 
+/// No máximo um alerta ABERTO por pastilha: índice único parcial criado na migration
+/// (o Prisma não representa índices parciais no schema).
 model Alerta {
-  id          Int          @id @default(autoincrement())
-  dataGeracao DateTime     @default(now()) @map("data_geracao")
-  situacao    StatusAlerta @default(ABERTO)
-  pastilhaId  Int          @map("id_pastilha")
-  pastilha    Pastilha     @relation(fields: [pastilhaId], references: [id])
+  id             Int          @id @default(autoincrement())
+  dataGeracao    DateTime     @default(now()) @map("data_geracao")
+  situacao       StatusAlerta @default(ABERTO)
+  dataResolucao  DateTime?    @map("data_resolucao")
+  pastilhaId     Int          @map("id_pastilha")
+  pastilha       Pastilha     @relation(fields: [pastilhaId], references: [id])
+  /// Quem resolveu manualmente. Nulo quando o alerta foi fechado automaticamente pela reposição.
+  resolvidoPorId Int?         @map("id_resolvido_por")
+  resolvidoPor   Usuario?     @relation("AlertasResolvidos", fields: [resolvidoPorId], references: [id])
 
+  @@index([situacao, dataGeracao])
+  @@index([pastilhaId])
   @@map("alerta")
+}
+
+/// Trilha de auditoria das mudanças relevantes. Nunca guarda senhas nem hashes.
+model Auditoria {
+  id         Int      @id @default(autoincrement())
+  dataHora   DateTime @default(now()) @map("data_hora")
+  usuarioId  Int?     @map("id_usuario")
+  usuario    Usuario? @relation(fields: [usuarioId], references: [id])
+  acao       String
+  entidade   String
+  entidadeId Int      @map("id_entidade")
+  antes      Json?
+  depois     Json?
+
+  @@index([entidade, entidadeId])
+  @@index([dataHora])
+  @@map("auditoria")
 }

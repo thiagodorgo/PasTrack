@@ -21,6 +21,7 @@
     "test:cov": "vitest run --coverage",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
+    "db:verificar": "node scripts/verificar-migrations.mjs",
     "db:seed": "tsx src/scripts/seed.ts",
     "db:seed:demo": "tsx src/scripts/seed-demo.ts",
     "db:studio": "prisma studio",

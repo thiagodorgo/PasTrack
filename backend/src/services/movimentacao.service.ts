@@ -2,6 +2,7 @@ import { TipoMovimentacao } from "@prisma/client";
 import { prisma } from "../config/prisma";
 import { AppError } from "../middlewares/erros";
 import { movimentacaoRepository } from "../repositories/movimentacao.repository";
+import { avaliarAlerta } from "./estoque/avaliar-alerta";
 
 interface RegistrarMovimentacaoDTO {
   tipo: TipoMovimentacao;
@@ -52,14 +53,7 @@ export const movimentacaoService = {
         data: { saldoAtual: { increment: delta } },
       });
 
-      if (atualizada.saldoAtual <= atualizada.estoqueMinimo) {
-        const alertaAberto = await tx.alerta.findFirst({
-          where: { pastilhaId: dados.pastilhaId, situacao: "ABERTO" },
-        });
-        if (!alertaAberto) {
-          await tx.alerta.create({ data: { pastilhaId: dados.pastilhaId } });
-        }
-      }
+      await avaliarAlerta(tx, dados.pastilhaId, dados.usuarioId);
 
       return { movimentacao, saldoAtual: atualizada.saldoAtual };
     });

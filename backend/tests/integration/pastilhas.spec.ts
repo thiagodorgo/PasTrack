@@ -417,21 +417,31 @@ describe("estoque mínimo e alerta na edição da pastilha", () => {
     ]);
   });
 
-  it("editar sem mudar o mínimo não abre nem fecha alerta", async () => {
-    const { cabecalho } = await entrarComo("GESTOR");
-    const pastilha = await criarPastilha({ saldoAtual: 5, estoqueMinimo: 5 });
-    await prisma.alerta.create({ data: { pastilhaId: pastilha.id } });
-    const resposta = await api()
-      .put(`/api/pastilhas/${pastilha.id}`)
-      .set(cabecalho)
-      .send({ descricao: "Nova descrição", estoqueMinimo: 5 });
-    expect(resposta.status).toBe(200);
-    const alertas = await prisma.alerta.findMany({ where: { pastilhaId: pastilha.id } });
-    expect(alertas.map((alerta) => alerta.situacao)).toEqual(["ABERTO"]);
-    expect(await prisma.auditoria.findMany({ select: { acao: true } })).toEqual([
-      { acao: "pastilha.atualizada" },
-    ]);
-  });
+  // nos dois estados avaliarAlerta mudaria o alerta (abriria no primeiro e fecharia no segundo):
+  // o teste só passa se a edição que não muda o mínimo deixa de chamá-lo
+  it.each<[string, { saldoAtual: number; estoqueMinimo: number }, boolean]>([
+    ["saldo 2, mínimo 5 e sem alerta", { saldoAtual: 2, estoqueMinimo: 5 }, false],
+    ["saldo 10, mínimo 2 e alerta aberto", { saldoAtual: 10, estoqueMinimo: 2 }, true],
+  ])(
+    "editar sem mudar o mínimo, partindo de %s, não abre nem fecha alerta",
+    async (_caso, estoque, comAlertaAberto) => {
+      const { cabecalho } = await entrarComo("GESTOR");
+      const pastilha = await criarPastilha(estoque);
+      if (comAlertaAberto) await prisma.alerta.create({ data: { pastilhaId: pastilha.id } });
+      const alertasAntes = await prisma.alerta.findMany({ where: { pastilhaId: pastilha.id } });
+
+      const resposta = await api()
+        .put(`/api/pastilhas/${pastilha.id}`)
+        .set(cabecalho)
+        .send({ descricao: "Nova descrição", estoqueMinimo: estoque.estoqueMinimo });
+
+      expect(resposta.status).toBe(200);
+      expect(await prisma.alerta.findMany({ where: { pastilhaId: pastilha.id } })).toEqual(alertasAntes);
+      expect(await prisma.auditoria.findMany({ select: { acao: true } })).toEqual([
+        { acao: "pastilha.atualizada" },
+      ]);
+    }
+  );
 });
 
 describe("GET /api/pastilhas", () => {

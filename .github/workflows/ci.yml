@@ -111,8 +111,20 @@ jobs:
       - name: Tipos
         run: npm run typecheck
 
+      - name: Testes com cobertura
+        run: npm run test:cov
+
       - name: Build
         run: npm run build
 
       - name: Auditoria das dependências de produção
         run: npm audit --omit=dev --audit-level=high
+
+      - name: Guarda os relatórios
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultados-frontend
+          path: tests/results/latest/
+          if-no-files-found: ignore
+          retention-days: 30

@@ -117,7 +117,17 @@ Resposta `200`:
 { "status": "ok", "banco": "ok", "versao": "0.2.0", "uptimeSegundos": 3600 }
 ```
 
-Erro `503`, quando o banco não responde: `{ "status": "erro", "banco": "indisponivel", "versao": "0.2.0", "uptimeSegundos": 3600 }`. Hoje esse corpo não traz a chave `erro`; pelo envelope, ela passa a vir também **(em implementação)**, mantidos os campos atuais.
+Erro `503`, quando o banco não responde. Segue o envelope de erro e mantém os campos de diagnóstico:
+
+```json
+{
+  "erro": "Banco de dados indisponível",
+  "status": "erro",
+  "banco": "indisponivel",
+  "versao": "0.2.0",
+  "uptimeSegundos": 3600
+}
+```
 
 ## 4. Autenticação
 

@@ -51,6 +51,18 @@ export const usuarioRepository = {
     return cliente.usuario.findUnique({ where: { id }, select: CAMPOS_PUBLICOS });
   },
 
+  listar() {
+    return prisma.usuario.findMany({ select: CAMPOS_PUBLICOS, orderBy: [{ nome: "asc" }, { id: "asc" }] });
+  },
+
+  criar(dados: Prisma.UsuarioCreateInput, cliente: Cliente = prisma) {
+    return cliente.usuario.create({ data: dados, select: CAMPOS_PUBLICOS });
+  },
+
+  atualizar(id: number, dados: Prisma.UsuarioUpdateInput, cliente: Cliente = prisma) {
+    return cliente.usuario.update({ where: { id }, data: dados, select: CAMPOS_PUBLICOS });
+  },
+
   /** Grava a senha escolhida pelo próprio usuário, encerra a troca obrigatória e derruba os tokens antigos. */
   trocarSenha(id: number, senhaHash: string, cliente: Cliente = prisma) {
     return cliente.usuario.update({
@@ -58,5 +70,37 @@ export const usuarioRepository = {
       data: { senhaHash, deveTrocarSenha: false, versaoToken: { increment: 1 } },
       select: CAMPOS_TOKEN,
     });
+  },
+
+  /**
+   * Grava uma senha definida por outra pessoa (administrador ou script de recuperação): obriga a troca
+   * no próximo acesso e derruba os tokens antigos. Com reativar, também reativa o usuário.
+   */
+  redefinirSenha(
+    id: number,
+    senhaHash: string,
+    { cliente = prisma, reativar = false }: { cliente?: Cliente; reativar?: boolean } = {}
+  ) {
+    return cliente.usuario.update({
+      where: { id },
+      data: {
+        senhaHash,
+        deveTrocarSenha: true,
+        versaoToken: { increment: 1 },
+        ...(reativar ? { ativo: true } : {}),
+      },
+      select: CAMPOS_PUBLICOS,
+    });
+  },
+
+  /**
+   * Trava as linhas dos administradores ativos até o fim da transação e devolve os ids, sempre na mesma
+   * ordem. Duas remoções simultâneas esperam uma pela outra, e a segunda já enxerga o resultado da primeira.
+   */
+  async travarAdministradoresAtivos(cliente: Cliente): Promise<number[]> {
+    const linhas = await cliente.$queryRaw<{ id: number }[]>`
+      SELECT id FROM "usuario" WHERE perfil = 'ADMINISTRADOR' AND ativo = true ORDER BY id FOR UPDATE
+    `;
+    return linhas.map((linha) => linha.id);
   },
 };

@@ -3,11 +3,15 @@ import { movimentacaoController } from "../controllers/movimentacao.controller";
 import { autorizar } from "../middlewares/auth";
 import { capturar } from "../middlewares/erros";
 import { validar } from "../middlewares/validar";
-import { registrarMovimentacaoBody } from "../schemas/movimentacao.schema";
+import { listarMovimentacoesQuery, registrarMovimentacaoBody } from "../schemas/movimentacao.schema";
 
 export const movimentacaoRotas = Router();
 
-movimentacaoRotas.get("/", capturar(movimentacaoController.listar));
+movimentacaoRotas.get(
+  "/",
+  validar({ query: listarMovimentacoesQuery }),
+  capturar(movimentacaoController.listar)
+);
 // a restrição de SAÍDA por perfil é aplicada no controller, conforme o tipo enviado
 movimentacaoRotas.post(
   "/",

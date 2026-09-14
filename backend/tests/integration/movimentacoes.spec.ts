@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { prisma } from "../../src/config/prisma";
 import { api, autorizacao } from "../helpers/api";
-import { registrarMovimentacao } from "../helpers/estoque";
+import { criarMovimentacoes, DadosMovimentacao, registrarMovimentacao } from "../helpers/estoque";
 import { criarFornecedor, criarPastilha, criarUsuario } from "../helpers/fabricas";
 
 async function saldoDe(pastilhaId: number) {
@@ -297,5 +297,179 @@ describe("regras do registro", () => {
       observacao: "troca de turno",
     });
     expect(resposta.body.saldoAtual).toBe(7);
+  });
+});
+
+describe("GET /api/movimentacoes", () => {
+  const inicio = new Date("2026-09-01T12:00:00.000Z");
+  const minutos = (n: number) => new Date(inicio.getTime() + n * 60_000);
+  const ids = (lista: { id: number }[]) => lista.map((movimentacao) => movimentacao.id);
+
+  async function preparar() {
+    const { usuario, token } = await criarUsuario({ perfil: "OPERADOR" });
+    const pastilha = await criarPastilha();
+    const outra = await criarPastilha();
+    const fornecedor = await criarFornecedor();
+    return { usuario, token, pastilha, outra, fornecedor };
+  }
+
+  function listar(token: string, consulta: Record<string, string | number> = {}) {
+    return api().get("/api/movimentacoes").set(autorizacao(token)).query(consulta);
+  }
+
+  it("sem página devolve o array das 100 mais recentes com pastilha, usuário e fornecedor", async () => {
+    const { usuario, token, pastilha, fornecedor } = await preparar();
+    await criarMovimentacoes(
+      Array.from({ length: 105 }, (_, i): DadosMovimentacao => ({
+        pastilhaId: pastilha.id,
+        usuarioId: usuario.id,
+        tipo: i % 2 === 0 ? "ENTRADA" : "SAIDA",
+        fornecedorId: i % 2 === 0 ? fornecedor.id : null,
+        dataHora: minutos(i),
+      }))
+    );
+
+    const resposta = await listar(token);
+    expect(resposta.status).toBe(200);
+    expect(Array.isArray(resposta.body)).toBe(true);
+    expect(resposta.body).toHaveLength(100);
+    expect(resposta.body[0].dataHora).toBe(minutos(104).toISOString());
+    expect(resposta.body[99].dataHora).toBe(minutos(5).toISOString());
+    expect(resposta.body[0]).toMatchObject({
+      tipo: "ENTRADA",
+      pastilha: { codigo: pastilha.codigo, descricao: pastilha.descricao, unidade: pastilha.unidade },
+      usuario: { nome: usuario.nome },
+      fornecedor: { nome: fornecedor.nome },
+    });
+    expect(resposta.body[1]).toMatchObject({ tipo: "SAIDA", fornecedor: null });
+  });
+
+  it("ordena pela data e desempata pelo id, da mais nova para a mais antiga", async () => {
+    const { usuario, token, pastilha } = await preparar();
+    await criarMovimentacoes(
+      [minutos(1), minutos(2), minutos(2), minutos(0)].map((dataHora) => ({
+        pastilhaId: pastilha.id,
+        usuarioId: usuario.id,
+        dataHora,
+      }))
+    );
+    expect(ids((await listar(token)).body)).toEqual([3, 2, 1, 4]);
+  });
+
+  it("com página devolve dados, total, página e tamanho", async () => {
+    const { usuario, token, pastilha } = await preparar();
+    await criarMovimentacoes(
+      Array.from({ length: 25 }, (_, i) => ({
+        pastilhaId: pastilha.id,
+        usuarioId: usuario.id,
+        dataHora: minutos(i),
+      }))
+    );
+
+    const primeira = await listar(token, { pagina: 1 });
+    expect(primeira.status).toBe(200);
+    expect(Object.keys(primeira.body).sort()).toEqual(["dados", "pagina", "tamanho", "total"]);
+    expect(primeira.body).toMatchObject({ total: 25, pagina: 1, tamanho: 20 });
+    expect(primeira.body.dados).toHaveLength(20);
+    expect(primeira.body.dados[0]).toMatchObject({
+      dataHora: minutos(24).toISOString(),
+      pastilha: { codigo: pastilha.codigo, descricao: pastilha.descricao, unidade: pastilha.unidade },
+      usuario: { nome: usuario.nome },
+      fornecedor: null,
+    });
+
+    const segunda = await listar(token, { pagina: 2 });
+    expect(segunda.body).toMatchObject({ total: 25, pagina: 2, tamanho: 20 });
+    expect(segunda.body.dados).toHaveLength(5);
+    expect(segunda.body.dados[4].dataHora).toBe(minutos(0).toISOString());
+
+    const menor = await listar(token, { pagina: 2, tamanho: 10 });
+    expect(menor.body).toMatchObject({ total: 25, pagina: 2, tamanho: 10 });
+    expect(menor.body.dados.map((m: { dataHora: string }) => m.dataHora)).toEqual(
+      Array.from({ length: 10 }, (_, i) => minutos(14 - i).toISOString())
+    );
+
+    const alemDoFim = await listar(token, { pagina: 9 });
+    expect(alemDoFim.body).toEqual({ dados: [], total: 25, pagina: 9, tamanho: 20 });
+  });
+
+  it("aceita o tamanho máximo de 100 por página", async () => {
+    const { usuario, token, pastilha } = await preparar();
+    await criarMovimentacoes(
+      Array.from({ length: 101 }, (_, i) => ({
+        pastilhaId: pastilha.id,
+        usuarioId: usuario.id,
+        dataHora: minutos(i),
+      }))
+    );
+    const resposta = await listar(token, { pagina: 1, tamanho: 100 });
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.dados).toHaveLength(100);
+    expect(resposta.body.total).toBe(101);
+  });
+
+  it("filtra por tipo, pastilha e período, com e sem página", async () => {
+    const { usuario, token, pastilha, outra, fornecedor } = await preparar();
+    const entrada = { usuarioId: usuario.id, tipo: "ENTRADA" as const, fornecedorId: fornecedor.id };
+    const saida = { usuarioId: usuario.id, tipo: "SAIDA" as const };
+    await criarMovimentacoes([
+      { ...entrada, pastilhaId: pastilha.id, dataHora: new Date("2026-09-01T10:00:00.000Z") },
+      { ...saida, pastilhaId: pastilha.id, dataHora: new Date("2026-09-10T00:00:00.000Z") },
+      { ...saida, pastilhaId: outra.id, dataHora: new Date("2026-09-10T12:00:00.000Z") },
+      { ...saida, pastilhaId: pastilha.id, dataHora: new Date("2026-09-10T23:59:59.999Z") },
+      { ...entrada, pastilhaId: outra.id, dataHora: new Date("2026-09-11T00:00:00.000Z") },
+    ]);
+
+    expect(ids((await listar(token, { tipo: "ENTRADA" })).body)).toEqual([5, 1]);
+    expect(ids((await listar(token, { pastilhaId: outra.id })).body)).toEqual([5, 3]);
+    // a data sem hora cobre o dia inteiro, do primeiro ao último milissegundo
+    expect(ids((await listar(token, { de: "2026-09-10", ate: "2026-09-10" })).body)).toEqual([4, 3, 2]);
+    expect(ids((await listar(token, { de: "2026-09-10T12:00:00Z" })).body)).toEqual([5, 4, 3]);
+    // data e hora com fuso: 09:00 em -03:00 é 12:00 UTC, e o limite é inclusivo
+    expect(ids((await listar(token, { ate: "2026-09-10T09:00:00-03:00" })).body)).toEqual([3, 2, 1]);
+
+    const pagina = await listar(token, {
+      pagina: 1,
+      tamanho: 1,
+      tipo: "SAIDA",
+      pastilhaId: pastilha.id,
+      de: "2026-09-10",
+    });
+    expect(pagina.body).toMatchObject({ total: 2, pagina: 1, tamanho: 1 });
+    expect(ids(pagina.body.dados)).toEqual([4]);
+  });
+
+  it.each([
+    ["pagina", "0"],
+    ["pagina", "abc"],
+    ["pagina", "1.5"],
+    ["tamanho", "0"],
+    ["tamanho", "101"],
+    ["tipo", "TRANSFERENCIA"],
+    ["pastilhaId", "0"],
+    ["pastilhaId", "x"],
+    ["de", "14/09/2026"],
+    ["de", "2026-13-01"],
+    ["de", "2026-09-10T12:00:00"],
+    ["ate", "ontem"],
+  ])("recusa %s=%s com 400", async (campo, valor) => {
+    const { token } = await criarUsuario();
+    const resposta = await listar(token, { [campo]: valor });
+    expect(resposta.status).toBe(400);
+    expect(resposta.body.codigo).toBe("DADOS_INVALIDOS");
+    expect(resposta.body.campos[0].caminho).toBe(campo);
+  });
+
+  it("recusa parâmetro desconhecido e período invertido", async () => {
+    const { token } = await criarUsuario();
+    const extra = await listar(token, { ordem: "asc" });
+    expect(extra.status).toBe(400);
+    expect(extra.body.campos[0].mensagem).toBe("Campo não permitido: ordem");
+
+    const invertido = await listar(token, { de: "2026-09-10", ate: "2026-09-09" });
+    expect(invertido.status).toBe(400);
+    expect(invertido.body.campos).toEqual([
+      { caminho: "ate", mensagem: "A data final deve ser igual ou posterior à inicial" },
+    ]);
   });
 });

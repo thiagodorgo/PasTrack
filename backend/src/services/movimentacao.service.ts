@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../config/prisma";
 import { AppError } from "../middlewares/erros";
 import { movimentacaoRepository } from "../repositories/movimentacao.repository";
-import { RegistrarMovimentacao } from "../schemas/movimentacao.schema";
+import { ConsultaMovimentacoes, RegistrarMovimentacao } from "../schemas/movimentacao.schema";
 import { avaliarAlerta } from "./estoque/avaliar-alerta";
 
 type RegistrarMovimentacaoDTO = RegistrarMovimentacao & { usuarioId: number };
@@ -45,8 +45,22 @@ async function aplicarSaida(tx: Prisma.TransactionClient, pastilhaId: number, qu
 }
 
 export const movimentacaoService = {
-  listar(pastilhaId?: number) {
-    return movimentacaoRepository.listar(pastilhaId);
+  /** Sem página: as 100 mais recentes. Com página: { dados, total, pagina, tamanho }. */
+  async listar(consulta: ConsultaMovimentacoes) {
+    const filtro: Prisma.MovimentacaoWhereInput = {
+      pastilhaId: consulta.pastilhaId,
+      tipo: consulta.tipo,
+      dataHora: consulta.de || consulta.ate ? { gte: consulta.de, lte: consulta.ate } : undefined,
+    };
+    if (consulta.pagina === undefined) {
+      return movimentacaoRepository.listar(filtro);
+    }
+    const { dados, total } = await movimentacaoRepository.listarPagina(
+      filtro,
+      consulta.pagina,
+      consulta.tamanho
+    );
+    return { dados, total, pagina: consulta.pagina, tamanho: consulta.tamanho };
   },
 
   /**

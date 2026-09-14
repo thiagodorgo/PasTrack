@@ -1,3 +1,5 @@
+import { TipoMovimentacao } from "@prisma/client";
+import { prisma } from "../../src/config/prisma";
 import { api, autorizacao } from "./api";
 import { criarFornecedor } from "./fabricas";
 
@@ -20,4 +22,27 @@ export async function registrarEntrada(
 /** SAÍDA pela API. */
 export function registrarSaida(token: string, pastilhaId: number, quantidade: number) {
   return registrarMovimentacao(token, { tipo: "SAIDA", pastilhaId, quantidade });
+}
+
+export interface DadosMovimentacao {
+  pastilhaId: number;
+  usuarioId: number;
+  tipo?: TipoMovimentacao;
+  quantidade?: number;
+  fornecedorId?: number | null;
+  dataHora?: Date;
+}
+
+/** Grava movimentações direto no banco, sem mexer no saldo. Serve para montar históricos. */
+export async function criarMovimentacoes(lista: DadosMovimentacao[]) {
+  await prisma.movimentacao.createMany({
+    data: lista.map((dados) => ({
+      tipo: dados.tipo ?? "SAIDA",
+      quantidade: dados.quantidade ?? 1,
+      pastilhaId: dados.pastilhaId,
+      usuarioId: dados.usuarioId,
+      fornecedorId: dados.fornecedorId ?? null,
+      dataHora: dados.dataHora,
+    })),
+  });
 }

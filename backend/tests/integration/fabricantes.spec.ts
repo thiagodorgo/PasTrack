@@ -31,6 +31,7 @@ describe("POST /api/fabricantes", () => {
     ["nome com 1 caractere depois de tirar os espaços", { nome: "  I  " }, "nome"],
     ["nome com mais de 100 caracteres", { nome: "x".repeat(101) }, "nome"],
     ["nome que não é texto", { nome: 123 }, "nome"],
+    ["nome com caractere nulo", { nome: "Is\u0000car" }, "nome"],
     ["campo extra id", { nome: "Iscar", id: 50 }, ""],
     ["pastilhas aninhadas", { nome: "Iscar", pastilhas: { create: [{ codigo: "X", descricao: "Y" }] } }, ""],
   ])("recusa %s com 400", async (_caso, corpo, caminho) => {
@@ -159,6 +160,7 @@ describe("PUT /api/fabricantes/:id", () => {
   it.each<[string, Corpo]>([
     ["corpo vazio", {}],
     ["nome curto", { nome: "x" }],
+    ["nome com caractere nulo", { nome: "Iscar\u0000" }],
     ["id no corpo", { nome: "Novo nome", id: 99 }],
     ["pastilhas.deleteMany", { pastilhas: { deleteMany: {} } }],
     [

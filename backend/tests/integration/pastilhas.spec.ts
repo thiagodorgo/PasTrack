@@ -123,6 +123,11 @@ describe("POST /api/pastilhas", () => {
     ["fabricante zero", { fabricanteId: 0 }, "fabricanteId"],
     ["fabricante em texto", { fabricanteId: "1" }, "fabricanteId"],
     ["fabricante fora da faixa do banco", { fabricanteId: 2_147_483_648 }, "fabricanteId"],
+    ["código com caractere nulo", { codigo: "CNMG\u0000120408" }, "codigo"],
+    ["descrição com caractere nulo", { descricao: "Pastilha\u0000" }, "descricao"],
+    ["modelo só com o caractere nulo", { modelo: "\u0000" }, "modelo"],
+    ["aplicação com caractere nulo", { aplicacao: "Aço\u0000" }, "aplicacao"],
+    ["unidade com caractere nulo", { unidade: "u\u0000n" }, "unidade"],
   ])("recusa %s com 400", async (_caso, alteracao, caminho) => {
     const { cabecalho } = await entrarComo("GESTOR");
     const resposta = await api()
@@ -350,6 +355,7 @@ describe("PUT /api/pastilhas/:id contra mass assignment", () => {
     ["movimentacoes.deleteMany", { movimentacoes: { deleteMany: {} } }],
     ["alertas.deleteMany", { alertas: { deleteMany: {} } }],
     ["fabricante.update", { fabricante: { update: { nome: "Invadido" } } }],
+    ["descrição com caractere nulo", { descricao: "Nova\u0000descrição" }],
   ])("recusa %s com 400 sem alterar nada", async (_caso, corpo) => {
     const { usuario, cabecalho } = await entrarComo("GESTOR");
     const pastilha = await criarPastilha({ saldoAtual: 5, estoqueMinimo: 5 });
@@ -478,6 +484,7 @@ describe("GET /api/pastilhas", () => {
     ["criticas repetido", "criticas=true&criticas=false"],
     ["busca com mais de 100 caracteres", `busca=${"x".repeat(101)}`],
     ["parâmetro desconhecido", "pagina=2"],
+    ["busca com caractere nulo", "busca=%00"],
   ])("recusa %s com 400", async (_caso, consulta) => {
     const { cabecalho } = await entrarComo("OPERADOR");
     const resposta = await api().get(`/api/pastilhas?${consulta}`).set(cabecalho);

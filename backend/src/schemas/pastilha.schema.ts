@@ -4,11 +4,19 @@ import { idParam } from "./comum.schema";
 /** Maior id que cabe no INT4 do banco. Acima disso o Postgres recusa a consulta e a API responderia 500. */
 const MAIOR_ID = 2_147_483_647;
 
-/** Texto opcional: vazio ou null grava null; ausente mantém o valor atual. */
-const textoOpcional = (maximo: number) =>
+/**
+ * Texto sem os espaços das pontas e sem o caractere nulo (U+0000). O Postgres recusa esse caractere
+ * em colunas de texto e em filtros, e sem esta regra a requisição cairia no 500.
+ */
+const texto = () =>
   z
     .string()
     .trim()
+    .refine((valor) => !valor.includes("\u0000"), "Não pode conter o caractere nulo (U+0000)");
+
+/** Texto opcional: vazio ou null grava null; ausente mantém o valor atual. */
+const textoOpcional = (maximo: number) =>
+  texto()
     .max(maximo)
     .transform((valor) => valor || null)
     .nullish();
@@ -19,17 +27,17 @@ export const pastilhaIdParam = idParam.extend({ id: idParam.shape.id.max(MAIOR_I
 
 /** Campos que o cadastro pode alterar. Código e saldo ficam de fora: o saldo só muda por movimentação. */
 const camposEditaveis = {
-  descricao: z.string().trim().min(1).max(200),
+  descricao: texto().min(1).max(200),
   modelo: textoOpcional(60),
   aplicacao: textoOpcional(200),
-  unidade: z.string().trim().min(1).max(10),
+  unidade: texto().min(1).max(10),
   estoqueMinimo: z.int().min(0).max(1_000_000),
   fabricanteId: z.int().positive().max(MAIOR_ID),
 };
 
 export const criarPastilhaSchema = z.strictObject({
   // gravado em maiúsculas: "cnmg 120408" e "CNMG 120408" são o mesmo código
-  codigo: z.string().trim().toUpperCase().min(1).max(40),
+  codigo: texto().toUpperCase().min(1).max(40),
   ...camposEditaveis,
   unidade: camposEditaveis.unidade.default("un"),
   estoqueMinimo: camposEditaveis.estoqueMinimo.default(0),
@@ -41,7 +49,7 @@ export const atualizarPastilhaSchema = z
   .refine(algumCampo, "Informe ao menos um campo para atualizar");
 
 export const consultaPastilhasSchema = z.strictObject({
-  busca: z.string().trim().max(100).optional(),
+  busca: texto().max(100).optional(),
   criticas: z
     .enum(["true", "false"])
     .transform((valor) => valor === "true")

@@ -352,7 +352,7 @@ Os limites de 20 itens críticos e 5 movimentações são aplicados na consulta 
 
 A pastilha nas respostas é `{ id, codigo, descricao, modelo, aplicacao, unidade, estoqueMinimo, saldoAtual, fabricanteId, criadoEm, atualizadoEm, fabricante }`, com `fabricante` no formato da seção de fabricantes. `modelo` e `aplicacao` podem ser `null`, e `codigo` é único e gravado em maiúsculas. O `saldoAtual` só muda por movimentação, e o banco recusa `saldoAtual` e `estoqueMinimo` negativos.
 
-Nas rotas de pastilha, os textos chegam sem os espaços das pontas, e qualquer campo fora dos listados em cada rota, na query ou no corpo, responde `400` com `codigo: "DADOS_INVALIDOS"`. O `:id` precisa ser um inteiro positivo de até 2147483647; fora disso, `400`. A criação e a edição ficam registradas na auditoria (`pastilha.criada` e `pastilha.atualizada`), com o estado anterior e o novo.
+Nas rotas de pastilha, os textos chegam sem os espaços das pontas, e texto com o caractere nulo (U+0000), inclusive na `busca`, responde `400`. Qualquer campo fora dos listados em cada rota, na query ou no corpo, responde `400` com `codigo: "DADOS_INVALIDOS"`. O `:id` precisa ser um inteiro positivo de até 2147483647; fora disso, `400`. A criação e a edição ficam registradas na auditoria (`pastilha.criada` e `pastilha.atualizada`), com o estado anterior e o novo.
 
 ### `GET /api/pastilhas`
 
@@ -463,7 +463,7 @@ Erros:
 
 ## 8. Fabricantes
 
-O fabricante nas respostas é `{ id, nome, criadoEm, atualizadoEm }`, com `nome` único. O `nome` tem de 2 a 100 caracteres e chega sem os espaços das pontas, e a unicidade vale para o nome já sem esses espaços. A criação e a edição ficam registradas na auditoria (`fabricante.criado` e `fabricante.atualizado`).
+O fabricante nas respostas é `{ id, nome, criadoEm, atualizadoEm }`, com `nome` único. O `nome` tem de 2 a 100 caracteres, chega sem os espaços das pontas e não pode ter o caractere nulo (U+0000), e a unicidade vale para o nome já sem esses espaços. A criação e a edição ficam registradas na auditoria (`fabricante.criado` e `fabricante.atualizado`).
 
 Qualquer campo não listado, na query ou no corpo, responde `400` com `codigo: "DADOS_INVALIDOS"`. O `:id` precisa ser um inteiro positivo de até 2147483647.
 
@@ -539,7 +539,7 @@ Erros:
 
 O fornecedor nas respostas é `{ id, nome, cnpj, contato, criadoEm, atualizadoEm }`. `cnpj` e `contato` podem ser `null`, e `cnpj` é único. A criação e a edição ficam registradas na auditoria (`fornecedor.criado` e `fornecedor.atualizado`).
 
-Campos, com os textos sem os espaços das pontas:
+Campos, com os textos sem os espaços das pontas e sem o caractere nulo (U+0000), que responde `400`:
 
 - `nome`: de 2 a 150 caracteres;
 - `cnpj`: opcional, numérico ou alfanumérico, com ou sem máscara;

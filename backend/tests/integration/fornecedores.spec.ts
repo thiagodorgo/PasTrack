@@ -51,12 +51,14 @@ describe("POST /api/fornecedores", () => {
     ["sem nome", { cnpj: CNPJ }, "nome"],
     ["nome com 1 caractere", { nome: " A " }, "nome"],
     ["nome com mais de 150 caracteres", { nome: "x".repeat(151) }, "nome"],
+    ["nome com caractere nulo", { nome: "Ferramentaria\u0000Sul" }, "nome"],
     ["CNPJ com dígito verificador errado", { nome: "Fornecedor", cnpj: "11.222.333/0001-82" }, "cnpj"],
     ["CNPJ com todos os dígitos iguais", { nome: "Fornecedor", cnpj: "11111111111111" }, "cnpj"],
     ["CNPJ com letras", { nome: "Fornecedor", cnpj: "11.222.333/0001-8X" }, "cnpj"],
     ["CNPJ com máscara incompleta", { nome: "Fornecedor", cnpj: "11.222.333000181" }, "cnpj"],
     ["CNPJ numérico", { nome: "Fornecedor", cnpj: 11222333000181 }, "cnpj"],
     ["contato com mais de 150 caracteres", { nome: "Fornecedor", contato: "x".repeat(151) }, "contato"],
+    ["contato com caractere nulo", { nome: "Fornecedor", contato: "vendas\u0000@sul.com.br" }, "contato"],
     ["campo extra id", { nome: "Fornecedor", id: 10 }, ""],
     ["movimentações aninhadas", { nome: "Fornecedor", movimentacoes: { create: [] } }, ""],
   ])("recusa %s com 400", async (_caso, corpo, caminho) => {
@@ -251,6 +253,7 @@ describe("PUT /api/fornecedores/:id", () => {
   it.each<[string, Corpo]>([
     ["corpo vazio", {}],
     ["CNPJ inválido", { cnpj: "11.222.333/0001-80" }],
+    ["contato só com o caractere nulo", { contato: "\u0000" }],
     ["id no corpo", { id: 99, nome: "Novo nome" }],
     ["criadoEm", { criadoEm: "2020-01-01T00:00:00.000Z" }],
     ["movimentacoes.deleteMany", { movimentacoes: { deleteMany: {} } }],

@@ -324,7 +324,7 @@ describe("PUT /api/pastilhas/:id", () => {
     ]);
   });
 
-  it("fabricante inexistente responde 400 e desfaz a transação", async () => {
+  it("fabricante inexistente responde 400 sem alterar a pastilha nem auditar", async () => {
     const { cabecalho } = await entrarComo("GESTOR");
     const pastilha = await criarPastilha();
     const resposta = await api()

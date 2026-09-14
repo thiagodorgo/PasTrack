@@ -1,7 +1,8 @@
 import { http, HttpResponse } from "msw";
-import type { NovaPastilha } from "../../../src/services/pastilhas";
+import type { AtualizacaoPastilha, NovaPastilha } from "../../../src/services/pastilhas";
 import type { Pastilha } from "../../../src/types";
-import { fabricantes } from "./cadastros";
+import { recusarAcesso, responderDadosInvalidos, responderErro } from "../acesso";
+import { fabricanteRegistrado, fabricantes } from "./fabricantes";
 
 // dois itens no nível crítico (WNMG e APMT) e um com saldo folgado (CNMG)
 export const pastilhas: Pastilha[] = [
@@ -43,26 +44,46 @@ export const pastilhas: Pastilha[] = [
   },
 ];
 
+const CAMPOS_EDITAVEIS = ["descricao", "modelo", "aplicacao", "unidade", "estoqueMinimo", "fabricanteId"];
+
+const naoEncontrada = () => responderErro(404, { erro: "Pastilha não encontrada", codigo: "NAO_ENCONTRADO" });
+const fabricanteInexistente = () =>
+  responderErro(400, {
+    erro: "Referência inválida: o registro relacionado não existe",
+    codigo: "REFERENCIA_INVALIDA",
+  });
+
+// sem guardar estado: a lista parte sempre dos dados de exemplo
 export const pastilhasHandlers = [
   http.get("*/api/pastilhas", ({ request }) => {
-    const busca = new URL(request.url).searchParams.get("busca")?.toLowerCase();
-    const lista = busca
-      ? pastilhas.filter(
-          (p) => p.codigo.toLowerCase().includes(busca) || p.descricao.toLowerCase().includes(busca)
-        )
-      : pastilhas;
+    const parametros = new URL(request.url).searchParams;
+    const busca = parametros.get("busca")?.toLowerCase();
+    let lista = pastilhas;
+    if (busca) {
+      lista = lista.filter(
+        (p) => p.codigo.toLowerCase().includes(busca) || p.descricao.toLowerCase().includes(busca)
+      );
+    }
+    if (parametros.get("criticas") === "true") {
+      lista = lista.filter((p) => p.saldoAtual <= p.estoqueMinimo);
+    }
     return HttpResponse.json(lista);
   }),
 
+  http.get("*/api/pastilhas/:id", ({ params }) => {
+    const pastilha = pastilhas.find((p) => p.id === Number(params.id));
+    return pastilha ? HttpResponse.json(pastilha) : naoEncontrada();
+  }),
+
   http.post("*/api/pastilhas", async ({ request }) => {
+    const recusa = recusarAcesso(request, "gerenciarPastilhas");
+    if (recusa) return recusa;
     const dados = (await request.json()) as NovaPastilha;
-    const fabricante = fabricantes.find((f) => f.id === dados.fabricanteId);
-    if (!fabricante) {
-      return HttpResponse.json(
-        { erro: "Referência inválida: o registro relacionado não existe", codigo: "REFERENCIA_INVALIDA" },
-        { status: 400 }
-      );
+    if (pastilhas.some((p) => p.codigo.toLowerCase() === dados.codigo.toLowerCase())) {
+      return responderErro(409, { erro: "Já existe uma pastilha com este código", codigo: "DUPLICADO" });
     }
+    const fabricante = fabricanteRegistrado(dados.fabricanteId);
+    if (!fabricante) return fabricanteInexistente();
     const criada: Pastilha = {
       id: pastilhas.length + 1,
       codigo: dados.codigo,
@@ -76,5 +97,27 @@ export const pastilhasHandlers = [
       fabricante,
     };
     return HttpResponse.json(criada, { status: 201 });
+  }),
+
+  // como a API: qualquer campo fora dos editáveis, inclusive codigo e saldoAtual, responde 400
+  http.put("*/api/pastilhas/:id", async ({ request, params }) => {
+    const recusa = recusarAcesso(request, "gerenciarPastilhas");
+    if (recusa) return recusa;
+    const pastilha = pastilhas.find((p) => p.id === Number(params.id));
+    if (!pastilha) return naoEncontrada();
+    const dados = (await request.json()) as Record<string, unknown>;
+    const proibidos = Object.keys(dados).filter((campo) => !CAMPOS_EDITAVEIS.includes(campo));
+    if (proibidos.length > 0) {
+      return responderDadosInvalidos(
+        Object.fromEntries(proibidos.map((campo) => [campo, `Campo não permitido: ${campo}`]))
+      );
+    }
+    const alteracoes = dados as AtualizacaoPastilha;
+    const fabricante =
+      alteracoes.fabricanteId === undefined
+        ? pastilha.fabricante
+        : fabricanteRegistrado(alteracoes.fabricanteId);
+    if (!fabricante) return fabricanteInexistente();
+    return HttpResponse.json({ ...pastilha, ...alteracoes, fabricanteId: fabricante.id, fabricante });
   }),
 ];

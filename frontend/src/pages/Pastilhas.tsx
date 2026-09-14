@@ -22,7 +22,7 @@ export function Pastilhas() {
   const [fabricanteId, setFabricanteId] = useState("");
 
   function carregar(filtro?: string) {
-    return listarPastilhas(filtro)
+    return listarPastilhas({ busca: filtro })
       .then(setPastilhas)
       .catch((e) => setErro(mensagemDeErro(e)))
       .finally(() => setCarregando(false));

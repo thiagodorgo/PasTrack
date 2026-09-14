@@ -48,11 +48,13 @@ describe("página do painel", () => {
     expect(screen.queryByRole("heading", { name: "Painel" })).not.toBeInTheDocument();
   });
 
-  it("mostra a falha de comunicação quando o servidor não responde", async () => {
+  it("mostra a falta de conexão quando o servidor não responde", async () => {
     server.use(http.get("*/api/painel/resumo", () => HttpResponse.error()));
 
     renderizar(<Painel />);
 
-    expect(await screen.findByText("Falha na comunicação com o servidor")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Sem conexão com o servidor. Verifique a rede e tente de novo.")
+    ).toBeInTheDocument();
   });
 });

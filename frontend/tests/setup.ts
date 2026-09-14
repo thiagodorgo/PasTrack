@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll } from "vitest";
+import { reiniciarDadosSimulados } from "./mocks/handlers";
 import { server } from "./mocks/server";
 
 // O jsdom não implementa ResizeObserver, usado pelo ResponsiveContainer do recharts.
@@ -30,6 +31,7 @@ beforeAll(() => {
 
 afterEach(() => {
   server.resetHandlers();
+  reiniciarDadosSimulados();
   cleanup();
   localStorage.clear();
 });

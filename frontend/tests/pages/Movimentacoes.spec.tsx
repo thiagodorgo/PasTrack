@@ -1,13 +1,14 @@
 import { screen, within } from "@testing-library/react";
 import { http } from "msw";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { Movimentacoes } from "../../src/pages/Movimentacoes";
 import type { NovaMovimentacao } from "../../src/services/movimentacoes";
-import { fornecedores } from "../mocks/handlers/cadastros";
+import { fornecedores } from "../mocks/handlers/fornecedores";
 import { movimentacoes } from "../mocks/handlers/movimentacoes";
 import { pastilhas } from "../mocks/handlers/pastilhas";
 import { server } from "../mocks/server";
 import { renderizar } from "../utils/renderizar";
+import { iniciarSessao } from "../utils/sessao";
 
 async function renderizarMovimentacoes() {
   const resultado = renderizar(<Movimentacoes />, { initialEntries: ["/movimentacoes"] });
@@ -17,6 +18,11 @@ async function renderizarMovimentacoes() {
 }
 
 describe("página de movimentações", () => {
+  // o registro exige sessão, como na API
+  beforeEach(() => {
+    iniciarSessao();
+  });
+
   it("carrega o histórico, as pastilhas e os fornecedores", async () => {
     const { usuario } = await renderizarMovimentacoes();
 

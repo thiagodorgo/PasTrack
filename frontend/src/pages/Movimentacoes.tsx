@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { mensagemDeErro } from "../services/api";
 import { listarFornecedores } from "../services/cadastros";
-import { listarMovimentacoes, registrarMovimentacao } from "../services/movimentacoes";
+import { listarMovimentacoes, type NovaMovimentacao, registrarMovimentacao } from "../services/movimentacoes";
 import { listarPastilhas } from "../services/pastilhas";
 import { Fornecedor, Movimentacao, Pastilha } from "../types";
 
@@ -41,13 +41,14 @@ export function Movimentacoes() {
     setSucesso("");
     setSalvando(true);
     try {
-      const resultado = await registrarMovimentacao({
-        tipo,
+      const campos = {
         pastilhaId: Number(pastilhaId),
         quantidade: Number(quantidade),
-        fornecedorId: tipo === "ENTRADA" && fornecedorId ? Number(fornecedorId) : undefined,
         documento: documento || undefined,
-      });
+      };
+      const dados: NovaMovimentacao =
+        tipo === "ENTRADA" ? { ...campos, tipo, fornecedorId: Number(fornecedorId) } : { ...campos, tipo };
+      const resultado = await registrarMovimentacao(dados);
       setSucesso(`Movimentação registrada. Saldo atual do item: ${resultado.saldoAtual}.`);
       setQuantidade("1");
       setDocumento("");

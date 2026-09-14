@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
+import { ConsultaAlertas, ParametroAlerta } from "../schemas/alerta.schema";
 import { alertaService } from "../services/alerta.service";
 
+// query e params chegam validados e convertidos pela rota
 export const alertaController = {
-  async listar(_req: Request, res: Response) {
-    return res.json(await alertaService.listarAbertos());
+  async listar(req: Request, res: Response) {
+    const consulta = req.query as unknown as ConsultaAlertas;
+    return res.json(await alertaService.listar(consulta));
   },
 
   async resolver(req: Request, res: Response) {
-    return res.json(await alertaService.resolver(Number(req.params.id)));
+    const { id } = req.params as unknown as ParametroAlerta;
+    return res.json(await alertaService.resolver(id, req.usuario!.id));
   },
 };

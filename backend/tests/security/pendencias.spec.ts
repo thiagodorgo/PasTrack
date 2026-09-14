@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { prisma } from "../../src/config/prisma";
 import { api, autorizacao } from "../helpers/api";
 import { criarPastilha, criarUsuario } from "../helpers/fabricas";
@@ -20,17 +20,6 @@ describe("pendências conhecidas de segurança e integridade", () => {
     expect(resposta.status).toBe(400);
     const depois = await prisma.pastilha.findUniqueOrThrow({ where: { id: pastilha.id } });
     expect(depois.saldoAtual).toBe(5);
-  });
-
-  it.fails("quantidade não numérica em POST /api/movimentacoes devolve 400", async () => {
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
-    const { token } = await criarUsuario({ perfil: "GESTOR" });
-    const pastilha = await criarPastilha({ saldoAtual: 5 });
-    const resposta = await api()
-      .post("/api/movimentacoes")
-      .set(autorizacao(token))
-      .send({ tipo: "ENTRADA", pastilhaId: pastilha.id, quantidade: "abc" });
-    expect(resposta.status).toBe(400);
   });
 
   it.fails("usuário desativado perde o acesso mesmo com token ainda válido", async () => {

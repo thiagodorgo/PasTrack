@@ -8,7 +8,10 @@ export const fornecedorIdParam = idParam.extend({ id: idParam.shape.id.max(2_147
 /** A listagem não recebe filtros: qualquer parâmetro na query vira 400. */
 export const consultaFornecedoresSchema = z.strictObject({});
 
-/** CNPJ com ou sem máscara, gravado como 00.000.000/0000-00. Vazio ou null grava null. */
+/**
+ * CNPJ numérico ou alfanumérico, com ou sem máscara, gravado em maiúsculas como XX.XXX.XXX/XXXX-XX.
+ * Vazio ou null grava null.
+ */
 const cnpj = z
   .string()
   .trim()

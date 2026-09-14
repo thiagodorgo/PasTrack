@@ -82,6 +82,33 @@ describe("POST /api/fornecedores", () => {
     expect(await prisma.fornecedor.count()).toBe(1);
     expect(await prisma.auditoria.count()).toBe(0);
   });
+
+  it("aceita CNPJ alfanumérico, grava em maiúsculas com máscara e detecta a duplicidade", async () => {
+    const { cabecalho } = await entrarComo("COMPRADOR");
+    const criado = await api()
+      .post("/api/fornecedores")
+      .set(cabecalho)
+      .send({ nome: "Fornecedor Alfa", cnpj: "12abc34501de35" });
+    expect(criado.status).toBe(201);
+    expect(criado.body.cnpj).toBe("12.ABC.345/01DE-35");
+    const repetido = await api()
+      .post("/api/fornecedores")
+      .set(cabecalho)
+      .send({ nome: "Outro fornecedor", cnpj: "12.ABC.345/01DE-35" });
+    expect(repetido.status).toBe(409);
+    expect(repetido.body.codigo).toBe("DUPLICADO");
+  });
+
+  it("recusa CNPJ alfanumérico com dígito verificador errado", async () => {
+    const { cabecalho } = await entrarComo("COMPRADOR");
+    const resposta = await api()
+      .post("/api/fornecedores")
+      .set(cabecalho)
+      .send({ nome: "Fornecedor Alfa", cnpj: "12.ABC.345/01DE-36" });
+    expect(resposta.status).toBe(400);
+    expect(resposta.body.campos).toEqual([{ caminho: "cnpj", mensagem: "CNPJ inválido" }]);
+    expect(await prisma.fornecedor.count()).toBe(0);
+  });
 });
 
 describe("GET /api/fornecedores", () => {

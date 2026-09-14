@@ -56,13 +56,24 @@ export const pastilhasHandlers = [
 
   http.post("*/api/pastilhas", async ({ request }) => {
     const dados = (await request.json()) as NovaPastilha;
+    const fabricante = fabricantes.find((f) => f.id === dados.fabricanteId);
+    if (!fabricante) {
+      return HttpResponse.json(
+        { erro: "Referência inválida: o registro relacionado não existe", codigo: "REFERENCIA_INVALIDA" },
+        { status: 400 }
+      );
+    }
     const criada: Pastilha = {
       id: pastilhas.length + 1,
-      unidade: "un",
-      estoqueMinimo: 0,
-      ...dados,
+      codigo: dados.codigo,
+      descricao: dados.descricao,
+      modelo: dados.modelo ?? null,
+      aplicacao: dados.aplicacao ?? null,
+      unidade: dados.unidade ?? "un",
+      estoqueMinimo: dados.estoqueMinimo ?? 0,
       saldoAtual: 0,
-      fabricante: fabricantes.find((f) => f.id === dados.fabricanteId),
+      fabricanteId: fabricante.id,
+      fabricante,
     };
     return HttpResponse.json(criada, { status: 201 });
   }),

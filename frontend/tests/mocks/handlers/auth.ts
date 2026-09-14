@@ -7,6 +7,7 @@ export const usuarioAdmin: Usuario = {
   nome: "Administrador",
   email: "admin@pastrack.com",
   perfil: "ADMINISTRADOR",
+  deveTrocarSenha: false,
 };
 
 export const credenciaisValidas = { email: "admin@pastrack.com", senha: "senha-correta" };

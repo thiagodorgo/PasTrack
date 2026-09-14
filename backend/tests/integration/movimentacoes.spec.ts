@@ -246,7 +246,7 @@ describe("regras do registro", () => {
       fornecedorId: 9999,
     });
     expect(entrada.status).toBe(404);
-    expect(entrada.body).toEqual({ erro: "Pastilha não encontrada", codigo: "NAO_ENCONTRADO" });
+    expect(entrada.body).toEqual({ erro: "Pastilha não encontrada" });
     const saida = await registrarMovimentacao(token, { tipo: "SAIDA", pastilhaId: 9999, quantidade: 1 });
     expect(saida.status).toBe(404);
   });

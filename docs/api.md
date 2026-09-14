@@ -560,9 +560,9 @@ Todos os perfis. Existente.
 
 Query, toda opcional:
 
-- `pastilhaId`: só as movimentações da pastilha;
+- `pastilhaId`: só as movimentações da pastilha, inteiro de 1 a 2.147.483.647;
 - `tipo`: `ENTRADA` ou `SAIDA`;
-- `de` e `ate`: datas ISO 8601 aplicadas a `dataHora`, com as duas pontas incluídas. Aceitam só a data (`2026-09-14`), que vale do início ao fim do dia em UTC, ou data e hora com fuso (`2026-09-14T08:00:00Z` ou `2026-09-14T08:00:00-03:00`). Data e hora sem fuso é recusada, e `ate` anterior a `de` também;
+- `de` e `ate`: datas ISO 8601 aplicadas a `dataHora`, com as duas pontas incluídas. Aceitam só a data (`2026-09-14`), que vale do início ao fim do dia em UTC, ou data e hora com fuso (`2026-09-14T08:00:00Z` ou `2026-09-14T08:00:00-03:00`). Data e hora sem fuso é recusada, assim como a data que, convertida para UTC, cai fora dos anos 1 a 9999 e o `ate` anterior a `de`;
 - `pagina` e `tamanho`: `pagina` começa em `1`; `tamanho` tem padrão `20`, mínimo `1` e máximo `100`. Sem `pagina`, `tamanho` é validado, mas não muda a resposta.
 
 Resposta `200`, da mais nova para a mais antiga por `dataHora`, com o `id` desempatando as do mesmo instante:
@@ -598,18 +598,18 @@ Erros: `400` com `codigo: "DADOS_INVALIDOS"` e `campos` para filtros inválidos,
 
 ### `POST /api/movimentacoes`
 
-ENTRADA: todos os perfis (ação `registrarEntrada`). SAIDA: ADMINISTRADOR, GESTOR e OPERADOR (ação `registrarSaida`); o COMPRADOR só registra ENTRADA. Existente.
+ENTRADA: todos os perfis (ação `registrarEntrada`). SAIDA: ADMINISTRADOR, GESTOR e OPERADOR (ação `registrarSaida`); o COMPRADOR só registra ENTRADA, e a SAIDA dele recebe `403` antes de o corpo ser validado. Existente.
 
 Corpo:
 
-| Campo          | Regra                                                                                                                        |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `tipo`         | Obrigatório: `ENTRADA` ou `SAIDA`.                                                                                           |
-| `pastilhaId`   | Obrigatório, inteiro positivo; a pastilha precisa existir.                                                                   |
-| `quantidade`   | Obrigatório, inteiro de 1 a 1.000.000. Texto e decimal são recusados.                                                        |
-| `fornecedorId` | Na ENTRADA, obrigatório e inteiro positivo, e o fornecedor precisa existir. Na SAIDA, não é aceito: enviado, responde `400`. |
-| `documento`    | Opcional, texto de até 100 caracteres, como o número da nota fiscal. Os espaços das pontas são removidos.                    |
-| `observacao`   | Opcional, texto de até 500 caracteres. Os espaços das pontas são removidos.                                                  |
+| Campo          | Regra                                                                                                                                                                               |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tipo`         | Obrigatório: `ENTRADA` ou `SAIDA`.                                                                                                                                                  |
+| `pastilhaId`   | Obrigatório, inteiro de 1 a 2.147.483.647; a pastilha precisa existir.                                                                                                              |
+| `quantidade`   | Obrigatório, inteiro de 1 a 1.000.000. Texto e decimal são recusados.                                                                                                               |
+| `fornecedorId` | Na ENTRADA, obrigatório, inteiro de 1 a 2.147.483.647, e o fornecedor precisa existir. Na SAIDA, não é aceito: enviado, responde `400`.                                             |
+| `documento`    | Opcional, texto de até 100 caracteres, como o número da nota fiscal. Os espaços das pontas são removidos; `null` ou só espaços gravam `null`; o caractere nulo (U+0000) é recusado. |
+| `observacao`   | Opcional, texto de até 500 caracteres, com as mesmas regras do `documento`.                                                                                                         |
 
 Qualquer outro campo, como `saldoAtual` ou `usuarioId`, responde `400`.
 
@@ -620,14 +620,17 @@ Tudo acontece numa única transação: atualiza o `saldoAtual` (soma a ENTRADA o
 
 A SAIDA é atômica: o desconto só acontece se ainda houver saldo, numa única instrução no banco, então o saldo nunca fica negativo, nem com requisições simultâneas. Entre saídas simultâneas, a que não encontrar saldo recebe o `400` de saldo insuficiente, com o saldo daquele momento, no lugar do `500` de antes. A atualização do saldo trava a pastilha até o fim da transação, então as movimentações da mesma pastilha são aplicadas uma de cada vez. O banco continua garantindo que o saldo nunca fica negativo e que há no máximo um alerta aberto por pastilha.
 
+A ENTRADA também é condicional: só soma se o saldo continuar dentro de 2.147.483.647, o maior valor da coluna do banco.
+
 Resposta `201`: `{ movimentacao, saldoAtual }`, com a movimentação gravada (`{ id, tipo, quantidade, dataHora, documento, observacao, pastilhaId, usuarioId, fornecedorId }`, sem os objetos relacionados) e o saldo da pastilha depois do lançamento.
 
 Erros:
 
-- `400` com `codigo: "DADOS_INVALIDOS"` e `campos` para corpo fora das regras acima: `tipo` ausente ou desconhecido, `pastilhaId` ou `quantidade` inválidos, `fornecedorId` ausente ou inválido na ENTRADA, `fornecedorId` enviado na SAIDA (`"A saída não tem fornecedor"`), texto longo demais e campo extra (`"Campo não permitido: saldoAtual"`);
+- `400` com `codigo: "DADOS_INVALIDOS"` e `campos` para corpo fora das regras acima: `tipo` ausente ou desconhecido, `pastilhaId` ou `quantidade` inválidos, `fornecedorId` ausente ou inválido na ENTRADA, `fornecedorId` enviado na SAIDA (`"A saída não tem fornecedor"`), texto longo demais ou com o caractere nulo, e campo extra (`"Campo não permitido: saldoAtual"`);
 - `400` `"Saldo insuficiente: há 3 un em estoque"`, sem `codigo`, com o saldo e a unidade da pastilha, inclusive para a SAIDA que perde a disputa com outra simultânea;
+- `400` `"Entrada acima do saldo máximo de 2147483647 un: há 2147483000 un em estoque"`, sem `codigo`, para a ENTRADA que passaria do limite do saldo;
 - `400` `"Fornecedor não encontrado"` com `codigo: "REFERENCIA_INVALIDA"` para `fornecedorId` inexistente na ENTRADA;
-- `403` `"Seu perfil só pode registrar entradas"`, para SAIDA registrada pelo COMPRADOR;
+- `403` `"Seu perfil só pode registrar entradas"`, para SAIDA registrada pelo COMPRADOR, antes da validação do corpo;
 - `404` `"Pastilha não encontrada"`, sem `codigo`. A pastilha é conferida antes do fornecedor.
 
 ```json
@@ -663,9 +666,17 @@ Um alerta abre quando, depois de uma movimentação, o saldo fica menor ou igual
 
 Todos os perfis. Existente.
 
-Query: `situacao` = `ABERTO` (padrão), `RESOLVIDO` ou `TODAS`. Outro valor ou outro parâmetro responde `400` com `codigo: "DADOS_INVALIDOS"`.
+Query, toda opcional:
 
-Resposta `200`: array do alerta mais novo para o mais antigo, por `dataGeracao`, com o `id` desempatando, sem paginação.
+- `situacao`: `ABERTO` (padrão), `RESOLVIDO` ou `TODAS`;
+- `pagina` e `tamanho`: `pagina` começa em `1`; `tamanho` tem padrão `20`, mínimo `1` e máximo `100`. Sem `pagina`, `tamanho` é validado, mas não muda a resposta.
+
+Outro valor ou outro parâmetro responde `400` com `codigo: "DADOS_INVALIDOS"`.
+
+Resposta `200`, do alerta mais novo para o mais antigo por `dataGeracao`, com o `id` desempatando:
+
+- sem `pagina`: array com os 100 alertas mais recentes da situação pedida;
+- com `pagina`: `{ dados, total, pagina, tamanho }`, como na listagem de movimentações.
 
 ```json
 [
@@ -699,7 +710,7 @@ Resposta `200`: o alerta atualizado, sem os objetos `pastilha` e `resolvidoPor`:
 
 Erros:
 
-- `400` com `codigo: "DADOS_INVALIDOS"` para `:id` que não é inteiro positivo;
+- `400` com `codigo: "DADOS_INVALIDOS"` para `:id` que não é inteiro de 1 a 2.147.483.647;
 - `403` para OPERADOR e COMPRADOR;
 - `404` com `codigo: "NAO_ENCONTRADO"` (`"Registro não encontrado"`) para alerta inexistente;
 - `409` `"Este alerta já foi resolvido"` com `codigo: "ALERTA_JA_RESOLVIDO"` para alerta já resolvido, manual ou automaticamente. Nada é alterado.

@@ -407,3 +407,75 @@ describe("id do alerta no limite do INT4", () => {
     expect(resposta.body.campos).toEqual([{ caminho: "id", mensagem: "Informe o alerta pelo id numérico" }]);
   });
 });
+
+describe("limite e paginação de GET /api/alertas", () => {
+  const inicio = new Date("2026-01-01T00:00:00.000Z").getTime();
+
+  /** Grava alertas resolvidos da mesma pastilha, um por minuto, do id 1 em diante. */
+  async function criarResolvidos(quantidade: number) {
+    const pastilha = await criarPastilha();
+    await prisma.alerta.createMany({
+      data: Array.from({ length: quantidade }, (_, i) => ({
+        pastilhaId: pastilha.id,
+        situacao: "RESOLVIDO" as const,
+        dataGeracao: new Date(inicio + i * 60_000),
+        dataResolucao: new Date(inicio + i * 60_000 + 1_000),
+      })),
+    });
+  }
+
+  function listar(token: string, consulta: Record<string, string | number>) {
+    return api().get("/api/alertas").set(autorizacao(token)).query(consulta);
+  }
+
+  it("sem página devolve no máximo os 100 mais recentes, em RESOLVIDO e em TODAS", async () => {
+    const { token } = await criarUsuario();
+    await criarResolvidos(105);
+    for (const situacao of ["RESOLVIDO", "TODAS"]) {
+      const resposta = await listar(token, { situacao });
+      expect(resposta.status).toBe(200);
+      expect(resposta.body).toHaveLength(100);
+      expect(resposta.body[0].id).toBe(105);
+      expect(resposta.body[99].id).toBe(6);
+    }
+  });
+
+  it("com página devolve dados, total, página e tamanho", async () => {
+    const { token } = await criarUsuario();
+    await criarResolvidos(25);
+
+    const primeira = await listar(token, { situacao: "TODAS", pagina: 1 });
+    expect(primeira.status).toBe(200);
+    expect(Object.keys(primeira.body).sort()).toEqual(["dados", "pagina", "tamanho", "total"]);
+    expect(primeira.body).toMatchObject({ total: 25, pagina: 1, tamanho: 20 });
+    expect(primeira.body.dados).toHaveLength(20);
+    expect(primeira.body.dados[0]).toMatchObject({ id: 25, resolvidoPor: null });
+    expect(primeira.body.dados[0].pastilha).toEqual(
+      expect.objectContaining({ codigo: expect.any(String), saldoAtual: expect.any(Number) })
+    );
+
+    const segunda = await listar(token, { situacao: "RESOLVIDO", pagina: 2, tamanho: 10 });
+    expect(segunda.body).toMatchObject({ total: 25, pagina: 2, tamanho: 10 });
+    expect(segunda.body.dados.map((alerta: { id: number }) => alerta.id)).toEqual([
+      15, 14, 13, 12, 11, 10, 9, 8, 7, 6,
+    ]);
+
+    const abertos = await listar(token, { pagina: 1 });
+    expect(abertos.body).toEqual({ dados: [], total: 0, pagina: 1, tamanho: 20 });
+
+    const alemDoFim = await listar(token, { situacao: "TODAS", pagina: 9007199254740991 });
+    expect(alemDoFim.status).toBe(200);
+    expect(alemDoFim.body).toMatchObject({ dados: [], total: 25 });
+  });
+
+  it.each([
+    ["pagina", "0"],
+    ["pagina", "x"],
+    ["tamanho", "101"],
+  ])("recusa %s=%s com 400", async (campo, valor) => {
+    const { token } = await criarUsuario();
+    const resposta = await listar(token, { [campo]: valor });
+    expect(resposta.status).toBe(400);
+    expect(resposta.body.campos[0].caminho).toBe(campo);
+  });
+});

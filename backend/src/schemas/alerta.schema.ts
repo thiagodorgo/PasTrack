@@ -14,12 +14,26 @@ export const alertaIdParam = z.object({
 
 export type ParametroAlerta = z.output<typeof alertaIdParam>;
 
-/** Consulta de GET /api/alertas. Sem situação, lista só os alertas abertos. */
+/**
+ * Consulta de GET /api/alertas. Sem situação, lista só os alertas abertos; sem página, a resposta
+ * é a lista dos 100 mais recentes.
+ */
 export const listarAlertasQuery = z.strictObject(
   {
     situacao: z
       .enum(["ABERTO", "RESOLVIDO", "TODAS"], "Use a situação ABERTO, RESOLVIDO ou TODAS")
       .default("ABERTO"),
+    pagina: z.coerce
+      .number("A página deve ser um número")
+      .int("A página deve ser um número inteiro")
+      .min(1, "A página começa em 1")
+      .optional(),
+    tamanho: z.coerce
+      .number("O tamanho da página deve ser um número")
+      .int("O tamanho da página deve ser um número inteiro")
+      .min(1, "O tamanho da página vai de 1 a 100")
+      .max(100, "O tamanho da página vai de 1 a 100")
+      .default(20),
   },
   {
     error: (problema) =>

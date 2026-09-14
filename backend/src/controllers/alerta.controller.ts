@@ -5,8 +5,8 @@ import { alertaService } from "../services/alerta.service";
 // query e params chegam validados e convertidos pela rota
 export const alertaController = {
   async listar(req: Request, res: Response) {
-    const { situacao } = req.query as unknown as ConsultaAlertas;
-    return res.json(await alertaService.listar(situacao));
+    const consulta = req.query as unknown as ConsultaAlertas;
+    return res.json(await alertaService.listar(consulta));
   },
 
   async resolver(req: Request, res: Response) {

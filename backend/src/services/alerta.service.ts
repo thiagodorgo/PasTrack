@@ -5,8 +5,14 @@ import { ConsultaAlertas } from "../schemas/alerta.schema";
 import { registrarAuditoria } from "./auditoria.service";
 
 export const alertaService = {
-  listar(situacao: ConsultaAlertas["situacao"]) {
-    return alertaRepository.listar(situacao === "TODAS" ? undefined : situacao);
+  /** Sem página: os 100 mais recentes. Com página: { dados, total, pagina, tamanho }. */
+  async listar(consulta: ConsultaAlertas) {
+    const situacao = consulta.situacao === "TODAS" ? undefined : consulta.situacao;
+    if (consulta.pagina === undefined) {
+      return alertaRepository.listar(situacao);
+    }
+    const { dados, total } = await alertaRepository.listarPagina(situacao, consulta.pagina, consulta.tamanho);
+    return { dados, total, pagina: consulta.pagina, tamanho: consulta.tamanho };
   },
 
   /**

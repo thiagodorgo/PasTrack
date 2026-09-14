@@ -326,8 +326,10 @@ Resposta `200`:
 
 - `totalPastilhas`: quantidade de pastilhas cadastradas;
 - `alertasAbertos`: quantidade de alertas `ABERTO`;
-- `itensCriticos`: pastilhas com `saldoAtual <= estoqueMinimo`, do menor saldo para o maior, cada uma com `{ id, codigo, descricao, saldoAtual, estoqueMinimo }`;
+- `itensCriticos`: até 20 pastilhas com `saldoAtual <= estoqueMinimo`, do menor saldo para o maior (o `id` desempata), cada uma com `{ id, codigo, descricao, saldoAtual, estoqueMinimo }`;
 - `ultimasMovimentacoes`: as 5 movimentações mais recentes, no formato de `GET /api/movimentacoes`.
+
+Os limites de 20 itens críticos e 5 movimentações são aplicados na consulta ao banco.
 
 ```json
 {
@@ -556,18 +558,19 @@ A movimentação nas listagens é `{ id, tipo, quantidade, dataHora, documento, 
 
 Todos os perfis. Existente.
 
-Query:
+Query, toda opcional:
 
 - `pastilhaId`: só as movimentações da pastilha;
-- `tipo` (`ENTRADA` ou `SAIDA`), `de` e `ate` **(em implementação)**: `de` e `ate` são datas ISO 8601 aplicadas a `dataHora`, com as duas pontas incluídas;
-- `pagina` e `tamanho` **(em implementação)**: `pagina` começa em `1`; `tamanho` tem padrão `20`, mínimo `1` e máximo `100`.
+- `tipo`: `ENTRADA` ou `SAIDA`;
+- `de` e `ate`: datas ISO 8601 aplicadas a `dataHora`, com as duas pontas incluídas. Aceitam só a data (`2026-09-14`), que vale do início ao fim do dia em UTC, ou data e hora com fuso (`2026-09-14T08:00:00Z` ou `2026-09-14T08:00:00-03:00`). Data e hora sem fuso é recusada, e `ate` anterior a `de` também;
+- `pagina` e `tamanho`: `pagina` começa em `1`; `tamanho` tem padrão `20`, mínimo `1` e máximo `100`. Sem `pagina`, `tamanho` é validado, mas não muda a resposta.
 
-Resposta `200`:
+Resposta `200`, da mais nova para a mais antiga por `dataHora`, com o `id` desempatando as do mesmo instante:
 
-- sem `pagina`: array com as 100 movimentações mais recentes, da mais nova para a mais antiga, como hoje;
-- com `pagina` **(em implementação)**: `{ dados, total, pagina, tamanho }`, em que `dados` traz as movimentações da página, na mesma ordem, e `total` a quantidade que atende aos filtros.
+- sem `pagina`: array com as 100 movimentações mais recentes que atendem aos filtros;
+- com `pagina`: `{ dados, total, pagina, tamanho }`, em que `dados` traz as movimentações da página e `total` a quantidade que atende aos filtros. Uma página além do fim devolve `dados` vazio.
 
-Erros **(em implementação)**: `400` com `codigo: "DADOS_INVALIDOS"` para filtros inválidos, inclusive `tamanho` acima de `100`.
+Erros: `400` com `codigo: "DADOS_INVALIDOS"` e `campos` para filtros inválidos, inclusive `tamanho` acima de `100`, `pagina` menor que `1` e parâmetros fora desta lista.
 
 ```json
 {
@@ -599,34 +602,33 @@ ENTRADA: todos os perfis (ação `registrarEntrada`). SAIDA: ADMINISTRADOR, GEST
 
 Corpo:
 
-| Campo          | Regra                                                                                                                                                                                                                    |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `tipo`         | Obrigatório: `ENTRADA` ou `SAIDA`.                                                                                                                                                                                       |
-| `pastilhaId`   | Obrigatório; a pastilha precisa existir.                                                                                                                                                                                 |
-| `quantidade`   | Obrigatório e maior que zero. **(em implementação)** Inteiro de 1 a 1.000.000.                                                                                                                                           |
-| `fornecedorId` | Na ENTRADA, precisa existir: se não existir, responde `400` com `codigo: "REFERENCIA_INVALIDA"`. Hoje é opcional e é ignorado na SAIDA. **(em implementação)** Obrigatório na ENTRADA; enviado na SAIDA, responde `400`. |
-| `documento`    | Opcional, texto, como o número da nota fiscal.                                                                                                                                                                           |
-| `observacao`   | Opcional, texto.                                                                                                                                                                                                         |
+| Campo          | Regra                                                                                                                        |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `tipo`         | Obrigatório: `ENTRADA` ou `SAIDA`.                                                                                           |
+| `pastilhaId`   | Obrigatório, inteiro positivo; a pastilha precisa existir.                                                                   |
+| `quantidade`   | Obrigatório, inteiro de 1 a 1.000.000. Texto e decimal são recusados.                                                        |
+| `fornecedorId` | Na ENTRADA, obrigatório e inteiro positivo, e o fornecedor precisa existir. Na SAIDA, não é aceito: enviado, responde `400`. |
+| `documento`    | Opcional, texto de até 100 caracteres, como o número da nota fiscal. Os espaços das pontas são removidos.                    |
+| `observacao`   | Opcional, texto de até 500 caracteres. Os espaços das pontas são removidos.                                                  |
 
-Tudo acontece numa única transação: grava a movimentação com o usuário do token como responsável, soma a ENTRADA ou desconta a SAIDA do `saldoAtual` e reavalia o alerta da pastilha:
+Qualquer outro campo, como `saldoAtual` ou `usuarioId`, responde `400`.
+
+Tudo acontece numa única transação: atualiza o `saldoAtual` (soma a ENTRADA ou desconta a SAIDA), grava a movimentação com o usuário do token como responsável e reavalia o alerta da pastilha:
 
 - saldo menor ou igual ao `estoqueMinimo` e nenhum alerta aberto: abre um alerta;
 - saldo acima do `estoqueMinimo` e alerta aberto, como na ENTRADA que repõe o estoque: fecha o alerta automaticamente, com `dataResolucao` preenchida e `resolvidoPorId` nulo.
 
-O banco garante que o saldo nunca fica negativo e que há no máximo um alerta aberto por pastilha. Hoje, se duas saídas simultâneas passam juntas pela verificação de saldo, a que deixaria o saldo negativo é barrada pelo banco e responde `500`. **(em implementação)** A SAIDA é atômica: nunca deixa o saldo negativo, nem com requisições simultâneas, e a que não tiver saldo recebe o `400` de saldo insuficiente.
+A SAIDA é atômica: o desconto só acontece se ainda houver saldo, numa única instrução no banco, então o saldo nunca fica negativo, nem com requisições simultâneas. Entre saídas simultâneas, a que não encontrar saldo recebe o `400` de saldo insuficiente, com o saldo daquele momento, no lugar do `500` de antes. A atualização do saldo trava a pastilha até o fim da transação, então as movimentações da mesma pastilha são aplicadas uma de cada vez. O banco continua garantindo que o saldo nunca fica negativo e que há no máximo um alerta aberto por pastilha.
 
 Resposta `201`: `{ movimentacao, saldoAtual }`, com a movimentação gravada (`{ id, tipo, quantidade, dataHora, documento, observacao, pastilhaId, usuarioId, fornecedorId }`, sem os objetos relacionados) e o saldo da pastilha depois do lançamento.
 
 Erros:
 
-- `400` `"Tipo de movimentação inválido"`;
-- `400` `"Informe a pastilha e a quantidade"`, quando falta um dos dois ou a quantidade é `0`;
-- `400` `"A quantidade deve ser maior que zero"`, para quantidade negativa;
-- `400` `"Saldo insuficiente: há 3 un em estoque"`, com o saldo e a unidade da pastilha;
-- `400` com `codigo: "REFERENCIA_INVALIDA"` para `fornecedorId` inexistente na ENTRADA;
-- `400` **(em implementação)** para quantidade não inteira ou fora de 1 a 1.000.000 (hoje texto ou decimal podem cair no `500`), para `fornecedorId` ausente na ENTRADA e para `fornecedorId` enviado na SAIDA;
+- `400` com `codigo: "DADOS_INVALIDOS"` e `campos` para corpo fora das regras acima: `tipo` ausente ou desconhecido, `pastilhaId` ou `quantidade` inválidos, `fornecedorId` ausente ou inválido na ENTRADA, `fornecedorId` enviado na SAIDA (`"A saída não tem fornecedor"`), texto longo demais e campo extra (`"Campo não permitido: saldoAtual"`);
+- `400` `"Saldo insuficiente: há 3 un em estoque"`, sem `codigo`, com o saldo e a unidade da pastilha, inclusive para a SAIDA que perde a disputa com outra simultânea;
+- `400` `"Fornecedor não encontrado"` com `codigo: "REFERENCIA_INVALIDA"` para `fornecedorId` inexistente na ENTRADA;
 - `403` `"Seu perfil só pode registrar entradas"`, para SAIDA registrada pelo COMPRADOR;
-- `404` `"Pastilha não encontrada"`, sem `codigo`.
+- `404` `"Pastilha não encontrada"`, sem `codigo`. A pastilha é conferida antes do fornecedor.
 
 ```json
 { "tipo": "ENTRADA", "pastilhaId": 3, "quantidade": 20, "fornecedorId": 1, "documento": "NF 123" }
@@ -651,9 +653,9 @@ Erros:
 
 ## 11. Alertas
 
-O alerta nas listagens é `{ id, dataGeracao, situacao, dataResolucao, pastilhaId, resolvidoPorId, pastilha: { codigo, descricao, saldoAtual, estoqueMinimo } }`, com `situacao` `ABERTO` ou `RESOLVIDO`. `dataResolucao` e `resolvidoPorId` ficam `null` enquanto o alerta está aberto. No fechamento automático, `dataResolucao` é preenchida e `resolvidoPorId` fica `null`.
+O alerta nas listagens é `{ id, dataGeracao, situacao, dataResolucao, pastilhaId, resolvidoPorId, pastilha: { codigo, descricao, saldoAtual, estoqueMinimo }, resolvidoPor }`, com `situacao` `ABERTO` ou `RESOLVIDO`. `dataResolucao` e `resolvidoPorId` ficam `null` enquanto o alerta está aberto. No fechamento automático, `dataResolucao` é preenchida e `resolvidoPorId` fica `null`.
 
-**(em implementação)** Cada alerta traz também `resolvidoPor`: `{ id, nome }` de quem resolveu manualmente, ou `null` quando o alerta está aberto ou foi fechado automaticamente.
+`resolvidoPor` é `{ id, nome }` de quem resolveu manualmente, ou `null` quando o alerta está aberto ou foi fechado automaticamente. Do usuário saem só esses dois campos.
 
 Um alerta abre quando, depois de uma movimentação, o saldo fica menor ou igual ao `estoqueMinimo` e não há alerta aberto para a pastilha. Se alguém resolver o alerta com o saldo ainda baixo, a próxima movimentação abre outro.
 
@@ -661,9 +663,9 @@ Um alerta abre quando, depois de uma movimentação, o saldo fica menor ou igual
 
 Todos os perfis. Existente.
 
-Query **(em implementação)**: `situacao` = `ABERTO` (padrão), `RESOLVIDO` ou `TODAS`. Hoje a rota devolve só os alertas abertos.
+Query: `situacao` = `ABERTO` (padrão), `RESOLVIDO` ou `TODAS`. Outro valor ou outro parâmetro responde `400` com `codigo: "DADOS_INVALIDOS"`.
 
-Resposta `200`: array do alerta mais novo para o mais antigo, por `dataGeracao`.
+Resposta `200`: array do alerta mais novo para o mais antigo, por `dataGeracao`, com o `id` desempatando, sem paginação.
 
 ```json
 [
@@ -689,15 +691,18 @@ Resposta `200`: array do alerta mais novo para o mais antigo, por `dataGeracao`.
 
 ADMINISTRADOR e GESTOR (ação `resolverAlerta`). Existente.
 
-Sem corpo. Marca o alerta como `RESOLVIDO`. Hoje a resolução manual não preenche `dataResolucao` nem `resolvidoPorId`; **(em implementação)** ela grava a data e o usuário logado em `resolvidoPorId`.
+Sem corpo. Marca o alerta aberto como `RESOLVIDO`, grava em `dataResolucao` o momento da resolução e em `resolvidoPorId` o usuário logado, e registra `alerta.resolvido` na trilha de auditoria, tudo na mesma transação.
+
+A resolução trava a pastilha do alerta, como as movimentações, e por isso não se sobrepõe ao fechamento automático por uma ENTRADA simultânea: se a ENTRADA fechar o alerta antes, a resolução manual recebe o `409`. De duas resoluções simultâneas, só uma vence, e a outra também recebe o `409`.
 
 Resposta `200`: o alerta atualizado, sem os objetos `pastilha` e `resolvidoPor`: `{ id, dataGeracao, situacao, dataResolucao, pastilhaId, resolvidoPorId }`.
 
 Erros:
 
-- `403`;
+- `400` com `codigo: "DADOS_INVALIDOS"` para `:id` que não é inteiro positivo;
+- `403` para OPERADOR e COMPRADOR;
 - `404` com `codigo: "NAO_ENCONTRADO"` (`"Registro não encontrado"`) para alerta inexistente;
-- `409` **(em implementação)** com `codigo: "ALERTA_JA_RESOLVIDO"` para alerta já resolvido. Hoje responde `200` e o alerta continua resolvido.
+- `409` `"Este alerta já foi resolvido"` com `codigo: "ALERTA_JA_RESOLVIDO"` para alerta já resolvido, manual ou automaticamente. Nada é alterado.
 
 ```json
 {

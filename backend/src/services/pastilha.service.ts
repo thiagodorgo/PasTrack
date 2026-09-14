@@ -1,52 +1,71 @@
+import { prisma } from "../config/prisma";
 import { AppError } from "../middlewares/erros";
-import { pastilhaRepository } from "../repositories/pastilha.repository";
+import { FiltroPastilhas, pastilhaRepository } from "../repositories/pastilha.repository";
+import { AtualizarPastilha, CriarPastilha } from "../schemas/pastilha.schema";
+import { registrarAuditoria } from "./auditoria.service";
+import { avaliarAlerta } from "./estoque/avaliar-alerta";
 
-interface PastilhaDTO {
-  codigo: string;
-  descricao: string;
-  modelo?: string;
-  aplicacao?: string;
-  unidade?: string;
-  estoqueMinimo?: number;
-  fabricanteId: number;
-}
+const naoEncontrada = () => new AppError("Pastilha não encontrada", 404, "NAO_ENCONTRADO");
 
 export const pastilhaService = {
-  listar(busca?: string) {
-    return pastilhaRepository.listar(
-      busca
-        ? {
-            OR: [
-              { codigo: { contains: busca, mode: "insensitive" } },
-              { descricao: { contains: busca, mode: "insensitive" } },
-            ],
-          }
-        : {}
-    );
+  listar(filtro: FiltroPastilhas = {}) {
+    return pastilhaRepository.listar(filtro);
   },
 
   async buscarPorId(id: number) {
     const pastilha = await pastilhaRepository.buscarPorId(id);
-    if (!pastilha) {
-      throw new AppError("Pastilha não encontrada", 404);
-    }
+    if (!pastilha) throw naoEncontrada();
     return pastilha;
   },
 
-  criar(dados: PastilhaDTO) {
-    return pastilhaRepository.criar({
-      codigo: dados.codigo,
-      descricao: dados.descricao,
-      modelo: dados.modelo,
-      aplicacao: dados.aplicacao,
-      unidade: dados.unidade ?? "un",
-      estoqueMinimo: dados.estoqueMinimo ?? 0,
-      fabricanteId: dados.fabricanteId,
+  criar(dados: CriarPastilha, usuarioId: number) {
+    return prisma.$transaction(async (tx) => {
+      const { fabricante, ...pastilha } = await pastilhaRepository.criar(tx, {
+        codigo: dados.codigo,
+        descricao: dados.descricao,
+        modelo: dados.modelo,
+        aplicacao: dados.aplicacao,
+        unidade: dados.unidade,
+        estoqueMinimo: dados.estoqueMinimo,
+        fabricanteId: dados.fabricanteId,
+      });
+      await registrarAuditoria(tx, {
+        usuarioId,
+        acao: "pastilha.criada",
+        entidade: "pastilha",
+        entidadeId: pastilha.id,
+        depois: pastilha,
+      });
+      return { ...pastilha, fabricante };
     });
   },
 
-  async atualizar(id: number, dados: Partial<PastilhaDTO>) {
-    await this.buscarPorId(id);
-    return pastilhaRepository.atualizar(id, dados);
+  /** Código e saldo nunca mudam aqui. Se o estoque mínimo mudar, o alerta é reavaliado na mesma transação. */
+  atualizar(id: number, dados: AtualizarPastilha, usuarioId: number) {
+    return prisma.$transaction(async (tx) => {
+      const antes = await pastilhaRepository.buscarParaAtualizar(tx, id);
+      if (!antes) throw naoEncontrada();
+
+      const { fabricante, ...depois } = await pastilhaRepository.atualizar(tx, id, {
+        descricao: dados.descricao,
+        modelo: dados.modelo,
+        aplicacao: dados.aplicacao,
+        unidade: dados.unidade,
+        estoqueMinimo: dados.estoqueMinimo,
+        fabricanteId: dados.fabricanteId,
+      });
+      await registrarAuditoria(tx, {
+        usuarioId,
+        acao: "pastilha.atualizada",
+        entidade: "pastilha",
+        entidadeId: id,
+        antes,
+        depois,
+      });
+      if (depois.estoqueMinimo !== antes.estoqueMinimo) {
+        await avaliarAlerta(tx, id, usuarioId);
+      }
+      return { ...depois, fabricante };
+    });
   },
 };

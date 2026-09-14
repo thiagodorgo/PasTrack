@@ -1,30 +1,25 @@
 import { Request, Response } from "express";
-import { AppError } from "../middlewares/erros";
+import { AtualizarPastilha, ConsultaPastilhas, CriarPastilha } from "../schemas/pastilha.schema";
 import { pastilhaService } from "../services/pastilha.service";
 
+/** Params, query e corpo já chegam validados e convertidos pelo validar() das rotas. */
 export const pastilhaController = {
   async listar(req: Request, res: Response) {
-    const busca = typeof req.query.busca === "string" ? req.query.busca : undefined;
-    const pastilhas = await pastilhaService.listar(busca);
-    return res.json(pastilhas);
+    const filtro = req.query as ConsultaPastilhas;
+    return res.json(await pastilhaService.listar(filtro));
   },
 
   async buscarPorId(req: Request, res: Response) {
-    const pastilha = await pastilhaService.buscarPorId(Number(req.params.id));
-    return res.json(pastilha);
+    return res.json(await pastilhaService.buscarPorId(Number(req.params.id)));
   },
 
   async criar(req: Request, res: Response) {
-    const { codigo, descricao, fabricanteId } = req.body;
-    if (!codigo || !descricao || !fabricanteId) {
-      throw new AppError("Código, descrição e fabricante são obrigatórios");
-    }
-    const pastilha = await pastilhaService.criar(req.body);
+    const pastilha = await pastilhaService.criar(req.body as CriarPastilha, req.usuario!.id);
     return res.status(201).json(pastilha);
   },
 
   async atualizar(req: Request, res: Response) {
-    const pastilha = await pastilhaService.atualizar(Number(req.params.id), req.body);
-    return res.json(pastilha);
+    const dados = req.body as AtualizarPastilha;
+    return res.json(await pastilhaService.atualizar(Number(req.params.id), dados, req.usuario!.id));
   },
 };

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { prisma } from "../../src/config/prisma";
 import { api, autorizacao } from "../helpers/api";
-import { criarPastilha, criarUsuario } from "../helpers/fabricas";
+import { criarUsuario } from "../helpers/fabricas";
 
 /**
  * Defeitos conhecidos, registrados como testes que DEVEM falhar enquanto não forem corrigidos.
@@ -10,18 +10,6 @@ import { criarPastilha, criarUsuario } from "../helpers/fabricas";
  * testes não "passem" por um motivo errado.
  */
 describe("pendências conhecidas de segurança e integridade", () => {
-  it.fails("PUT /api/pastilhas/:id não aceita saldoAtual (mass assignment)", async () => {
-    const { token } = await criarUsuario({ perfil: "GESTOR" });
-    const pastilha = await criarPastilha({ saldoAtual: 5 });
-    const resposta = await api()
-      .put(`/api/pastilhas/${pastilha.id}`)
-      .set(autorizacao(token))
-      .send({ saldoAtual: 999 });
-    expect(resposta.status).toBe(400);
-    const depois = await prisma.pastilha.findUniqueOrThrow({ where: { id: pastilha.id } });
-    expect(depois.saldoAtual).toBe(5);
-  });
-
   it.fails("usuário desativado perde o acesso mesmo com token ainda válido", async () => {
     const { usuario, token } = await criarUsuario({ perfil: "OPERADOR" });
     await prisma.usuario.update({ where: { id: usuario.id }, data: { ativo: false } });

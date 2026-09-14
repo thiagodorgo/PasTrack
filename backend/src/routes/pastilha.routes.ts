@@ -2,10 +2,28 @@ import { Router } from "express";
 import { pastilhaController } from "../controllers/pastilha.controller";
 import { autorizar } from "../middlewares/auth";
 import { capturar } from "../middlewares/erros";
+import { validar } from "../middlewares/validar";
+import {
+  atualizarPastilhaSchema,
+  consultaPastilhasSchema,
+  criarPastilhaSchema,
+  pastilhaIdParam,
+} from "../schemas/pastilha.schema";
 
 export const pastilhaRotas = Router();
 
-pastilhaRotas.get("/", capturar(pastilhaController.listar));
-pastilhaRotas.get("/:id", capturar(pastilhaController.buscarPorId));
-pastilhaRotas.post("/", autorizar("gerenciarPastilhas"), capturar(pastilhaController.criar));
-pastilhaRotas.put("/:id", autorizar("gerenciarPastilhas"), capturar(pastilhaController.atualizar));
+// a permissão vem antes da validação: quem não pode alterar recebe 403 sem ver as regras do corpo
+pastilhaRotas.get("/", validar({ query: consultaPastilhasSchema }), capturar(pastilhaController.listar));
+pastilhaRotas.get("/:id", validar({ params: pastilhaIdParam }), capturar(pastilhaController.buscarPorId));
+pastilhaRotas.post(
+  "/",
+  autorizar("gerenciarPastilhas"),
+  validar({ body: criarPastilhaSchema }),
+  capturar(pastilhaController.criar)
+);
+pastilhaRotas.put(
+  "/:id",
+  autorizar("gerenciarPastilhas"),
+  validar({ params: pastilhaIdParam, body: atualizarPastilhaSchema }),
+  capturar(pastilhaController.atualizar)
+);

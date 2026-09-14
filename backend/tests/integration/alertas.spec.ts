@@ -1,13 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { prisma } from "../../src/config/prisma";
 import { api, autorizacao } from "../helpers/api";
-import { criarPastilha, criarUsuario } from "../helpers/fabricas";
+import { criarFornecedor, criarPastilha, criarUsuario } from "../helpers/fabricas";
 
 async function movimentar(token: string, pastilhaId: number, tipo: "ENTRADA" | "SAIDA", quantidade: number) {
+  // a ENTRADA exige fornecedor; a SAÍDA não aceita
+  const fornecedorId = tipo === "ENTRADA" ? (await criarFornecedor()).id : undefined;
   const resposta = await api()
     .post("/api/movimentacoes")
     .set(autorizacao(token))
-    .send({ tipo, pastilhaId, quantidade });
+    .send({ tipo, pastilhaId, quantidade, fornecedorId });
   expect(resposta.status).toBe(201);
   return resposta;
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { prisma } from "../../src/config/prisma";
 import { api, autorizacao } from "../helpers/api";
-import { criarFabricante, criarPastilha, criarUsuario } from "../helpers/fabricas";
+import { criarFabricante, criarFornecedor, criarPastilha, criarUsuario } from "../helpers/fabricas";
 
 describe("permissões por perfil nas rotas", () => {
   it("OPERADOR não cadastra pastilha", async () => {
@@ -46,10 +46,11 @@ describe("permissões por perfil nas rotas", () => {
   it("COMPRADOR registra entrada, mas não registra saída", async () => {
     const { token } = await criarUsuario({ perfil: "COMPRADOR" });
     const pastilha = await criarPastilha({ saldoAtual: 5 });
+    const fornecedor = await criarFornecedor();
     const entrada = await api()
       .post("/api/movimentacoes")
       .set(autorizacao(token))
-      .send({ tipo: "ENTRADA", pastilhaId: pastilha.id, quantidade: 3 });
+      .send({ tipo: "ENTRADA", pastilhaId: pastilha.id, quantidade: 3, fornecedorId: fornecedor.id });
     expect(entrada.status).toBe(201);
     expect(entrada.body.saldoAtual).toBe(8);
 

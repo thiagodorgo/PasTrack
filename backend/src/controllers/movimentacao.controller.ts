@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { pode } from "../config/permissoes";
 import { AppError } from "../middlewares/erros";
+import { RegistrarMovimentacao } from "../schemas/movimentacao.schema";
 import { movimentacaoService } from "../services/movimentacao.service";
 
 export const movimentacaoController = {
@@ -10,31 +11,15 @@ export const movimentacaoController = {
     return res.json(movimentacoes);
   },
 
+  /** O corpo chega validado e convertido pela rota (schemas/movimentacao.schema.ts). */
   async registrar(req: Request, res: Response) {
-    const { tipo, pastilhaId, quantidade, fornecedorId, documento, observacao } = req.body;
-
-    if (tipo !== "ENTRADA" && tipo !== "SAIDA") {
-      throw new AppError("Tipo de movimentação inválido");
-    }
-    if (!pastilhaId || !quantidade) {
-      throw new AppError("Informe a pastilha e a quantidade");
-    }
-
+    const dados = req.body as RegistrarMovimentacao;
     const usuario = req.usuario!;
-    if (tipo === "SAIDA" && !pode(usuario.perfil, "registrarSaida")) {
+    if (dados.tipo === "SAIDA" && !pode(usuario.perfil, "registrarSaida")) {
       throw new AppError("Seu perfil só pode registrar entradas", 403);
     }
 
-    const resultado = await movimentacaoService.registrar({
-      tipo,
-      pastilhaId: Number(pastilhaId),
-      quantidade: Number(quantidade),
-      usuarioId: usuario.id,
-      fornecedorId: fornecedorId ? Number(fornecedorId) : undefined,
-      documento,
-      observacao,
-    });
-
+    const resultado = await movimentacaoService.registrar({ ...dados, usuarioId: usuario.id });
     return res.status(201).json(resultado);
   },
 };

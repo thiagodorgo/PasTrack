@@ -172,7 +172,7 @@ describe("validação do corpo de POST /api/movimentacoes", () => {
     expect(maxima.body.saldoAtual).toBe(1_000_011);
   });
 
-  it("recusa documento acima de 100 caracteres e observação acima de 500", async () => {
+  it("recusa documento e observação longos demais, de outro tipo ou com o caractere nulo", async () => {
     const { token, saida } = await preparar();
     await esperarRecusa(
       await registrarMovimentacao(token, { ...saida, documento: "d".repeat(101) }),
@@ -183,6 +183,16 @@ describe("validação do corpo de POST /api/movimentacoes", () => {
       "observacao"
     );
     await esperarRecusa(await registrarMovimentacao(token, { ...saida, documento: 123 }), "documento");
+    // o PostgreSQL não grava o caractere nulo: o schema recusa antes de chegar ao banco
+    const nulo = String.fromCharCode(0);
+    await esperarRecusa(
+      await registrarMovimentacao(token, { ...saida, documento: `NF${nulo}1` }),
+      "documento"
+    );
+    await esperarRecusa(
+      await registrarMovimentacao(token, { ...saida, observacao: `a${nulo}` }),
+      "observacao"
+    );
   });
 
   it("apara os espaços antes de medir documento e observação", async () => {
@@ -586,5 +596,40 @@ describe("SAIDA de quem só registra ENTRADA", () => {
     });
     expect(resposta.status).toBe(400);
     expect(resposta.body.codigo).toBe("DADOS_INVALIDOS");
+  });
+});
+
+describe("documento e observação vazios", () => {
+  it("só com espaços, documento e observação gravam null", async () => {
+    const { token } = await criarUsuario({ perfil: "OPERADOR" });
+    const pastilha = await criarPastilha({ saldoAtual: 5 });
+    const resposta = await registrarMovimentacao(token, {
+      tipo: "SAIDA",
+      pastilhaId: pastilha.id,
+      quantidade: 1,
+      documento: "   ",
+      observacao: " \n\t ",
+    });
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.movimentacao).toMatchObject({ documento: null, observacao: null });
+  });
+
+  it("aceita null em documento e observação e grava null", async () => {
+    const { token } = await criarUsuario({ perfil: "GESTOR" });
+    const pastilha = await criarPastilha();
+    const fornecedor = await criarFornecedor();
+    const resposta = await registrarMovimentacao(token, {
+      tipo: "ENTRADA",
+      pastilhaId: pastilha.id,
+      quantidade: 1,
+      fornecedorId: fornecedor.id,
+      documento: null,
+      observacao: null,
+    });
+    expect(resposta.status).toBe(201);
+    const gravada = await prisma.movimentacao.findUniqueOrThrow({
+      where: { id: resposta.body.movimentacao.id },
+    });
+    expect(gravada).toMatchObject({ documento: null, observacao: null });
   });
 });

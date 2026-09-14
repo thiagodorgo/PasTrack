@@ -18,6 +18,23 @@ function identificador(mensagem: string) {
   return z.number(mensagem).int(mensagem).positive(mensagem).max(ID_MAXIMO, mensagem);
 }
 
+/** O PostgreSQL não grava o caractere nulo (U+0000) em texto. */
+const CARACTERE_NULO = String.fromCharCode(0);
+
+/**
+ * Texto opcional: apara as pontas, limita o tamanho e recusa o caractere nulo.
+ * Ausente, null ou só com espaços, vira null.
+ */
+function textoOpcional(campo: string, limite: number) {
+  return z
+    .string(`${campo} deve ser um texto`)
+    .trim()
+    .max(limite, `${campo} deve ter até ${limite} caracteres`)
+    .refine((texto) => !texto.includes(CARACTERE_NULO), `${campo} não pode ter o caractere nulo (U+0000)`)
+    .nullish()
+    .transform((texto) => texto || null);
+}
+
 const camposComuns = {
   pastilhaId: identificador("Informe a pastilha pelo id numérico"),
   quantidade: z
@@ -25,16 +42,8 @@ const camposComuns = {
     .int("A quantidade deve ser um número inteiro")
     .min(1, "A quantidade deve ser de pelo menos 1")
     .max(QUANTIDADE_MAXIMA, `A quantidade deve ser de no máximo ${QUANTIDADE_MAXIMA}`),
-  documento: z
-    .string("O documento deve ser um texto")
-    .trim()
-    .max(100, "O documento deve ter até 100 caracteres")
-    .optional(),
-  observacao: z
-    .string("A observação deve ser um texto")
-    .trim()
-    .max(500, "A observação deve ter até 500 caracteres")
-    .optional(),
+  documento: textoOpcional("O documento", 100),
+  observacao: textoOpcional("A observação", 500),
 };
 
 /**

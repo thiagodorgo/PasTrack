@@ -25,6 +25,8 @@ saudeRotas.get("/health", async (_req, res) => {
     await prisma.$queryRaw`SELECT 1`;
     return res.json({ status: "ok", banco: "ok", ...base });
   } catch {
-    return res.status(503).json({ status: "erro", banco: "indisponivel", ...base });
+    return res
+      .status(503)
+      .json({ erro: "Banco de dados indisponível", status: "erro", banco: "indisponivel", ...base });
   }
 });

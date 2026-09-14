@@ -16,14 +16,19 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:integracao": "vitest run --project integracao",
     "test:cov": "vitest run --coverage",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
+    "db:seed": "tsx src/scripts/seed.ts",
+    "db:seed:demo": "tsx src/scripts/seed-demo.ts",
     "db:studio": "prisma studio",
-    "seed": "tsx prisma/seed.ts"
+    "db:teste:subir": "docker compose -f ../docker-compose.test.yml up -d --wait",
+    "db:teste:parar": "docker compose -f ../docker-compose.test.yml down -v"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx src/scripts/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

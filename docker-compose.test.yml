@@ -1,0 +1,20 @@
+# Banco descartável para os testes de integração do backend (dados em memória).
+# Uso: npm run db:teste:subir --prefix backend
+name: pastrack-teste
+
+services:
+  banco-teste:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: pastrack
+      POSTGRES_PASSWORD: pastrack
+      POSTGRES_DB: pastrack_teste
+    ports:
+      - "127.0.0.1:${DB_TESTE_PORTA:-5433}:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pastrack -d pastrack_teste"]
+      interval: 2s
+      timeout: 3s
+      retries: 30

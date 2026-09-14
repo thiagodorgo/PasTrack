@@ -43,14 +43,14 @@ A arquitetura em três camadas da aplicação está em [docs/arquitetura.png](do
 
 ```bash
 cd backend
-cp .env.example .env   # ajustar a DATABASE_URL e o JWT_SECRET
+cp .env.example .env   # preencha JWT_SECRET e SEED_ADMIN_SENHA (instruções no próprio arquivo)
 npm install
-npx prisma migrate dev --name inicial
-npm run seed
+npm run db:deploy      # aplica as migrations versionadas
+npm run db:seed        # cria o administrador inicial
 npm run dev
 ```
 
-A API sobe em http://localhost:3333.
+A API sobe em http://localhost:3333. O banco pode ser um PostgreSQL local ou o do Docker Compose.
 
 ## Como rodar o front-end
 
@@ -65,7 +65,9 @@ A aplicação abre em http://localhost:5173.
 
 ## Acesso inicial
 
-O seed cria o usuário administrador `admin@pastrack.com` com a senha `admin123`. Trocar a senha depois do primeiro acesso.
+O seed cria um único administrador com o e-mail de `SEED_ADMIN_EMAIL` e a senha de `SEED_ADMIN_SENHA`. Em desenvolvimento, se a senha ficar vazia, o seed gera uma senha aleatória e a exibe uma única vez. Em produção a variável é obrigatória. Rodar o seed de novo nunca altera a senha de um administrador que já existe.
+
+Para carregar dados de demonstração (fabricantes, fornecedores, pastilhas e um usuário de cada perfil), defina `SEED_DEMO=true` no `.env` e rode `npm run db:seed:demo`.
 
 ## Estrutura do projeto
 

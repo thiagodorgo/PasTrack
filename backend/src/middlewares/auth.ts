@@ -1,11 +1,14 @@
+import { PerfilUsuario } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { env } from "../config/env";
+import { Acao, pode } from "../config/permissoes";
 import { AppError } from "./erros";
 
 export interface UsuarioToken {
   id: number;
   nome: string;
-  perfil: string;
+  perfil: PerfilUsuario;
 }
 
 export function autenticar(req: Request, _res: Response, next: NextFunction) {
@@ -15,8 +18,7 @@ export function autenticar(req: Request, _res: Response, next: NextFunction) {
   }
 
   try {
-    const payload = jwt.verify(cabecalho.slice(7), process.env.JWT_SECRET as string) as UsuarioToken;
-    req.usuario = payload;
+    req.usuario = jwt.verify(cabecalho.slice(7), env.JWT_SECRET) as UsuarioToken;
   } catch {
     throw new AppError("Token inválido ou expirado", 401);
   }
@@ -24,9 +26,10 @@ export function autenticar(req: Request, _res: Response, next: NextFunction) {
   next();
 }
 
-export function autorizar(...perfis: string[]) {
+/** Libera a rota só para os perfis que podem executar a ação, conforme config/permissoes.ts. */
+export function autorizar(acao: Acao) {
   return (req: Request, _res: Response, next: NextFunction) => {
-    if (!req.usuario || !perfis.includes(req.usuario.perfil)) {
+    if (!req.usuario || !pode(req.usuario.perfil, acao)) {
       throw new AppError("Acesso negado para este perfil", 403);
     }
     next();

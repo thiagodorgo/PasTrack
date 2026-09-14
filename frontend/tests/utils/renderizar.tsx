@@ -1,12 +1,12 @@
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactElement } from "react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, type MemoryRouterProps } from "react-router-dom";
 import { AuthProvider } from "../../src/contexts/AuthContext";
 
 interface OpcoesDeRenderizacao {
-  /** Histórico inicial do MemoryRouter; a última entrada é a rota ativa. */
-  initialEntries?: string[];
+  /** Histórico inicial do MemoryRouter (caminhos ou { pathname, state }); a última entrada é a rota ativa. */
+  initialEntries?: MemoryRouterProps["initialEntries"];
 }
 
 /**

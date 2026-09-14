@@ -417,3 +417,76 @@ select:focus {
   color: var(--texto-suave);
   font-size: 14px;
 }
+
+/* telas de acesso: login e troca de senha */
+.logo-login {
+  color: var(--azul);
+  padding: 0;
+  margin-bottom: 24px;
+}
+
+.logo-login::before {
+  background: var(--azul);
+}
+
+.subtitulo-login {
+  margin-bottom: 20px;
+}
+
+.titulo-acesso {
+  margin-bottom: 16px;
+}
+
+.cartao-login > label,
+.cartao-login .campo,
+.cartao-login .mensagem {
+  margin-bottom: 14px;
+}
+
+.cartao-login > .botao-bloco {
+  margin-top: 10px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dica-campo {
+  color: var(--texto-suave);
+  font-size: 12px;
+}
+
+.erro-campo {
+  color: var(--vermelho);
+  font-size: 13px;
+}
+
+.botao-bloco {
+  width: 100%;
+  text-align: center;
+}
+
+/* páginas */
+.cabecalho-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.campo-largo {
+  grid-column: 1 / -1;
+}
+
+textarea {
+  padding: 9px 10px;
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--texto);
+  resize: vertical;
+}

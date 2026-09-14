@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Carregando } from "../components/Carregando";
+import { Mensagem } from "../components/Mensagem";
+import { TabelaMovimentacoes } from "../components/TabelaMovimentacoes";
 import { mensagemDeErro } from "../services/api";
 import { buscarResumo } from "../services/painel";
-import { ResumoPainel } from "../types";
+import type { ResumoPainel } from "../types";
 
 export function Painel() {
   const [resumo, setResumo] = useState<ResumoPainel | null>(null);
@@ -16,8 +19,8 @@ export function Painel() {
       .finally(() => setCarregando(false));
   }, []);
 
-  if (carregando) return <p className="texto-suave">Carregando painel...</p>;
-  if (erro) return <p className="mensagem-erro">{erro}</p>;
+  if (carregando) return <Carregando texto="Carregando painel..." />;
+  if (erro) return <Mensagem tipo="erro">{erro}</Mensagem>;
   if (!resumo) return null;
 
   return (
@@ -60,38 +63,7 @@ export function Painel() {
 
       <div className="cartao">
         <h2>Últimas movimentações</h2>
-        {resumo.ultimasMovimentacoes.length === 0 ? (
-          <p className="texto-suave">Nenhuma movimentação registrada ainda.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Tipo</th>
-                <th>Pastilha</th>
-                <th>Qtde</th>
-                <th>Responsável</th>
-              </tr>
-            </thead>
-            <tbody>
-              {resumo.ultimasMovimentacoes.map((m) => (
-                <tr key={m.id}>
-                  <td>{new Date(m.dataHora).toLocaleString("pt-BR")}</td>
-                  <td>
-                    <span className={m.tipo === "ENTRADA" ? "selo selo-entrada" : "selo selo-saida"}>
-                      {m.tipo === "ENTRADA" ? "Entrada" : "Saída"}
-                    </span>
-                  </td>
-                  <td>{m.pastilha.codigo}</td>
-                  <td>
-                    {m.quantidade} {m.pastilha.unidade}
-                  </td>
-                  <td>{m.usuario.nome}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        <TabelaMovimentacoes movimentacoes={resumo.ultimasMovimentacoes} legenda="Últimas movimentações" />
       </div>
     </>
   );

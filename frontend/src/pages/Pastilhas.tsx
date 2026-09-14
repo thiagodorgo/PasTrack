@@ -1,8 +1,12 @@
-import { FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
+import { Carregando } from "../components/Carregando";
+import { Mensagem } from "../components/Mensagem";
+import { SePerfil } from "../components/SePerfil";
 import { mensagemDeErro } from "../services/api";
 import { listarFabricantes } from "../services/cadastros";
 import { criarPastilha, listarPastilhas } from "../services/pastilhas";
-import { Fabricante, Pastilha } from "../types";
+import type { Fabricante, Pastilha } from "../types";
+import { formatarQuantidade } from "../utils/formato";
 
 export function Pastilhas() {
   const [pastilhas, setPastilhas] = useState<Pastilha[]>([]);
@@ -72,17 +76,24 @@ export function Pastilhas() {
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div className="cabecalho-pagina">
         <h1>Pastilhas</h1>
-        <button className="botao" onClick={() => setMostrarFormulario((v) => !v)}>
-          {mostrarFormulario ? "Fechar" : "Nova pastilha"}
-        </button>
+        <SePerfil acao="gerenciarPastilhas">
+          <button
+            type="button"
+            className="botao"
+            aria-expanded={mostrarFormulario}
+            onClick={() => setMostrarFormulario((aberto) => !aberto)}
+          >
+            {mostrarFormulario ? "Fechar" : "Nova pastilha"}
+          </button>
+        </SePerfil>
       </div>
 
-      {erro && <p className="mensagem-erro">{erro}</p>}
+      {erro && <Mensagem tipo="erro">{erro}</Mensagem>}
 
       {mostrarFormulario && (
-        <form className="cartao formulario" onSubmit={aoSalvar}>
+        <form className="cartao formulario" onSubmit={aoSalvar} aria-label="Nova pastilha">
           <label>
             Código
             <input value={codigo} onChange={(e) => setCodigo(e.target.value)} required />
@@ -129,7 +140,7 @@ export function Pastilhas() {
         </form>
       )}
 
-      <form className="cartao formulario" onSubmit={aoBuscar}>
+      <form className="cartao formulario" onSubmit={aoBuscar} role="search">
         <label>
           Buscar por código ou descrição
           <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Ex.: CNMG" />
@@ -139,44 +150,43 @@ export function Pastilhas() {
 
       <div className="cartao">
         {carregando ? (
-          <p className="texto-suave">Carregando pastilhas...</p>
+          <Carregando texto="Carregando pastilhas..." />
         ) : pastilhas.length === 0 ? (
           <p className="texto-suave">Nenhuma pastilha encontrada.</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Descrição</th>
-                <th>Fabricante</th>
-                <th>Saldo</th>
-                <th>Mínimo</th>
-                <th>Situação</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pastilhas.map((p) => (
-                <tr key={p.id}>
-                  <td>{p.codigo}</td>
-                  <td>{p.descricao}</td>
-                  <td>{p.fabricante?.nome}</td>
-                  <td>
-                    {p.saldoAtual} {p.unidade}
-                  </td>
-                  <td>
-                    {p.estoqueMinimo} {p.unidade}
-                  </td>
-                  <td>
-                    {p.saldoAtual <= p.estoqueMinimo ? (
-                      <span className="selo selo-critico">Crítico</span>
-                    ) : (
-                      <span className="selo selo-ok">Normal</span>
-                    )}
-                  </td>
+          <div className="tabela-rolavel">
+            <table>
+              <caption className="sr-only">Pastilhas cadastradas</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Código</th>
+                  <th scope="col">Descrição</th>
+                  <th scope="col">Fabricante</th>
+                  <th scope="col">Saldo</th>
+                  <th scope="col">Mínimo</th>
+                  <th scope="col">Situação</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {pastilhas.map((p) => (
+                  <tr key={p.id}>
+                    <td>{p.codigo}</td>
+                    <td>{p.descricao}</td>
+                    <td>{p.fabricante.nome}</td>
+                    <td>{formatarQuantidade(p.saldoAtual, p.unidade)}</td>
+                    <td>{formatarQuantidade(p.estoqueMinimo, p.unidade)}</td>
+                    <td>
+                      {p.saldoAtual <= p.estoqueMinimo ? (
+                        <span className="selo selo-critico">Crítico</span>
+                      ) : (
+                        <span className="selo selo-ok">Normal</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </>

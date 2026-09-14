@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { pode } from "../config/permissoes";
 import { AppError } from "../middlewares/erros";
 import { movimentacaoService } from "../services/movimentacao.service";
 
@@ -19,11 +20,16 @@ export const movimentacaoController = {
       throw new AppError("Informe a pastilha e a quantidade");
     }
 
+    const usuario = req.usuario!;
+    if (tipo === "SAIDA" && !pode(usuario.perfil, "registrarSaida")) {
+      throw new AppError("Seu perfil só pode registrar entradas", 403);
+    }
+
     const resultado = await movimentacaoService.registrar({
       tipo,
       pastilhaId: Number(pastilhaId),
       quantidade: Number(quantidade),
-      usuarioId: req.usuario!.id,
+      usuarioId: usuario.id,
       fornecedorId: fornecedorId ? Number(fornecedorId) : undefined,
       documento,
       observacao,

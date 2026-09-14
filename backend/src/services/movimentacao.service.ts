@@ -7,7 +7,13 @@ import { avaliarAlerta } from "./estoque/avaliar-alerta";
 
 type RegistrarMovimentacaoDTO = RegistrarMovimentacao & { usuarioId: number };
 
-/** ENTRADA: o fornecedor precisa existir; o incremento trava a linha da pastilha. */
+/** Maior saldo que cabe na coluna INT4 do banco. */
+const SALDO_MAXIMO = 2_147_483_647;
+
+/**
+ * ENTRADA: o fornecedor precisa existir. O incremento só acontece se o saldo continuar cabendo
+ * no INT4 do banco, numa única instrução que também trava a linha da pastilha.
+ */
 async function aplicarEntrada(
   tx: Prisma.TransactionClient,
   pastilhaId: number,
@@ -20,10 +26,19 @@ async function aplicarEntrada(
   if (!fornecedor) {
     throw new AppError("Fornecedor não encontrado", 400, "REFERENCIA_INVALIDA");
   }
-  await tx.pastilha.update({
-    where: { id: pastilhaId },
+  const { count } = await tx.pastilha.updateMany({
+    where: { id: pastilhaId, saldoAtual: { lte: SALDO_MAXIMO - dados.quantidade } },
     data: { saldoAtual: { increment: dados.quantidade } },
   });
+  if (count === 0) {
+    const atual = await tx.pastilha.findUniqueOrThrow({
+      where: { id: pastilhaId },
+      select: { saldoAtual: true, unidade: true },
+    });
+    throw new AppError(
+      `Entrada acima do saldo máximo de ${SALDO_MAXIMO} ${atual.unidade}: há ${atual.saldoAtual} ${atual.unidade} em estoque`
+    );
+  }
 }
 
 /**

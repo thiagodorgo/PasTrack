@@ -660,3 +660,29 @@ describe("limites do período de GET /api/movimentacoes", () => {
     ]);
   });
 });
+
+describe("saldo máximo do banco", () => {
+  it("a ENTRADA que passaria de 2147483647 responde 400 sem gravar nada", async () => {
+    const { token } = await criarUsuario({ perfil: "GESTOR" });
+    const fornecedor = await criarFornecedor();
+    const pastilha = await criarPastilha({ saldoAtual: 2_147_483_000 });
+    const entrada = { tipo: "ENTRADA", pastilhaId: pastilha.id, fornecedorId: fornecedor.id };
+
+    const acima = await registrarMovimentacao(token, { ...entrada, quantidade: 1000 });
+    expect(acima.status).toBe(400);
+    expect(acima.body).toEqual({
+      erro: "Entrada acima do saldo máximo de 2147483647 un: há 2147483000 un em estoque",
+    });
+    expect(await saldoDe(pastilha.id)).toBe(2_147_483_000);
+    expect(await prisma.movimentacao.count()).toBe(0);
+
+    const noLimite = await registrarMovimentacao(token, { ...entrada, quantidade: 647 });
+    expect(noLimite.status).toBe(201);
+    expect(noLimite.body.saldoAtual).toBe(2_147_483_647);
+
+    const mais = await registrarMovimentacao(token, { ...entrada, quantidade: 1 });
+    expect(mais.status).toBe(400);
+    expect(mais.body.erro).toMatch(/há 2147483647 un em estoque$/);
+    expect(await prisma.movimentacao.count()).toBe(1);
+  });
+});

@@ -633,3 +633,30 @@ describe("documento e observação vazios", () => {
     expect(gravada).toMatchObject({ documento: null, observacao: null });
   });
 });
+
+describe("limites do período de GET /api/movimentacoes", () => {
+  function listar(token: string, consulta: Record<string, string>) {
+    return api().get("/api/movimentacoes").set(autorizacao(token)).query(consulta);
+  }
+
+  it("aceita datas nos extremos dos anos 1 e 9999", async () => {
+    const { token } = await criarUsuario();
+    expect((await listar(token, { de: "0001-01-01", ate: "9999-12-31" })).status).toBe(200);
+    const comHora = await listar(token, { de: "0001-01-01T00:00:00Z", ate: "9999-12-31T23:59:59.999Z" });
+    expect(comHora.status).toBe(200);
+  });
+
+  it.each([
+    ["de", "0000-01-01"],
+    ["de", "0001-01-01T00:00:00+03:00"],
+    ["ate", "0000-12-31"],
+    ["ate", "9999-12-31T23:00:00-03:00"],
+  ])("recusa %s=%s, fora dos anos 1 a 9999 em UTC", async (campo, valor) => {
+    const { token } = await criarUsuario();
+    const resposta = await listar(token, { [campo]: valor });
+    expect(resposta.status).toBe(400);
+    expect(resposta.body.campos).toEqual([
+      { caminho: campo, mensagem: "Use uma data entre os anos 1 e 9999, em UTC" },
+    ]);
+  });
+});

@@ -549,3 +549,42 @@ describe("ids no limite do INT4", () => {
     expect(acima.body.campos[0].caminho).toBe("pastilhaId");
   });
 });
+
+describe("SAIDA de quem só registra ENTRADA", () => {
+  it("COMPRADOR com SAIDA de quantidade 0 recebe 403, não 400", async () => {
+    const { token } = await criarUsuario({ perfil: "COMPRADOR" });
+    const pastilha = await criarPastilha({ saldoAtual: 5 });
+    const resposta = await registrarMovimentacao(token, {
+      tipo: "SAIDA",
+      pastilhaId: pastilha.id,
+      quantidade: 0,
+    });
+    expect(resposta.status).toBe(403);
+    expect(resposta.body).toEqual({ erro: "Seu perfil só pode registrar entradas" });
+    expect(await saldoDe(pastilha.id)).toBe(5);
+  });
+
+  it("COMPRADOR com SAIDA cheia de campos inválidos também recebe 403", async () => {
+    const { token } = await criarUsuario({ perfil: "COMPRADOR" });
+    const resposta = await registrarMovimentacao(token, {
+      tipo: "SAIDA",
+      pastilhaId: "x",
+      fornecedorId: 1,
+      saldoAtual: 9,
+    });
+    expect(resposta.status).toBe(403);
+    expect(resposta.body).toEqual({ erro: "Seu perfil só pode registrar entradas" });
+  });
+
+  it("a ENTRADA inválida do COMPRADOR continua recebendo 400", async () => {
+    const { token } = await criarUsuario({ perfil: "COMPRADOR" });
+    const pastilha = await criarPastilha();
+    const resposta = await registrarMovimentacao(token, {
+      tipo: "ENTRADA",
+      pastilhaId: pastilha.id,
+      quantidade: 0,
+    });
+    expect(resposta.status).toBe(400);
+    expect(resposta.body.codigo).toBe("DADOS_INVALIDOS");
+  });
+});

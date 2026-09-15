@@ -229,7 +229,16 @@ Get-NetConnectionProfile
 
 Se você mudou `WEB_PORTA`, use a mesma porta na regra.
 
-No Linux, libere a porta no firewall da distribuição, se houver um ativo. No Ubuntu, por exemplo: `sudo ufw allow 8080/tcp`.
+No Linux, o Docker publica as portas com regras próprias do iptables, que passam por fora do `ufw` e de firewalls parecidos. Com o `WEB_PORTA` padrão, a porta 8080 fica aberta para qualquer origem que alcance a máquina, e nem uma regra de bloqueio no `ufw` a fecha. Para limitar o acesso:
+
+- publique a porta só no IP da rede local, com `WEB_PORTA=192.168.0.10:8080` no `.env`. O acesso na própria máquina também passa a ser por esse IP, e não mais por `localhost`;
+- ou filtre na cadeia `DOCKER-USER` do iptables, que o Docker consulta antes das próprias regras. Por exemplo, para aceitar só a rede `192.168.0.0/24` na interface `eth0`:
+
+  ```bash
+  sudo iptables -I DOCKER-USER -i eth0 ! -s 192.168.0.0/24 -j DROP
+  ```
+
+  A regra se perde ao reiniciar. Torne-a permanente com o recurso da distribuição, como o pacote `iptables-persistent`.
 
 ### 3. Acesse
 

@@ -95,8 +95,10 @@ Sem o arquivo, a verificação é pulada com um aviso.
    git commit -m "test: registra resultados dos testes de AAAA-MM-DD"
    ```
 
-3. Faça o merge do PR com merge commit (sem squash e sem rebase), para que o commit de evidência continue com o
-   commit testado como pai.
+3. Faça o merge do PR por squash logo depois de gerar o snapshot, sem nenhum outro merge na `main` no meio. Assim o
+   commit de evidência na `main` tem como pai o commit testado. Se a `main` andar antes do merge, gere o snapshot de
+   novo sobre a `main` atualizada. A regra está no
+   [ADR-0007](../../docs/decisoes/ADR-0007-resultados-de-testes-versionados.md).
 
 4. A tag aponta para o commit de evidência, cujo pai é o código testado:
 

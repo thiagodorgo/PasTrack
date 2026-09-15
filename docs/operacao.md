@@ -137,11 +137,13 @@ O `ativo = false` barra o login, e o `versao_token` maior derruba na hora as ses
 
 Trocar a chave invalida todos os tokens emitidos, e todo mundo precisa entrar de novo. Faça isso se houver suspeita de que o `.env` vazou.
 
-1. Gere um valor novo:
+1. Gere um valor novo com o Node.js do container da API. A máquina servidora não precisa ter Node.js:
 
    ```bash
-   node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+   docker compose exec api node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
    ```
+
+   Com a API parada, use o gerador avulso do [guia de implantação](deploy.md#gerar-os-segredos).
 
 2. Substitua o `JWT_SECRET` no `.env`.
 3. Recrie a API:

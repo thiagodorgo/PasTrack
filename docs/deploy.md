@@ -144,6 +144,14 @@ A senha precisa:
 
 Depois que o administrador existe, mudar `SEED_ADMIN_SENHA` não altera a senha dele.
 
+Se a senha tiver `$`, aspas ou um espaço seguido de `#`, escreva-a entre aspas simples no `.env`:
+
+```text
+SEED_ADMIN_SENHA='Pa$tilha 2026 #1'
+```
+
+Sem as aspas, o Compose trata o `$` como início de uma variável e altera a senha, e um espaço seguido de `#` vira começo de comentário. O aviso do Compose, quando aparece, é fácil de perder. Não use aspas simples dentro da própria senha. A regra vale também para `SEED_DEMO_SENHA`.
+
 ## Subir o sistema
 
 ```bash

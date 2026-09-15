@@ -222,12 +222,12 @@ Nos comandos desta seção, troque `<arquivo>` pelo nome escolhido, sem o `.sql`
 ```bash
 docker compose stop web api
 docker compose cp backups/<arquivo>.sql banco:/tmp/restaurar.sql
-docker compose exec -T banco psql -U pastrack -d pastrack -v ON_ERROR_STOP=1 --single-transaction -f /tmp/restaurar.sql
+docker compose exec -T banco psql -U pastrack -d pastrack -v ON_ERROR_STOP=1 --single-transaction -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" -f /tmp/restaurar.sql
 docker compose exec -T banco rm /tmp/restaurar.sql
 docker compose up -d --wait
 ```
 
-Com `--single-transaction`, um erro no meio desfaz tudo, e o banco fica como estava.
+O `-c` recria o schema `public` antes de ler o arquivo, e o `--single-transaction` junta os dois numa transação só. Um erro no meio desfaz tudo, e o banco fica como estava.
 
 ### Numa instalação nova ou depois de zerar tudo
 
@@ -242,7 +242,7 @@ Com `--single-transaction`, um erro no meio desfaz tudo, e o banco fica como est
 
    ```bash
    docker compose cp backups/<arquivo>.sql banco:/tmp/restaurar.sql
-   docker compose exec -T banco psql -U pastrack -d pastrack -v ON_ERROR_STOP=1 --single-transaction -f /tmp/restaurar.sql
+   docker compose exec -T banco psql -U pastrack -d pastrack -v ON_ERROR_STOP=1 --single-transaction -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" -f /tmp/restaurar.sql
    docker compose exec -T banco rm /tmp/restaurar.sql
    ```
 
@@ -256,7 +256,9 @@ Por que o mesmo `SEED_ADMIN_EMAIL`? Na subida, o seed procura esse e-mail. Se el
 
 ### Backup de uma versão anterior
 
-Na subida, a API aplica as migrations que faltam. Um backup de uma versão anterior é atualizado sozinho.
+Um backup de uma versão anterior não tem as tabelas, as colunas e os índices das migrations mais novas. Restaurado por cima do banco atual sem recriar o schema, ele falha: o que as migrations novas criaram continua no banco e entra em conflito com o arquivo.
+
+Por isso, os comandos acima recriam o schema `public` na mesma transação, antes do `-f`. Sem esse `-c`, um backup antigo só se restaura numa instalação nova ou depois de zerar tudo. Na subida seguinte, a API aplica as migrations que o backup não tinha.
 
 Um backup de um banco criado com `migrate dev`, antes das migrations versionadas, precisa do baseline. Veja [aplicar migrations num banco existente](#aplicar-migrations-num-banco-existente).
 

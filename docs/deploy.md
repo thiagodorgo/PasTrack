@@ -312,12 +312,14 @@ Nos comandos, troque `<arquivo>` pelo nome escolhido, sem o `.sql`, como `pastra
 ```bash
 docker compose stop web api
 docker compose cp backups/<arquivo>.sql banco:/tmp/restaurar.sql
-docker compose exec -T banco psql -U pastrack -d pastrack -v ON_ERROR_STOP=1 --single-transaction -f /tmp/restaurar.sql
+docker compose exec -T banco psql -U pastrack -d pastrack -v ON_ERROR_STOP=1 --single-transaction -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" -f /tmp/restaurar.sql
 docker compose exec -T banco rm /tmp/restaurar.sql
 docker compose up -d --wait
 ```
 
-Com `--single-transaction`, um erro no meio desfaz tudo, e o banco fica como estava. Na subida, a API aplica as migrations que o backup ainda não tinha.
+- O `-c` recria o schema `public` antes de ler o arquivo. Assim, sai do banco o que o backup não tem, como as tabelas das migrations mais novas.
+- Com `--single-transaction`, o `-c` e o arquivo formam uma transação só. Um erro no meio desfaz tudo, e o banco fica como estava.
+- Por isso, o mesmo comando restaura um backup de uma versão anterior. Na subida, a API aplica as migrations que o backup ainda não tinha.
 
 Para restaurar numa instalação nova ou depois de zerar tudo, siga o [manual de operação](operacao.md#restaurar-um-backup).
 

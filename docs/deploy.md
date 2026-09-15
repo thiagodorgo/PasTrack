@@ -294,6 +294,10 @@ Para restaurar numa instalação nova ou depois de zerar tudo, siga o [manual de
 
 ### Agendar o backup no Windows
 
+A tarefa roda o script com `-ExecutionPolicy Bypass`. Quem conseguir alterar o arquivo roda comandos com a conta da tarefa. Por isso, o script fica em `C:\PasTrack\backups`, que herda a restrição de [proteger a pasta do projeto](#proteger-a-pasta-do-projeto). Não crie o script antes desse passo. Se preferir, guarde-o numa pasta em que só administradores escrevem.
+
+Para conferir, `icacls C:\PasTrack\backups` deve mostrar as mesmas três entradas, marcadas como herdadas com `(I)`.
+
 Crie o arquivo `C:\PasTrack\backups\backup-pastrack.ps1`:
 
 ```powershell

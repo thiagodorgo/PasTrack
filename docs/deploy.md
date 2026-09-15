@@ -264,28 +264,54 @@ O backup é um arquivo SQL gerado pelo `pg_dump`. Ele contém todos os dados, in
 
 ### Fazer um backup
 
-Na pasta do projeto:
+Na pasta do projeto, crie a pasta dos backups na primeira vez:
 
 ```bash
 mkdir backups
+```
+
+Monte o nome do arquivo com a data e a hora, para um backup nunca sobrescrever outro:
+
+```powershell
+$arquivo = "backups/pastrack_{0}.sql" -f (Get-Date -Format "yyyy-MM-dd_HHmmss")    # Windows
+```
+
+```bash
+arquivo="backups/pastrack_$(date +%Y-%m-%d_%H%M%S).sql"                              # Linux
+```
+
+Na mesma janela, gere o backup e copie o arquivo para a pasta:
+
+```bash
 docker compose exec -T banco pg_dump -U pastrack -d pastrack --clean --if-exists --no-owner -f /tmp/backup.sql
-docker compose cp banco:/tmp/backup.sql backups/pastrack_2026-09-14.sql
+docker compose cp banco:/tmp/backup.sql $arquivo
 docker compose exec -T banco rm /tmp/backup.sql
 ```
 
-- O `mkdir` só é preciso na primeira vez.
 - Troque `pastrack` se você mudou `POSTGRES_USER` ou `POSTGRES_DB`.
 - O arquivo é gerado dentro do container e copiado depois. Redirecionar a saída com `>` no Windows PowerShell 5.1 grava o arquivo em UTF-16, e o `psql` não consegue lê-lo.
 - A pasta `backups/` não está no `.gitignore`. Para ela nunca ir para o Git, rode uma vez `Add-Content .git/info/exclude "backups/"` (Windows) ou `echo "backups/" >> .git/info/exclude` (Linux).
 - Copie os backups para fora da máquina servidora, como um disco externo ou uma pasta de rede. Um backup no mesmo disco não protege contra a perda do disco.
 
+Para listar os backups, do mais novo para o mais antigo:
+
+```powershell
+Get-ChildItem backups -Filter "pastrack_*.sql" | Sort-Object LastWriteTime -Descending | Format-Table Name, Length, LastWriteTime    # Windows
+```
+
+```bash
+ls -lt backups/pastrack_*.sql    # Linux
+```
+
 ### Restaurar
 
-A restauração substitui todos os dados atuais pelos do backup.
+A restauração substitui todos os dados atuais pelos do backup. Antes, escolha o arquivo na listagem e confira a data e o fim do arquivo, como no [manual de operação](operacao.md#escolher-e-conferir-o-arquivo).
+
+Nos comandos, troque `<arquivo>` pelo nome escolhido, sem o `.sql`, como `pastrack_2026-09-15_143000`. Copiado como está, o marcador faz o comando falhar, de propósito.
 
 ```bash
 docker compose stop web api
-docker compose cp backups/pastrack_2026-09-14.sql banco:/tmp/restaurar.sql
+docker compose cp backups/<arquivo>.sql banco:/tmp/restaurar.sql
 docker compose exec -T banco psql -U pastrack -d pastrack -v ON_ERROR_STOP=1 --single-transaction -f /tmp/restaurar.sql
 docker compose exec -T banco rm /tmp/restaurar.sql
 docker compose up -d --wait

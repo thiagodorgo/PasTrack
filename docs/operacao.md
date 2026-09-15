@@ -191,11 +191,37 @@ Se você trocar só o `.env`, a API passa a falhar com `Authentication failed ag
 
 Os backups são feitos como no [guia de implantação](deploy.md#backup-e-restauração). A restauração substitui todos os dados atuais pelos do backup.
 
+### Escolher e conferir o arquivo
+
+Liste os backups, do mais novo para o mais antigo:
+
+```powershell
+Get-ChildItem backups -Filter "pastrack_*.sql" | Sort-Object LastWriteTime -Descending | Format-Table Name, Length, LastWriteTime    # Windows
+```
+
+```bash
+ls -lt backups/pastrack_*.sql    # Linux
+```
+
+Confira a data no nome do arquivo e na listagem. Depois, veja se o arquivo terminou de ser gravado: as últimas linhas precisam trazer `-- PostgreSQL database dump complete`.
+
+```powershell
+Get-Content backups/<arquivo>.sql -Tail 5    # Windows
+```
+
+```bash
+tail -n 5 backups/<arquivo>.sql    # Linux
+```
+
+Sem essa linha, o backup está incompleto: escolha outro.
+
+Nos comandos desta seção, troque `<arquivo>` pelo nome escolhido, sem o `.sql`, como `pastrack_2026-09-15_143000`. Copiado como está, o marcador faz o comando falhar, de propósito.
+
 ### Na mesma instalação
 
 ```bash
 docker compose stop web api
-docker compose cp backups/pastrack_2026-09-14.sql banco:/tmp/restaurar.sql
+docker compose cp backups/<arquivo>.sql banco:/tmp/restaurar.sql
 docker compose exec -T banco psql -U pastrack -d pastrack -v ON_ERROR_STOP=1 --single-transaction -f /tmp/restaurar.sql
 docker compose exec -T banco rm /tmp/restaurar.sql
 docker compose up -d --wait
@@ -215,7 +241,7 @@ Com `--single-transaction`, um erro no meio desfaz tudo, e o banco fica como est
 3. Restaure o backup:
 
    ```bash
-   docker compose cp backups/pastrack_2026-09-14.sql banco:/tmp/restaurar.sql
+   docker compose cp backups/<arquivo>.sql banco:/tmp/restaurar.sql
    docker compose exec -T banco psql -U pastrack -d pastrack -v ON_ERROR_STOP=1 --single-transaction -f /tmp/restaurar.sql
    docker compose exec -T banco rm /tmp/restaurar.sql
    ```
@@ -256,7 +282,7 @@ Entre no sistema e confira o painel, algumas pastilhas e as últimas movimentaç
 
 As migrations só andam para a frente. Por isso, voltar exige o backup do passo 1:
 
-1. Apague o banco atual com `docker compose down -v`. Isso apaga os dados: confira antes se o backup do passo 1 está em `backups/`.
+1. Confira o backup do passo 1: a data no nome e as últimas linhas com `-- PostgreSQL database dump complete` ([escolher e conferir o arquivo](#escolher-e-conferir-o-arquivo)). Só depois apague o banco atual com `docker compose down -v`, que apaga os dados.
 2. Volte o código com `git checkout <tag ou commit anterior>`.
 3. Siga [numa instalação nova ou depois de zerar tudo](#numa-instalação-nova-ou-depois-de-zerar-tudo), com o backup do passo 1.
 

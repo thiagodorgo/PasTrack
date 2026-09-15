@@ -200,7 +200,7 @@ Com o banco fora do ar, a resposta é 503, com `"erro": "Banco de dados indispon
 3. O sistema pede uma senha nova, porque o administrador inicial nasce com a troca de senha obrigatória. Escolha a senha e guarde-a num gerenciador de senhas.
 4. Apague o valor de `SEED_ADMIN_SENHA` no `.env`. A API só usa esse valor para criar o administrador, e uma senha parada num arquivo é um risco sem necessidade. Se um dia o banco for zerado, preencha de novo.
 
-Depois, cadastre os demais usuários na tela de usuários, que só o ADMINISTRADOR vê. Cada usuário novo também troca a senha no primeiro acesso.
+Depois, cadastre os demais usuários. Só o ADMINISTRADOR gerencia usuários. A tela de usuários ainda é provisória: até ela ficar pronta, o cadastro é feito pela API, com `POST /api/usuarios`, descrita no [contrato da API](api.md). Cada usuário novo também troca a senha no primeiro acesso.
 
 Depois de 5 senhas erradas em 15 minutos para o mesmo e-mail e IP, o login responde 429 e pede para esperar. É a proteção contra força bruta.
 

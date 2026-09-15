@@ -33,7 +33,6 @@ describe("validarCnpj", () => {
     ["símbolo fora das letras e dígitos", "12.AB#.345/01DE-35"],
     ["dígitos repetidos", "00.000.000/0000-00"],
     ["dígitos repetidos sem máscara", "11111111111111"],
-    ["base repetida, mesmo com os dígitos verificadores certos", "11.111.111/1111-80"],
     ["caracteres a menos", "1122233300018"],
     ["caracteres a mais", "112223330001810"],
     ["máscara fora do lugar", "112.223.330/0018-1"],

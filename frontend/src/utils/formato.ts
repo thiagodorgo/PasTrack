@@ -29,15 +29,15 @@ const FORMATO_CNPJ = /^[0-9A-Z]{2}\.?[0-9A-Z]{3}\.?[0-9A-Z]{3}\/?[0-9A-Z]{4}-?\d
 
 /**
  * Valida o CNPJ pelos dígitos verificadores, no formato numérico ou no alfanumérico, em que as 12
- * primeiras posições podem ter letras. Aceita com ou sem máscara e com letras minúsculas; recusa a base
- * formada por um só caractere repetido.
+ * primeiras posições podem ter letras. Aceita com ou sem máscara e com letras minúsculas. Como o
+ * backend, recusa só a sequência de 14 dígitos iguais, como 11111111111111.
  */
 export function validarCnpj(cnpj: string): boolean {
   const valor = cnpj.trim().toUpperCase();
   if (!FORMATO_CNPJ.test(valor)) return false;
   const caracteres = normalizarCnpj(valor);
+  if (/^(\d)\1{13}$/.test(caracteres)) return false;
   const base = caracteres.slice(0, 12);
-  if (/^(.)\1{11}$/.test(base)) return false;
   const primeiro = digitoVerificador(base);
   const segundo = digitoVerificador(base + primeiro);
   return caracteres.slice(12) === `${primeiro}${segundo}`;

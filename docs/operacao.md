@@ -77,20 +77,61 @@ docker compose logs --no-color --since 24h api > logs-api.txt                   
 
 ## Recuperar o acesso do administrador
 
-**(em implementação)** O script `redefinir-senha-admin` vai redefinir a senha de um administrador direto no servidor, sem precisar entrar no sistema. O comando entra neste manual junto com o script.
+O script `redefinir-senha-admin` recupera o acesso de um ADMINISTRADOR direto no servidor, sem entrar no sistema. Troque o e-mail pelo do administrador:
 
-Se houver outro ADMINISTRADOR com acesso, ele poderá redefinir a senha pelo módulo de usuários, também em implementação ([contrato da API](api.md)). A senha redefinida precisa ser trocada no próximo acesso.
+```bash
+docker compose exec api node dist/scripts/redefinir-senha-admin.js admin@pastrack.local
+```
 
-Enquanto nenhum dos dois caminhos existe, dá para recuperar o acesso criando outro administrador pelo seed:
+O script:
 
-1. No `.env`, troque `SEED_ADMIN_EMAIL` por um e-mail que ainda não exista no sistema e preencha `SEED_ADMIN_SENHA`.
-2. Rode `docker compose up -d --wait`. Na subida, o seed cria o novo administrador.
-3. Entre com o novo e-mail e a nova senha.
-4. Apague `SEED_ADMIN_SENHA` do `.env`.
+- reativa o usuário, se ele estiver desativado;
+- grava uma senha temporária e a mostra uma única vez;
+- obriga a troca de senha no próximo acesso;
+- encerra todas as sessões abertas dessa conta;
+- registra `usuario.acesso_recuperado` na auditoria.
 
-Mudar só a `SEED_ADMIN_SENHA` não adianta: o seed nunca altera a senha de um administrador que já existe.
+Para escolher a senha em vez de receber uma temporária, passe `NOVA_SENHA` só para esse comando, com `docker compose exec -e NOVA_SENHA=<senha> api node dist/scripts/redefinir-senha-admin.js <e-mail>`. A senha segue a política do administrador inicial, mas fica no histórico do terminal. Prefira a temporária.
 
-A conta antiga continua existindo. Desative-a no módulo de usuários, quando ele estiver disponível.
+O script só vale para ADMINISTRADOR. A senha dos outros perfis é redefinida por um administrador, na tela de usuários.
+
+Mudar a `SEED_ADMIN_SENHA` não adianta: o seed nunca altera a senha de um administrador que já existe.
+
+## Responder a um vazamento do `.env`
+
+Se o `.env` vazou, ou se houver suspeita, troque tudo o que ele guarda:
+
+1. o `JWT_SECRET`, o que derruba todas as sessões ([trocar o `JWT_SECRET`](#trocar-o-jwt_secret));
+2. a `POSTGRES_PASSWORD` ([trocar a senha do banco](#trocar-a-senha-do-banco));
+3. a senha do administrador, se a `SEED_ADMIN_SENHA` ainda estava preenchida no arquivo ([recuperar o acesso do administrador](#recuperar-o-acesso-do-administrador)).
+
+Depois, deixe a `SEED_ADMIN_SENHA` vazia e confira a proteção da pasta ([guia de implantação](deploy.md#proteger-a-pasta-do-projeto)).
+
+### Desativar uma conta de administrador comprometida
+
+O caminho normal é a tela de usuários, com outro administrador. Ela recusa desativar o último administrador ativo e registra a desativação na auditoria.
+
+Sem acesso à tela, desative pelo `psql`. Confira antes se sobra outro administrador ativo, porque o banco não tem essa trava:
+
+```bash
+docker compose exec banco psql -U pastrack -d pastrack
+```
+
+No prompt do `psql`, troque o e-mail, sempre em minúsculas, e rode:
+
+```sql
+SELECT id, email, ativo FROM usuario WHERE perfil = 'ADMINISTRADOR';
+
+BEGIN;
+UPDATE usuario SET ativo = false, versao_token = versao_token + 1
+  WHERE email = 'conta-comprometida@empresa.com.br';
+INSERT INTO auditoria (acao, entidade, id_entidade, antes, depois)
+  SELECT 'usuario.desativado', 'usuario', id, '{"ativo": true}', '{"ativo": false, "origem": "psql"}'
+  FROM usuario WHERE email = 'conta-comprometida@empresa.com.br';
+COMMIT;
+```
+
+O `ativo = false` barra o login, e o `versao_token` maior derruba na hora as sessões abertas. A linha na `auditoria` deixa o mesmo registro que a tela faria. Saia com `\q`.
 
 ## Trocar o `JWT_SECRET`
 

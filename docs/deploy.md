@@ -211,16 +211,19 @@ Peça a quem cuida da rede para fixar esse IP, com uma reserva no roteador. Se o
 Abra o PowerShell como administrador e rode:
 
 ```powershell
-New-NetFirewallRule -DisplayName "PasTrack (porta 8080)" -Direction Inbound -Protocol TCP -LocalPort 8080 -Action Allow -Profile Private
+New-NetFirewallRule -DisplayName "PasTrack (porta 8080)" -Direction Inbound -Protocol TCP -LocalPort 8080 -Action Allow -Profile Domain,Private -RemoteAddress LocalSubnet
 ```
 
-A regra vale para redes do tipo privada. Confira o tipo da rede:
+- `-Profile Domain,Private` aplica a regra em redes de domínio e privadas, nunca em rede pública.
+- `-RemoteAddress LocalSubnet` só aceita conexões vindas da sub-rede da própria máquina.
+
+Confira o tipo da rede:
 
 ```powershell
 Get-NetConnectionProfile
 ```
 
-Se `NetworkCategory` for `Public`, mude em Configurações > Rede e Internet > Ethernet (ou Wi-Fi) > Tipo de perfil de rede > Rede privada.
+`NetworkCategory` deve ser `DomainAuthenticated`, numa rede de domínio, ou `Private`. Se for `Public`, mude em Configurações > Rede e Internet > Ethernet (ou Wi-Fi) > Tipo de perfil de rede > Rede privada.
 
 Se você mudou `WEB_PORTA`, use a mesma porta na regra.
 

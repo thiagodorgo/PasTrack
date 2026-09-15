@@ -1,5 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { App } from "../src/App";
 import { usuarioAdmin, usuarioComSenhaTemporaria, usuarioGestor } from "./mocks/handlers/auth";
 import { criarTokenExpirado } from "./utils/jwt";
@@ -7,6 +7,12 @@ import { iniciarSessao } from "./utils/sessao";
 
 // as páginas chegam por import dinâmico; na primeira vez, a transformação do módulo pode demorar
 const ESPERA = { timeout: 10_000 };
+
+// O painel traz o recharts, pesado de transformar na primeira importação. Carregado antes dos testes,
+// o React.lazy da aplicação encontra o módulo pronto e a espera não conta no tempo de cada teste.
+beforeAll(async () => {
+  await import("../src/pages/Painel");
+}, 60_000);
 
 /** Abre a aplicação inteira, com o BrowserRouter de verdade, no caminho informado. */
 function abrirEm(caminho: string) {

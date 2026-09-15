@@ -55,7 +55,9 @@ docker compose logs --since 2h web     # acessos ao site nas últimas 2 horas
 docker compose logs banco              # PostgreSQL
 ```
 
-Linhas importantes no log da API:
+A API escreve dois tipos de linha: texto simples e JSON.
+
+As linhas de texto simples saem na subida e na parada. Elas aparecem sempre, qualquer que seja o `LOG_LEVEL`:
 
 | Linha                                                      | Significado                                                                        |
 | ---------------------------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -64,6 +66,43 @@ Linhas importantes no log da API:
 | `API do PasTrack rodando na porta 3333 (production)`       | A API subiu.                                                                       |
 | `Configuração inválida. Corrija as variáveis de ambiente:` | Variável inválida no `.env`. A lista abaixo da linha diz qual.                     |
 | `SIGTERM recebido: encerrando o servidor`                  | Parada normal, por `stop`, `down` ou atualização.                                  |
+
+As linhas JSON saem uma por requisição e uma por erro não tratado. Os campos principais são:
+
+- `level`: 30 para `info`, 40 para `warn`, 50 para `error` e 60 para `fatal`;
+- `time`: a hora, em ISO 8601;
+- `req`: o id da requisição, o método, o caminho e os cabeçalhos;
+- `res`: o status HTTP da resposta;
+- `responseTime`: o tempo de resposta, em milissegundos.
+
+Respostas 2xx e 3xx saem como `info`, 4xx como `warn` e 5xx como `error`. O `/api/health` não gera linha. Senhas, o cabeçalho `Authorization` e cookies aparecem como `[Redacted]`.
+
+Toda resposta traz o id da requisição no cabeçalho `X-Request-Id`, e o erro 500 também o traz no campo `requestId`. Para achar a requisição no log, troque `<id>` por esse valor:
+
+```powershell
+docker compose logs api | Select-String <id>    # Windows
+```
+
+```bash
+docker compose logs api | grep <id>             # Linux
+```
+
+### O que o `LOG_LEVEL` muda
+
+O `LOG_LEVEL` do `.env` define o nível mínimo das linhas JSON. O padrão é `info`.
+
+| `LOG_LEVEL`        | O que aparece nas linhas JSON                                        |
+| ------------------ | -------------------------------------------------------------------- |
+| `trace` ou `debug` | tudo o que aparece em `info`, mais mensagens de depuração, se houver |
+| `info`             | uma linha por requisição e os erros                                  |
+| `warn`             | só as respostas 4xx e 5xx e os erros                                 |
+| `error`            | só as respostas 5xx e os erros não tratados                          |
+| `fatal`            | só mensagens de nível `fatal`                                        |
+| `silent`           | nenhuma                                                              |
+
+Para mudar o nível, edite o `.env` e rode `docker compose up -d --wait`. As linhas de texto simples não dependem dele.
+
+### Guardar um trecho do log
 
 Cada container guarda até 3 arquivos de 10 MB, e o mais antigo é descartado. Para guardar um trecho, por exemplo para enviar a quem dá suporte:
 

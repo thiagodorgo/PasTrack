@@ -23,14 +23,16 @@ O alerta segue um ciclo definido. O `avaliarAlerta` (`backend/src/services/estoq
 | Evento                                                                 | Resultado                                                                          |
 | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | O saldo chega ao estoque mínimo ou fica abaixo, e não há alerta aberto | Abre um alerta ABERTO.                                                             |
+| Uma pastilha é cadastrada com o saldo no mínimo ou abaixo              | Abre um alerta ABERTO, na mesma transação do cadastro.                             |
 | Uma reposição leva o saldo acima do mínimo, com alerta aberto          | Fecha automaticamente: RESOLVIDO, com `dataResolucao` e com `resolvidoPorId` nulo. |
 | ADMINISTRADOR ou GESTOR resolve manualmente                            | RESOLVIDO, com `dataResolucao` e `resolvidoPorId` preenchidos.                     |
-| Alguém tenta resolver um alerta já resolvido                           | 409, e nada muda.                                                                  |
+| Alguém tenta resolver um alerta já resolvido                           | 409 com `codigo: "ALERTA_JA_RESOLVIDO"`, e nada muda.                              |
 | O estoque mínimo da pastilha muda                                      | O alerta é reavaliado com o novo mínimo e abre ou fecha conforme as linhas acima.  |
 
 - Há no máximo um alerta ABERTO por pastilha, garantido pelo índice parcial ([ADR-0006](ADR-0006-saldo-atomico-e-regras-no-banco.md)).
 - Só ADMINISTRADOR e GESTOR resolvem manualmente ([ADR-0003](ADR-0003-matriz-de-perfis-e-papel-do-comprador.md)).
-- Tudo vai para a tabela `auditoria`, na mesma transação: a abertura (`alerta.aberto`), o fechamento automático (`alerta.resolvido_automaticamente`) e a resolução manual. A auditoria nunca guarda senhas nem hashes.
+- A resolução manual trava a linha da pastilha antes de gravar, como as movimentações. Assim, ela nunca se sobrepõe ao fechamento automático por uma reposição, e de duas resoluções simultâneas só uma vence.
+- Tudo vai para a tabela `auditoria`, na mesma transação: a abertura (`alerta.aberto`), o fechamento automático (`alerta.resolvido_automaticamente`) e a resolução manual (`alerta.resolvido`), com quem resolveu e a data. A auditoria nunca guarda senhas nem hashes.
 
 ## Alternativas consideradas
 
@@ -44,4 +46,4 @@ O alerta segue um ciclo definido. O `avaliarAlerta` (`backend/src/services/estoq
 - O histórico fica completo. Cada alerta resolvido continua na tabela, e `resolvidoPorId` nulo indica fechamento automático.
 - O frontend precisa tratar o 409: outra pessoa, ou uma reposição, pode ter fechado o alerta antes.
 - Se um alerta for resolvido manualmente com o saldo ainda no mínimo, a próxima movimentação que deixar o saldo no mínimo ou abaixo abre um alerta novo.
-- Situação em 14/09/2026: a abertura, o fechamento automático e a auditoria já estão na `main`. A resolução manual com `resolvidoPorId` e 409 e a reavaliação na mudança do estoque mínimo entram nas próximas entregas.
+- Situação em 15/09/2026: todo o ciclo está na `main`. A abertura, o fechamento automático e a auditoria entraram com o PR #11. A resolução manual com trava da pastilha, `resolvidoPorId`, `dataResolucao`, auditoria e 409 entrou com o PR #18. O cadastro de pastilha e a mudança do estoque mínimo reavaliam o alerta desde o PR #19.

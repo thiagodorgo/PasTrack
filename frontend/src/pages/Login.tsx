@@ -1,11 +1,14 @@
-import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { type FormEvent, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Mensagem } from "../components/Mensagem";
 import { useAuth } from "../contexts/AuthContext";
 import { mensagemDeErro } from "../services/api";
 
 export function Login() {
   const { entrar } = useAuth();
   const navegar = useNavigate();
+  const { state } = useLocation();
+  const sessaoExpirou = (state as { motivo?: string } | null)?.motivo === "sessao-expirada";
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -17,45 +20,56 @@ export function Login() {
     setErro("");
     setCarregando(true);
     try {
-      await entrar(email, senha);
-      navegar("/");
+      const usuario = await entrar(email, senha);
+      // com a senha temporária, a troca vem antes de qualquer outra tela
+      navegar(usuario.deveTrocarSenha ? "/alterar-senha" : "/", { replace: true });
     } catch (e) {
       setErro(mensagemDeErro(e));
-    } finally {
       setCarregando(false);
     }
   }
 
   return (
-    <div className="tela-login">
-      <form className="cartao-login" onSubmit={aoEnviar}>
-        <div className="logo" style={{ color: "#1d3b8b", padding: 0, marginBottom: 24 }}>
+    <main className="tela-login">
+      <form className="cartao-login" onSubmit={aoEnviar} aria-labelledby="titulo-login">
+        <h1 id="titulo-login" className="logo logo-login">
           PasTrack
-        </div>
-        <p className="texto-suave" style={{ marginBottom: 20 }}>
-          Controle de estoque de pastilhas industriais
-        </p>
+        </h1>
+        <p className="texto-suave subtitulo-login">Controle de estoque de pastilhas industriais</p>
 
-        {erro && (
-          <p className="mensagem-erro" style={{ marginBottom: 14 }}>
-            {erro}
-          </p>
+        {sessaoExpirou && !erro && (
+          <Mensagem tipo="info">Sua sessão expirou. Entre de novo para continuar.</Mensagem>
         )}
+        {erro && <Mensagem tipo="erro">{erro}</Mensagem>}
 
-        <label style={{ marginBottom: 12 }}>
+        <label>
           E-mail
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input
+            type="email"
+            name="email"
+            autoComplete="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </label>
 
-        <label style={{ marginBottom: 20 }}>
+        <label>
           Senha
-          <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required />
+          <input
+            type="password"
+            name="senha"
+            autoComplete="current-password"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            required
+          />
         </label>
 
-        <button className="botao" style={{ width: "100%" }} disabled={carregando}>
+        <button className="botao botao-bloco" disabled={carregando}>
           {carregando ? "Entrando..." : "Entrar"}
         </button>
       </form>
-    </div>
+    </main>
   );
 }

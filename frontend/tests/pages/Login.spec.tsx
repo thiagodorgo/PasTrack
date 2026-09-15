@@ -1,18 +1,20 @@
 import { screen } from "@testing-library/react";
 import { http } from "msw";
-import { Route, Routes } from "react-router-dom";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { type InitialEntry, Route, Routes } from "react-router-dom";
+import { describe, expect, it } from "vitest";
 import { Protegido } from "../../src/components/Protegido";
 import { Login } from "../../src/pages/Login";
 import { Painel } from "../../src/pages/Painel";
-import { credenciaisValidas, usuarioAdmin } from "../mocks/handlers/auth";
+import { usuarioSalvo } from "../../src/services/auth";
+import { credenciaisTemporarias, credenciaisValidas, usuarioAdmin } from "../mocks/handlers/auth";
 import { server } from "../mocks/server";
 import { renderizar } from "../utils/renderizar";
 
-function renderizarLogin() {
+function renderizarLogin(entrada: InitialEntry = "/login") {
   const resultado = renderizar(
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/alterar-senha" element={<p>Tela de troca de senha</p>} />
       <Route
         path="/"
         element={
@@ -22,7 +24,7 @@ function renderizarLogin() {
         }
       />
     </Routes>,
-    { initialEntries: ["/login"] }
+    { initialEntries: [entrada] }
   );
 
   async function preencherEEnviar(email: string, senha: string) {
@@ -35,20 +37,14 @@ function renderizarLogin() {
 }
 
 describe("página de login", () => {
-  // Na aplicação a tela de login fica em /login, e o interceptor de 401 consulta window.location.pathname.
-  beforeEach(() => {
-    window.history.replaceState(null, "", "/login");
-  });
-
-  afterEach(() => {
-    window.history.replaceState(null, "", "/");
-  });
-
-  it("renderiza os campos de e-mail e senha", () => {
+  it("renderiza o título e os campos com o preenchimento automático adequado", () => {
     renderizarLogin();
 
+    expect(screen.getByRole("heading", { level: 1, name: "PasTrack" })).toBeInTheDocument();
     expect(screen.getByLabelText("E-mail")).toHaveAttribute("type", "email");
+    expect(screen.getByLabelText("E-mail")).toHaveAttribute("autocomplete", "username");
     expect(screen.getByLabelText("Senha")).toHaveAttribute("type", "password");
+    expect(screen.getByLabelText("Senha")).toHaveAttribute("autocomplete", "current-password");
     expect(screen.getByRole("button", { name: "Entrar" })).toBeEnabled();
   });
 
@@ -62,12 +58,21 @@ describe("página de login", () => {
     expect(localStorage.getItem("pastrack:usuario")).toBe(JSON.stringify(usuarioAdmin));
   });
 
+  it("com a senha temporária, leva à troca de senha em vez do painel", async () => {
+    const { preencherEEnviar } = renderizarLogin();
+
+    await preencherEEnviar(credenciaisTemporarias.email, credenciaisTemporarias.senha);
+
+    expect(await screen.findByText("Tela de troca de senha")).toBeInTheDocument();
+    expect(usuarioSalvo()?.deveTrocarSenha).toBe(true);
+  });
+
   it("com resposta 401, mostra a mensagem 'E-mail ou senha inválidos' vinda do servidor", async () => {
     const { preencherEEnviar } = renderizarLogin();
 
     await preencherEEnviar(credenciaisValidas.email, "senha-errada");
 
-    expect(await screen.findByText("E-mail ou senha inválidos")).toBeInTheDocument();
+    expect(await screen.findByRole("alert")).toHaveTextContent("E-mail ou senha inválidos");
     expect(screen.getByRole("button", { name: "Entrar" })).toBeEnabled();
     expect(localStorage.getItem("pastrack:token")).toBeNull();
   });
@@ -92,5 +97,17 @@ describe("página de login", () => {
     liberarResposta();
 
     expect(await screen.findByRole("heading", { name: "Painel" })).toBeInTheDocument();
+  });
+
+  it("avisa que a sessão expirou quando chega do encerramento da sessão", () => {
+    renderizarLogin({ pathname: "/login", state: { motivo: "sessao-expirada" } });
+
+    expect(screen.getByRole("status")).toHaveTextContent("Sua sessão expirou");
+  });
+
+  it("sem motivo, não mostra o aviso de sessão expirada", () => {
+    renderizarLogin();
+
+    expect(screen.queryByText(/Sua sessão expirou/)).not.toBeInTheDocument();
   });
 });

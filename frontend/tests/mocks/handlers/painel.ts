@@ -1,11 +1,12 @@
 import { http, HttpResponse } from "msw";
 import type { ResumoPainel } from "../../../src/types";
+import { alertas } from "./alertas";
 import { movimentacoes } from "./movimentacoes";
 import { pastilhas } from "./pastilhas";
 
 export const resumoPainel: ResumoPainel = {
   totalPastilhas: pastilhas.length,
-  alertasAbertos: 1,
+  alertasAbertos: alertas.filter((alerta) => alerta.situacao === "ABERTO").length,
   itensCriticos: pastilhas
     .filter((p) => p.saldoAtual <= p.estoqueMinimo)
     .map(({ id, codigo, descricao, saldoAtual, estoqueMinimo }) => ({

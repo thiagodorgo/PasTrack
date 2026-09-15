@@ -82,6 +82,18 @@ describe("serviço de fornecedores", () => {
     expect(camposDoErro(erro)).toEqual({ cnpj: "CNPJ inválido" });
   });
 
+  it("cria com CNPJ alfanumérico em minúsculas e recebe o CNPJ formatado em maiúsculas", async () => {
+    const criado = await criarFornecedor({ nome: "Usinagem Alfa", cnpj: "12abc34501de35" });
+
+    expect(criado).toMatchObject({ nome: "Usinagem Alfa", cnpj: "12.ABC.345/01DE-35" });
+  });
+
+  it("um CNPJ alfanumérico com dígito verificador errado responde 400 no campo cnpj", async () => {
+    const erro = await capturarErro(criarFornecedor({ nome: "Usinagem Beta", cnpj: "12.ABC.345/01DE-36" }));
+
+    expect(camposDoErro(erro)).toEqual({ cnpj: "CNPJ inválido" });
+  });
+
   it("um CNPJ já cadastrado responde 409 DUPLICADO", async () => {
     const erro = await capturarErro(criarFornecedor({ nome: "Outro", cnpj: "11222333000181" }));
 

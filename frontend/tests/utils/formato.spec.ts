@@ -3,13 +3,21 @@ import {
   formatarCnpj,
   formatarDataHora,
   formatarQuantidade,
+  normalizarCnpj,
   somenteDigitos,
   validarCnpj,
 } from "../../src/utils/formato";
 
 describe("validarCnpj", () => {
   it.each(["11.222.333/0001-81", "11222333000181", "33.000.167/0001-01", " 55.666.777/0001-81 "])(
-    "aceita o CNPJ válido %s",
+    "aceita o CNPJ numérico válido %s",
+    (cnpj) => {
+      expect(validarCnpj(cnpj)).toBe(true);
+    }
+  );
+
+  it.each(["12.ABC.345/01DE-35", "12ABC34501DE35", "12.abc.345/01de-35"])(
+    "aceita o CNPJ alfanumérico válido %s",
     (cnpj) => {
       expect(validarCnpj(cnpj)).toBe(true);
     }
@@ -18,11 +26,16 @@ describe("validarCnpj", () => {
   it.each([
     ["dígito verificador errado", "11.222.333/0001-82"],
     ["primeiro dígito errado", "11.222.333/0001-71"],
+    ["dígito verificador errado no alfanumérico", "12.ABC.345/01DE-36"],
+    ["primeiro dígito errado no alfanumérico", "12.ABC.345/01DE-25"],
+    ["letra nos dígitos verificadores", "11.222.333/0001-8a"],
+    ["letra nos dígitos verificadores do alfanumérico", "12.ABC.345/01DE-3E"],
+    ["símbolo fora das letras e dígitos", "12.AB#.345/01DE-35"],
     ["dígitos repetidos", "00.000.000/0000-00"],
     ["dígitos repetidos sem máscara", "11111111111111"],
-    ["dígitos a menos", "1122233300018"],
-    ["dígitos a mais", "112223330001810"],
-    ["letra no lugar de dígito", "11.222.333/0001-8a"],
+    ["base repetida, mesmo com os dígitos verificadores certos", "11.111.111/1111-80"],
+    ["caracteres a menos", "1122233300018"],
+    ["caracteres a mais", "112223330001810"],
     ["máscara fora do lugar", "112.223.330/0018-1"],
     ["valor vazio", ""],
   ])("recusa %s (%s)", (_caso, cnpj) => {
@@ -39,14 +52,27 @@ describe("formatarCnpj", () => {
     expect(formatarCnpj("11.222.333/0001-81")).toBe("11.222.333/0001-81");
   });
 
-  it("formata parte dos dígitos, para uso durante a digitação", () => {
+  it("mantém as letras do CNPJ alfanumérico, em maiúsculas", () => {
+    expect(formatarCnpj("12abc34501de35")).toBe("12.ABC.345/01DE-35");
+    expect(formatarCnpj("12.ABC.345/01DE-35")).toBe("12.ABC.345/01DE-35");
+  });
+
+  it("formata parte dos caracteres, para uso durante a digitação", () => {
     expect(formatarCnpj("11")).toBe("11");
     expect(formatarCnpj("112223")).toBe("11.222.3");
     expect(formatarCnpj("1122233300")).toBe("11.222.333/00");
+    expect(formatarCnpj("12abc3")).toBe("12.ABC.3");
   });
 
-  it("descarta o que passar de 14 dígitos e o que não for dígito", () => {
-    expect(formatarCnpj("11a2223330001819999")).toBe("11.222.333/0001-81");
+  it("descarta o que passar de 14 caracteres e o que não for letra ou dígito", () => {
+    expect(formatarCnpj("11.222.333/0001-8199")).toBe("11.222.333/0001-81");
+    expect(formatarCnpj("12-abc 345*01de35")).toBe("12.ABC.345/01DE-35");
+  });
+});
+
+describe("normalizarCnpj", () => {
+  it("tira a pontuação e passa as letras para maiúsculas", () => {
+    expect(normalizarCnpj(" 12.abc.345/01de-35 ")).toBe("12ABC34501DE35");
   });
 });
 

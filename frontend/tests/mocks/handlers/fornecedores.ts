@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import type { DadosFornecedor } from "../../../src/services/cadastros";
 import type { Fornecedor } from "../../../src/types";
-import { formatarCnpj, somenteDigitos, validarCnpj } from "../../../src/utils/formato";
+import { formatarCnpj, normalizarCnpj, validarCnpj } from "../../../src/utils/formato";
 import { proximoId, recusarAcesso, responderDadosInvalidos, responderErro } from "../acesso";
 
 /** Fornecedores de exemplo, com CNPJs válidos: o estado em que cada teste começa. */
@@ -27,7 +27,7 @@ const naoEncontrado = () =>
   responderErro(404, { erro: "Fornecedor não encontrado", codigo: "NAO_ENCONTRADO" });
 
 /**
- * Valida o corpo como a API: nome obrigatório e CNPJ, quando informado, conferido pelos dígitos
+ * Valida o corpo como a API: nome obrigatório e CNPJ, numérico ou alfanumérico, conferido pelos dígitos
  * verificadores e gravado com máscara. Campo ausente mantém o valor atual; texto vazio apaga.
  */
 type DadosLidos =
@@ -53,7 +53,7 @@ async function lerDados(request: Request, atual?: Fornecedor): Promise<DadosLido
 function cnpjEmUso(cnpj: string | null, ignorarId?: number) {
   if (!cnpj) return false;
   return registros.some(
-    (f) => f.id !== ignorarId && f.cnpj !== null && somenteDigitos(f.cnpj) === somenteDigitos(cnpj)
+    (f) => f.id !== ignorarId && f.cnpj !== null && normalizarCnpj(f.cnpj) === normalizarCnpj(cnpj)
   );
 }
 

@@ -29,7 +29,7 @@ export interface Fabricante {
 export interface Fornecedor {
   id: number;
   nome: string;
-  /** No formato 00.000.000/0000-00. */
+  /** No formato 00.000.000/0000-00; no CNPJ alfanumérico, as 12 primeiras posições podem ter letras. */
   cnpj: string | null;
   contato: string | null;
 }

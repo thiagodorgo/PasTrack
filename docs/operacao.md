@@ -68,8 +68,11 @@ Linhas importantes no log da API:
 Cada container guarda até 3 arquivos de 10 MB, e o mais antigo é descartado. Para guardar um trecho, por exemplo para enviar a quem dá suporte:
 
 ```powershell
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 docker compose logs --no-color --since 24h api | Out-File -Encoding utf8 logs-api.txt    # Windows
 ```
+
+A primeira linha faz o PowerShell ler a saída do Docker em UTF-8. Sem ela, os acentos saem corrompidos no arquivo. Outra opção é gravar pelo `cmd`, que não converte nada: `cmd /c "docker compose logs --no-color --since 24h api > logs-api.txt"`.
 
 ```bash
 docker compose logs --no-color --since 24h api > logs-api.txt                            # Linux

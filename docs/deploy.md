@@ -51,6 +51,31 @@ No Linux, use a pasta que preferir, como `/opt/pastrack`.
 
 Todos os comandos `docker compose` deste guia rodam dentro dessa pasta.
 
+## Proteger a pasta do projeto
+
+Uma pasta criada na raiz do `C:` herda de lá a permissão de escrita para qualquer usuário do Windows. Nessa pasta vão ficar o `.env`, com os segredos, e os backups, com todos os dados. Restrinja o acesso antes de criar o `.env`.
+
+No PowerShell como administrador:
+
+```powershell
+$conta = "$env:USERDOMAIN\$env:USERNAME"   # a conta que roda o Docker Desktop
+icacls C:\PasTrack /inheritance:r /grant:r "*S-1-5-32-544:(OI)(CI)F" "*S-1-5-18:(OI)(CI)F" "${conta}:(OI)(CI)F"
+```
+
+- `/inheritance:r` corta a herança que vem da raiz do `C:`.
+- `*S-1-5-32-544` é o grupo Administradores, e `*S-1-5-18` é o SYSTEM. Os identificadores valem em qualquer idioma do Windows.
+- `$conta` precisa ser a conta que usa o Docker Desktop. Se o PowerShell de administrador abriu com outra conta, troque o valor, por exemplo `$conta = "MAQUINA\usuario"`.
+
+Confira o resultado:
+
+```powershell
+icacls C:\PasTrack
+```
+
+Devem aparecer só três entradas, todas com `(OI)(CI)(F)`: Administradores, SYSTEM e a conta do Docker Desktop. Os nomes saem no idioma do Windows, como `BUILTIN\Administradores` e `AUTORIDADE NT\SISTEMA`. Se aparecer `Usuários autenticados` ou `Usuários`, a herança não foi cortada: rode o comando de novo.
+
+No Linux, deixe a pasta só para o seu usuário: `chmod 700 /opt/pastrack`.
+
 ## Preparar o `.env`
 
 O `.env` guarda a configuração e os segredos. Ele nunca vai para o Git.

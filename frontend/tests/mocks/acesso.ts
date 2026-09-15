@@ -11,9 +11,10 @@ export interface UsuarioDoToken {
   perfil: Perfil;
 }
 
-/** Resposta de erro no envelope da API. */
+/** Resposta de erro no envelope da API. Como na API, todo 404 sai com o código NAO_ENCONTRADO. */
 export function responderErro(status: number, corpo: ErroApi) {
-  return HttpResponse.json(corpo, { status });
+  const envelope: ErroApi = status === 404 ? { ...corpo, codigo: "NAO_ENCONTRADO" } : corpo;
+  return HttpResponse.json(envelope, { status });
 }
 
 /** Resposta 400 de validação, com os erros por campo. */

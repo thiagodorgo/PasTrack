@@ -154,11 +154,13 @@ describe("api: interceptor de resposta", () => {
 
 describe("mensagemDeErro", () => {
   it("devolve a mensagem enviada pelo servidor", async () => {
-    responderPastilhasCom(404, { erro: "Pastilha não encontrada" });
+    // como na API, todo 404 traz o código NAO_ENCONTRADO
+    responderPastilhasCom(404, { erro: "Pastilha não encontrada", codigo: "NAO_ENCONTRADO" });
 
     const erro = await capturarErro(api.get("/pastilhas"));
 
     expect(mensagemDeErro(erro)).toBe("Pastilha não encontrada");
+    expect(codigoDoErro(erro)).toBe("NAO_ENCONTRADO");
   });
 
   it("sem conexão com o servidor, pede para verificar a rede", async () => {

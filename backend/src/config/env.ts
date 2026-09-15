@@ -38,8 +38,10 @@ const esquemaEnv = z
     RATE_LIMIT_LOGIN_MAX: z.coerce.number().int().min(1).max(1000).default(5),
     /** Janela do limite de login, em minutos. */
     RATE_LIMIT_LOGIN_JANELA_MIN: z.coerce.number().int().min(1).max(1440).default(15),
-    /** Requisições por minuto permitidas por IP em /api. */
-    RATE_LIMIT_GLOBAL_MAX: z.coerce.number().int().min(1).max(1_000_000).default(300),
+    /** Requisições por minuto de cada IP em /api, antes da autenticação: só contra varredura. */
+    RATE_LIMIT_GLOBAL_MAX: z.coerce.number().int().min(1).max(1_000_000).default(1000),
+    /** Requisições por minuto de cada usuário autenticado. */
+    RATE_LIMIT_USUARIO_MAX: z.coerce.number().int().min(1).max(1_000_000).default(300),
   })
   .superRefine((valores, contexto) => {
     if (valores.NODE_ENV === "production" && valores.BCRYPT_CUSTO < 12) {

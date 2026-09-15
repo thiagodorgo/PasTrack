@@ -67,10 +67,28 @@ export const limitarTrocaDeSenha = rateLimit({
   logger: logDoLimitador,
 });
 
-/** Limite geral por IP em /api, contra abuso e varreduras. Responde 429 com o mesmo código do login. */
+/**
+ * Limite por IP em /api, antes do autenticar: só contra varredura, por isso alto. Vários postos podem
+ * chegar pelo mesmo IP (NAT ou proxy), e o orçamento do dia a dia fica no limite por usuário.
+ * Responde 429 com o mesmo código do login.
+ */
 export const limitarGlobal = rateLimit({
   windowMs: MINUTO_MS,
   limit: env.RATE_LIMIT_GLOBAL_MAX,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  handler: responderLimite("Muitas requisições. Aguarde um instante e tente de novo.", "MUITAS_TENTATIVAS"),
+  logger: logDoLimitador,
+});
+
+/**
+ * Limite por usuário autenticado, depois do autenticar: cada pessoa tem o próprio orçamento, mesmo
+ * dividindo o IP com outros postos, e trocar de IP não renova o de quem estourou.
+ */
+export const limitarPorUsuario = rateLimit({
+  windowMs: MINUTO_MS,
+  limit: env.RATE_LIMIT_USUARIO_MAX,
+  keyGenerator: (req) => "usuario:" + String(req.usuario?.id),
   standardHeaders: "draft-8",
   legacyHeaders: false,
   handler: responderLimite("Muitas requisições. Aguarde um instante e tente de novo.", "MUITAS_TENTATIVAS"),

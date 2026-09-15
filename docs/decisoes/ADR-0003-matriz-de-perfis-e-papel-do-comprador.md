@@ -54,6 +54,7 @@ O COMPRADOR é a área de compras.
 ## Consequências
 
 - Uma mudança de permissão aparece no diff de dois arquivos e num ADR. Se só um lado mudar, o teste falha.
+- O frontend tem um espelho da matriz em `frontend/src/utils/permissoes.ts`, desde o PR #20. Ele decide o que aparece na tela: itens do menu, botões e rotas. Quem autoriza de fato continua sendo a API. Mudar a matriz exige mudar também esse espelho.
 - Todos os perfis podem consultar. Por isso, as rotas de leitura exigem só um usuário autenticado.
 - A documentação de perfis, em elaboração em `docs/perfis-e-permissoes.md`, sai desta mesma matriz.
 - A resolução manual de alertas fica com ADMINISTRADOR e GESTOR ([ADR-0008](ADR-0008-ciclo-de-vida-do-alerta.md)).

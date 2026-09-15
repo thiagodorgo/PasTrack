@@ -4,6 +4,8 @@ Todas as mudanças relevantes do PasTrack ficam registradas neste arquivo.
 
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e as versões seguem o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+<!-- Marcadores a trocar pelos números dos PRs antes do rebase final: #PR-IDENTIDADE e #PR-FRONTEND-BASE. -->
+
 ## [Não lançado]
 
 ### Adicionado
@@ -38,6 +40,19 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - Job `compose-smoke` no CI, que sobe o sistema e confere saúde, login, cabeçalhos e fallback da SPA. (#14)
 - Contrato da API REST em `docs/api.md`. (#15)
 - Primeiro snapshot de evidências, em `tests/results/2026-09-14_fb30118/`, e o `HISTORICO.md`. Backend com 123 testes e 88,78% de cobertura de linhas, frontend com 29 testes e 62,29%, e `npm audit` sem vulnerabilidades. (#17)
+- Movimentações validadas com zod, numa união discriminada por tipo: na ENTRADA o fornecedor é obrigatório e precisa existir, e na SAÍDA ele é proibido. (#18)
+- Filtros de movimentações por pastilha, tipo e período, filtro de alertas por situação e paginação opcional nas duas listagens. (#18)
+- Resolução manual de alerta com trava da pastilha, registro de quem resolveu e da data, auditoria e 409 `ALERTA_JA_RESOLVIDO` para alerta já resolvido. (#18)
+- Edição e consulta por id de fabricantes e fornecedores. (#19)
+- Validação e formatação de CNPJ, inclusive o CNPJ alfanumérico. (#19)
+- Cadastro de pastilhas validado e auditado. A pastilha criada já no mínimo abre o alerta, e a mudança do estoque mínimo reavalia o alerta, na mesma transação. (#19)
+- Logs estruturados em JSON, com request id, redação de senhas e credenciais e nível definido por `LOG_LEVEL`. (#PR-IDENTIDADE)
+- Gestão de usuários para administradores: cadastro, edição, ativação, desativação e redefinição de senha, sem deixar o sistema sem administrador ativo. (#PR-IDENTIDADE)
+- Troca obrigatória de senha no primeiro acesso e depois de uma redefinição. (#PR-IDENTIDADE)
+- Script `redefinir-senha-admin`, que recupera o acesso de um administrador pelo servidor. (#PR-IDENTIDADE)
+- Telas de alertas, fabricantes, fornecedores, usuários e troca de senha, com rotas carregadas sob demanda. (#PR-FRONTEND-BASE)
+- Guarda de rota por perfil, componentes comuns e layout acessível no frontend. (#PR-FRONTEND-BASE)
+- Serviços do frontend por recurso, com erros tipados e uma sessão que reage aos eventos da API sem recarregar a página. (#PR-FRONTEND-BASE)
 - Documentação: decisões de arquitetura (ADR-0001 a ADR-0008), guia de implantação, manual de operação, índice da documentação e este registro de mudanças.
 
 ### Modificado
@@ -50,6 +65,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - Os usuários de demonstração entram sem troca obrigatória de senha. (#11)
 - A cobertura do backend e do frontend é gravada mesmo quando algum teste falha. (#13)
 - O frontend chama a API por `/api`: em desenvolvimento pelo proxy do Vite, e no Docker pelo nginx. (#14)
+- A ENTRADA sem `fornecedorId` passa a responder 400. (#18)
+- O painel consulta o banco com os limites de 20 itens críticos e 5 movimentações. (#18)
+- A permissão é conferida antes da validação do corpo: a SAÍDA do COMPRADOR e as escritas dos cadastros sem permissão recebem 403, e não 400. (#18, #19)
+- Códigos e mensagens de erro alinhados ao contrato da API. (#PR-IDENTIDADE)
 
 ### Removido
 
@@ -61,16 +80,23 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - A ENTRADA que repõe o estoque acima do mínimo fecha o alerta aberto. (#11)
 - A migration fecha alertas ABERTO duplicados de dados antigos e mantém aberto só o mais recente de cada pastilha. (#11)
 - `GET /api/health` sem banco responde 503 com a chave `erro`, como todo erro da API, e mantém os campos de diagnóstico. (#16)
+- Quantidade não numérica, ids acima do limite do banco, datas fora dos anos 1 a 9999 e o caractere nulo em texto respondem 400, e não 500. (#18)
+- O código da pastilha é único sem diferença de maiúsculas. (#19)
+- Uma sessão expirada numa rota protegida mantém o aviso na tela de login. (#PR-FRONTEND-BASE)
 
 ### Segurança
 
 - Resolve os 9 alertas de dependências: React Router 7.18.3, Vite 6.4.3, esbuild, express 4.22.3, qs 6.16.0 e body-parser 1.20.8. O `npm audit` fica sem vulnerabilidades. (#8)
-- `JWT_SECRET` com pelo menos 32 caracteres e recusado se for o valor de exemplo, e custo do bcrypt 12 ou mais em produção. (#9)
+- `JWT_SECRET` com pelo menos 32 caracteres e recusado se for o valor de exemplo, e custo do bcrypt entre 12 e 15 em produção. (#9)
 - O seed não tem mais senha fixa. Rodar de novo nunca troca a senha de um administrador existente. (#9)
 - `X-Powered-By` desligado, CORS restrito às origens configuradas e corpo limitado a 100 kB. (#9)
 - O relatório de testes remove caminhos absolutos e hostname e aborta sem gravar se sobrar algum dado da máquina. (#13)
 - Containers sem root, banco publicado só em `127.0.0.1` e API sem porta no host. (#14)
 - CSP, `nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` e `server_tokens off` no nginx. (#14)
+- A SAÍDA é atômica: saídas simultâneas nunca deixam o saldo negativo. (#18)
+- `PUT /api/pastilhas/:id` não aceita mais `saldoAtual`: o saldo só muda por movimentação. (#19)
+- Sessão revalidada no banco a cada requisição, com JWT endurecido: usuário desativado, com a senha trocada ou com o perfil alterado perde o acesso na hora. (#PR-IDENTIDADE)
+- Helmet na API e limites de requisição: 5 falhas de login por IP e e-mail em 15 minutos e 300 requisições por minuto por IP, com 429 `MUITAS_TENTATIVAS`. (#PR-IDENTIDADE)
 
 ## [0.1.0] — 09/08/2026
 

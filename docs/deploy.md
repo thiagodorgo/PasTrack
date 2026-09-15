@@ -121,13 +121,15 @@ Abra o `.env` num editor de texto e cole os valores.
 | `SEED_ADMIN_EMAIL`  | não                | `admin@pastrack.local`  | E-mail do administrador inicial.                                                                                                                                                               |
 | `SEED_ADMIN_SENHA`  | na primeira subida | —                       | Senha do administrador inicial.                                                                                                                                                                |
 | `SEED_DEMO`         | não                | `false`                 | `true` carrega dados de demonstração. Não use na instalação da empresa.                                                                                                                        |
-| `SEED_DEMO_SENHA`   | não                | vazia                   | Senha dos usuários de demonstração. Vazia: a API gera uma e mostra no log.                                                                                                                     |
+| `SEED_DEMO_SENHA`   | não                | vazia                   | Senha dos usuários de demonstração. Defina sempre que usar `SEED_DEMO=true`.                                                                                                                   |
 | `WEB_PORTA`         | não                | `8080`                  | Porta do site, nesta máquina e na rede.                                                                                                                                                        |
 | `DB_PORTA`          | não                | `5432`                  | Porta do PostgreSQL, só nesta máquina, para quem desenvolve.                                                                                                                                   |
 
 `POSTGRES_USER`, `POSTGRES_PASSWORD` e `POSTGRES_DB` só valem quando o banco é criado, na primeira subida. Mudar esses valores depois não altera o banco. Para trocar a senha do banco, siga o [manual de operação](operacao.md#trocar-a-senha-do-banco).
 
 `NODE_ENV` e `TRUST_PROXY` não ficam no `.env`: o `docker-compose.yml` fixa os valores certos para esta instalação.
+
+Com `SEED_DEMO=true` e `SEED_DEMO_SENHA` vazia, a API gera uma senha a cada subida e a mostra no log. Só vale a senha da primeira subida: os usuários de demonstração são criados uma vez e não mudam depois, e as senhas mostradas nas subidas seguintes não funcionam. Por isso, defina `SEED_DEMO_SENHA` sempre que usar `SEED_DEMO=true`.
 
 ### A senha do administrador inicial
 

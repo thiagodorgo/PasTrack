@@ -42,13 +42,14 @@ function SemProvedor() {
   return null;
 }
 
-function renderizarSessao() {
+function renderizarSessao(inicial = "/") {
   return renderizar(
     <Routes>
       <Route path="/login" element={<TelaDeLogin />} />
       <Route path="/alterar-senha" element={<p>Tela de troca de senha</p>} />
       <Route path="/" element={<TelaDaSessao />} />
-    </Routes>
+    </Routes>,
+    { initialEntries: [inicial] }
   );
 }
 
@@ -66,6 +67,16 @@ function renderizarRotaProtegida() {
       />
     </Routes>
   );
+}
+
+/**
+ * Simula o aviso que o navegador entrega a esta aba quando outra aba muda o localStorage.
+ * O teste muda o armazenamento antes, como a outra aba teria feito.
+ */
+function avisarMudancaEmOutraAba(key: string | null, oldValue: string | null, newValue: string | null) {
+  act(() => {
+    window.dispatchEvent(new StorageEvent("storage", { key, oldValue, newValue, storageArea: localStorage }));
+  });
 }
 
 describe("AuthContext", () => {
@@ -182,19 +193,79 @@ describe("AuthContext", () => {
     expect(screen.getByText("Não gerencia usuários")).toBeInTheDocument();
   });
 
-  it("depois de desmontado, deixa de ouvir os eventos", () => {
+  it("depois de desmontado, deixa de ouvir os eventos, inclusive os de outras abas", () => {
     iniciarSessao();
     const { unmount } = renderizarSessao();
+    const remover = vi.spyOn(window, "removeEventListener");
 
     unmount();
     window.dispatchEvent(new Event(EVENTO_SESSAO_EXPIRADA));
 
     expect(localStorage.getItem("pastrack:token")).not.toBeNull();
+    expect(remover).toHaveBeenCalledWith("storage", expect.any(Function));
   });
 
   it("useAuth fora do AuthProvider lança um erro claro", () => {
     silenciarErrosDeRenderizacao();
 
     expect(() => render(<SemProvedor />)).toThrow("useAuth deve ser usado dentro de AuthProvider");
+  });
+});
+
+describe("AuthContext: sessão compartilhada entre abas", () => {
+  it("quando outra aba encerra a sessão e o token some, esta aba sai e vai ao login", async () => {
+    const { token } = iniciarSessao();
+    renderizarSessao();
+    expect(screen.getByText("Sessão de Administrador")).toBeInTheDocument();
+
+    localStorage.removeItem("pastrack:token");
+    localStorage.removeItem("pastrack:usuario");
+    avisarMudancaEmOutraAba("pastrack:token", token, null);
+
+    expect(await screen.findByText("Tela de login")).toBeInTheDocument();
+  });
+
+  it("quando outra aba limpa o armazenamento inteiro, esta aba também sai", async () => {
+    iniciarSessao();
+    renderizarSessao();
+
+    localStorage.clear();
+    avisarMudancaEmOutraAba(null, null, null);
+
+    expect(await screen.findByText("Tela de login")).toBeInTheDocument();
+  });
+
+  it("quando outra aba entra com outro usuário, esta aba recarrega o usuário e vai ao painel", async () => {
+    const anterior = iniciarSessao(usuarioAdmin);
+    renderizarSessao("/alterar-senha");
+    expect(screen.getByText("Tela de troca de senha")).toBeInTheDocument();
+
+    const nova = iniciarSessao(usuarioGestor);
+    avisarMudancaEmOutraAba("pastrack:token", anterior.token, nova.token);
+
+    expect(await screen.findByText("Sessão de Maria Souza")).toBeInTheDocument();
+    expect(screen.getByText("Não gerencia usuários")).toBeInTheDocument();
+  });
+
+  it("quando só o usuário gravado muda de id, esta aba também recarrega e vai ao painel", async () => {
+    iniciarSessao(usuarioAdmin);
+    renderizarSessao("/alterar-senha");
+
+    const gravadoAntes = localStorage.getItem("pastrack:usuario");
+    localStorage.setItem("pastrack:usuario", JSON.stringify(usuarioGestor));
+    avisarMudancaEmOutraAba("pastrack:usuario", gravadoAntes, JSON.stringify(usuarioGestor));
+
+    expect(await screen.findByText("Sessão de Maria Souza")).toBeInTheDocument();
+  });
+
+  it("mudanças em outras chaves do armazenamento são ignoradas", () => {
+    iniciarSessao();
+    renderizarSessao();
+
+    // mesmo com o token apagado, um aviso de outra chave não mexe na sessão desta aba
+    localStorage.removeItem("pastrack:token");
+    avisarMudancaEmOutraAba("preferencia:tema", null, "escuro");
+
+    expect(screen.getByText("Sessão de Administrador")).toBeInTheDocument();
   });
 });

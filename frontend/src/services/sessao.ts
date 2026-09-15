@@ -1,8 +1,8 @@
 import type { Usuario } from "../types";
 
 // Chaves da sessão no localStorage: o token da API e o usuário logado.
-const CHAVE_TOKEN = "pastrack:token";
-const CHAVE_USUARIO = "pastrack:usuario";
+export const CHAVE_TOKEN = "pastrack:token";
+export const CHAVE_USUARIO = "pastrack:usuario";
 
 export function lerToken(): string | null {
   return localStorage.getItem(CHAVE_TOKEN);

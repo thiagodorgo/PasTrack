@@ -10,6 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { EVENTO_SESSAO_EXPIRADA, EVENTO_TROCA_SENHA_OBRIGATORIA } from "../services/api";
 import * as authService from "../services/auth";
+import { CHAVE_TOKEN, CHAVE_USUARIO, lerToken } from "../services/sessao";
 import type { Usuario } from "../types";
 import { type Acao, pode as perfilPode } from "../utils/permissoes";
 
@@ -32,7 +33,8 @@ const Contexto = createContext<AuthContexto | null>(null);
 
 /**
  * Sessão do usuário. Precisa ficar dentro do Router: ao ouvir os eventos disparados pela camada da API,
- * leva ao login (sessão expirada) ou à troca de senha (troca obrigatória) sem recarregar a página.
+ * leva ao login (sessão expirada) ou à troca de senha (troca obrigatória) sem recarregar a página,
+ * e acompanha as mudanças de sessão feitas em outras abas.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [usuario, setUsuario] = useState<Usuario | null>(() => authService.usuarioSalvo());
@@ -67,6 +69,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       window.removeEventListener(EVENTO_TROCA_SENHA_OBRIGATORIA, aoExigirTrocaDeSenha);
     };
   }, [sair, navegar]);
+
+  // Outra aba mexeu na sessão: o evento storage chega só às demais abas da mesma origem.
+  useEffect(() => {
+    function aoMudarEmOutraAba(evento: StorageEvent) {
+      // chave nula: o armazenamento inteiro foi limpo
+      if (evento.key !== null && evento.key !== CHAVE_TOKEN && evento.key !== CHAVE_USUARIO) return;
+
+      const salvo = lerToken() ? authService.usuarioSalvo() : null;
+      if (!salvo) {
+        // a outra aba encerrou a sessão; se esta já estava sem sessão, não há o que fazer
+        if (usuario) sair();
+        return;
+      }
+      // outro login, ou o mesmo usuário com token novo: esta aba segue a sessão nova a partir do painel
+      const trocouSessao = evento.key === CHAVE_TOKEN || salvo.id !== usuario?.id;
+      setUsuario(salvo);
+      if (trocouSessao) navegar("/", { replace: true });
+    }
+
+    window.addEventListener("storage", aoMudarEmOutraAba);
+    return () => window.removeEventListener("storage", aoMudarEmOutraAba);
+  }, [usuario, sair, navegar]);
 
   async function entrar(email: string, senha: string) {
     const logado = await authService.login(email, senha);

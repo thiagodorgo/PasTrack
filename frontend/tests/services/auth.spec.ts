@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   alterarSenha,
   estaAutenticado,
@@ -158,11 +158,11 @@ describe("tokenExpirado", () => {
     expect(tokenExpirado(criarTokenExpirado(usuarioAdmin))).toBe(true);
   });
 
-  it("compara o exp com o instante informado", () => {
+  it("sem o instante de chegada, compara o exp com o instante informado", () => {
     const token = criarJwt({ id: 1, exp: agoraEmSegundos() + 60 });
 
     expect(tokenExpirado(token)).toBe(false);
-    expect(tokenExpirado(token, Date.now() + 120_000)).toBe(true);
+    expect(tokenExpirado(token, null, Date.now() + 120_000)).toBe(true);
   });
 
   it("lê payload com acentos, codificado em base64url", () => {
@@ -179,6 +179,103 @@ describe("tokenExpirado", () => {
     ["exp em texto", criarJwt({ id: 1, exp: "amanhã" })],
   ])("token malformado conta como expirado: %s", (_caso, token) => {
     expect(tokenExpirado(token)).toBe(true);
+  });
+});
+
+describe("validade do token contada a partir da chegada", () => {
+  const UMA_HORA = 60 * 60 * 1000;
+  const OITO_HORAS = 8 * UMA_HORA;
+  const UM_DIA = 24 * UMA_HORA;
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("com o relógio do posto adiantado, o token vale pela sua duração a partir da chegada", () => {
+    // emitido agora pelo servidor, com 8 horas de validade; o relógio do posto está um dia à frente
+    const token = criarTokenValido(usuarioAdmin);
+    const chegada = Date.now() + UM_DIA;
+
+    expect(tokenExpirado(token, chegada, chegada + UMA_HORA)).toBe(false);
+    expect(tokenExpirado(token, chegada, chegada + OITO_HORAS - UMA_HORA)).toBe(false);
+    expect(tokenExpirado(token, chegada, chegada + OITO_HORAS)).toBe(true);
+    // pelo exp absoluto, o mesmo token pareceria vencido desde a chegada
+    expect(tokenExpirado(token, null, chegada)).toBe(true);
+  });
+
+  it("com o relógio do posto atrasado, o token não passa da sua duração", () => {
+    const token = criarTokenValido(usuarioAdmin);
+    const chegada = Date.now() - UM_DIA;
+
+    expect(tokenExpirado(token, chegada, chegada + OITO_HORAS - UMA_HORA)).toBe(false);
+    expect(tokenExpirado(token, chegada, chegada + OITO_HORAS + UMA_HORA)).toBe(true);
+    // pelo exp absoluto, o mesmo token pareceria valer por mais um dia
+    expect(tokenExpirado(token, null, chegada + OITO_HORAS + UMA_HORA)).toBe(false);
+  });
+
+  it("sem iat no token, vale o exp absoluto mesmo com o instante de chegada", () => {
+    const token = criarJwt({ id: 1, exp: agoraEmSegundos() + 60 });
+
+    expect(tokenExpirado(token, Date.now() - UM_DIA, Date.now())).toBe(false);
+    expect(tokenExpirado(token, Date.now() + UM_DIA, Date.now() + 120_000)).toBe(true);
+  });
+
+  it("a sessão gravada vale com o relógio do posto adiantado e acaba ao fim da duração", () => {
+    // o servidor emite o token com o relógio certo; o posto está um dia à frente quando ele chega
+    const token = criarTokenValido(usuarioAdmin);
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(Date.now() + UM_DIA);
+
+    gravarSessao(token, usuarioAdmin);
+
+    expect(estaAutenticado()).toBe(true);
+    expect(sessaoExpirada()).toBe(false);
+
+    vi.setSystemTime(Date.now() + OITO_HORAS);
+
+    expect(estaAutenticado()).toBe(false);
+    expect(sessaoExpirada()).toBe(true);
+  });
+
+  it("com o relógio do posto atrasado, a sessão gravada acaba ao fim da duração do token", () => {
+    const token = criarTokenValido(usuarioAdmin);
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(Date.now() - UM_DIA);
+
+    gravarSessao(token, usuarioAdmin);
+
+    expect(estaAutenticado()).toBe(true);
+
+    vi.setSystemTime(Date.now() + OITO_HORAS + UMA_HORA);
+
+    expect(estaAutenticado()).toBe(false);
+    expect(sessaoExpirada()).toBe(true);
+  });
+
+  it("o instante de chegada é gravado junto com o token e sai com a sessão", () => {
+    const antes = Date.now();
+
+    gravarSessao(criarTokenValido(usuarioAdmin), usuarioAdmin);
+
+    const gravado = Number(localStorage.getItem("pastrack:token-recebido-em"));
+    expect(gravado).toBeGreaterThanOrEqual(antes);
+    expect(gravado).toBeLessThanOrEqual(Date.now());
+
+    sair();
+
+    expect(localStorage.getItem("pastrack:token-recebido-em")).toBeNull();
+  });
+
+  it("sem o instante de chegada, ou com ele ilegível, vale o exp absoluto", () => {
+    localStorage.setItem("pastrack:token", criarTokenValido(usuarioAdmin));
+    localStorage.setItem("pastrack:usuario", JSON.stringify(usuarioAdmin));
+
+    expect(estaAutenticado()).toBe(true);
+
+    localStorage.setItem("pastrack:token-recebido-em", "ontem");
+    localStorage.setItem("pastrack:token", criarTokenExpirado(usuarioAdmin));
+
+    expect(sessaoExpirada()).toBe(true);
   });
 });
 

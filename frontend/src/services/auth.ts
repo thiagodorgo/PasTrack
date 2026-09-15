@@ -1,7 +1,14 @@
 import type { Usuario } from "../types";
 import { ehPerfil } from "../utils/permissoes";
 import { api } from "./api";
-import { gravarToken, gravarUsuario, lerToken, lerUsuarioGravado, limparSessao } from "./sessao";
+import {
+  gravarToken,
+  gravarUsuario,
+  lerRecebimentoDoToken,
+  lerToken,
+  lerUsuarioGravado,
+  limparSessao,
+} from "./sessao";
 
 interface RespostaDoLogin {
   token: string;
@@ -31,7 +38,7 @@ export async function alterarSenha(senhaAtual: string, novaSenha: string): Promi
   return data.token;
 }
 
-/** Grava o token e o usuário da sessão. */
+/** Grava o token, com o instante local em que chegou, e o usuário da sessão. */
 export function gravarSessao(token: string, usuario: Usuario): void {
   gravarToken(token);
   gravarUsuario(usuario);
@@ -87,31 +94,47 @@ function decodificarBase64url(trecho: string): string {
   return new TextDecoder().decode(Uint8Array.from(binario, (caractere) => caractere.charCodeAt(0)));
 }
 
+interface PrazoDoToken {
+  exp?: unknown;
+  iat?: unknown;
+}
+
 /**
- * O token JWT já expirou? Lê o exp (em segundos) do payload, sem verificar a assinatura: quem valida é a API.
- * Token malformado ou sem exp numérico conta como expirado.
+ * O token já venceu? A validade é a duração do token (exp - iat, em segundos), contada a partir do
+ * instante local em que ele chegou: assim, um relógio adiantado ou atrasado no posto não encurta nem
+ * estica a sessão. Sem o instante de chegada (sessão gravada sem ele) ou sem iat, vale o exp absoluto.
+ * Token malformado ou sem exp numérico conta como vencido. A assinatura não é verificada: quem encerra
+ * a sessão de fato é o 401 da API.
  */
-export function tokenExpirado(token: string, agora: number = Date.now()): boolean {
+export function tokenExpirado(
+  token: string,
+  recebidoEm: number | null = null,
+  agora: number = Date.now()
+): boolean {
   const partes = token.split(".");
   if (partes.length !== 3 || partes[1] === "") return true;
   try {
     const payload: unknown = JSON.parse(decodificarBase64url(partes[1]));
-    const exp =
-      typeof payload === "object" && payload !== null ? (payload as { exp?: unknown }).exp : undefined;
-    return typeof exp !== "number" || exp * 1000 <= agora;
+    const { exp, iat } =
+      typeof payload === "object" && payload !== null ? (payload as PrazoDoToken) : ({} as PrazoDoToken);
+    if (typeof exp !== "number") return true;
+    if (recebidoEm !== null && typeof iat === "number" && exp > iat) {
+      return recebidoEm + (exp - iat) * 1000 <= agora;
+    }
+    return exp * 1000 <= agora;
   } catch {
     return true;
   }
 }
 
-/** Há sessão válida: token gravado e ainda no prazo. */
+/** Há sessão válida: token gravado e ainda no prazo, contado a partir da chegada do token. */
 export function estaAutenticado(): boolean {
   const token = lerToken();
-  return token !== null && !tokenExpirado(token);
+  return token !== null && !tokenExpirado(token, lerRecebimentoDoToken());
 }
 
 /** Há um token gravado, mas vencido ou ilegível: a sessão expirou. */
 export function sessaoExpirada(): boolean {
   const token = lerToken();
-  return token !== null && tokenExpirado(token);
+  return token !== null && tokenExpirado(token, lerRecebimentoDoToken());
 }

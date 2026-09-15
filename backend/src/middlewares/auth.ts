@@ -11,6 +11,8 @@ export interface UsuarioAutenticado {
   nome: string;
   perfil: PerfilUsuario;
   deveTrocarSenha: boolean;
+  /** Versão de token da sessão desta requisição. Interna: nunca vai para uma resposta. */
+  versaoToken: number;
 }
 
 const CABECALHO_BEARER = /^Bearer\s+(\S+)$/i;
@@ -44,6 +46,7 @@ export const autenticar = capturar(async (req: Request, _res: Response, next: Ne
     nome: usuario.nome,
     perfil: usuario.perfil,
     deveTrocarSenha: usuario.deveTrocarSenha,
+    versaoToken: usuario.versaoToken,
   };
   next();
 });

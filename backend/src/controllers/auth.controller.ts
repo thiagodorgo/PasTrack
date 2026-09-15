@@ -17,8 +17,9 @@ export const authController = {
 
   async trocarSenha(req: Request, res: Response) {
     const { senhaAtual, novaSenha } = req.body as TrocarSenhaEntrada;
+    const { id, versaoToken } = usuarioDaRequisicao(req);
     try {
-      return res.json(await authService.trocarSenha(usuarioDaRequisicao(req).id, senhaAtual, novaSenha));
+      return res.json(await authService.trocarSenha(id, versaoToken, senhaAtual, novaSenha));
     } catch (erro) {
       // só a senha atual errada conta no limite de tentativas da troca
       if (erro instanceof AppError && erro.codigo === "SENHA_ATUAL_INCORRETA") {

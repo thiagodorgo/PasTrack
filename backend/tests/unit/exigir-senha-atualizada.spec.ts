@@ -18,7 +18,13 @@ function montarApp(usuario?: UsuarioAutenticado) {
   return app;
 }
 
-const base: UsuarioAutenticado = { id: 1, nome: "Ana", perfil: "OPERADOR", deveTrocarSenha: false };
+const base: UsuarioAutenticado = {
+  id: 1,
+  nome: "Ana",
+  perfil: "OPERADOR",
+  deveTrocarSenha: false,
+  versaoToken: 0,
+};
 
 describe("exigirSenhaAtualizada", () => {
   it("libera quem já trocou a senha", async () => {

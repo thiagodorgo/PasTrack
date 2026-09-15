@@ -123,8 +123,10 @@ export const authService = {
   /**
    * Troca a senha do próprio usuário: confere a senha atual, aplica a política, encerra a troca obrigatória
    * e incrementa a versão do token, o que derruba as outras sessões. Devolve um token novo.
+   * A gravação é condicional: se, entre a conferência e a gravação, a senha foi redefinida, o acesso foi
+   * recuperado ou o usuário foi desativado, a mudança do administrador vence e a troca responde 401.
    */
-  async trocarSenha(id: number, senhaAtual: string, novaSenha: string) {
+  async trocarSenha(id: number, versaoDaSessao: number, senhaAtual: string, novaSenha: string) {
     const usuario = await usuarioRepository.buscarCredenciaisPorId(id);
     if (!usuario) {
       throw sessaoInvalida();
@@ -137,14 +139,22 @@ export const authService = {
 
     const senhaHash = await bcrypt.hash(novaSenha, env.BCRYPT_CUSTO);
     const atualizado = await prisma.$transaction(async (tx) => {
-      const dados = await usuarioRepository.trocarSenha(id, senhaHash, tx);
+      const { count } = await usuarioRepository.trocarSenhaSeInalterada(
+        id,
+        { versaoToken: versaoDaSessao, senhaHash: usuario.senhaHash },
+        senhaHash,
+        tx
+      );
+      if (count === 0) {
+        throw sessaoInvalida();
+      }
       await registrarAuditoria(tx, {
         usuarioId: id,
         acao: "usuario.senha_alterada",
         entidade: "usuario",
         entidadeId: id,
       });
-      return dados;
+      return usuarioRepository.buscarDadosDoToken(id, tx);
     });
     return { token: gerarToken(atualizado) };
   },

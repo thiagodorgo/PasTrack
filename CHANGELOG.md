@@ -4,7 +4,7 @@ Todas as mudanças relevantes do PasTrack ficam registradas neste arquivo.
 
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e as versões seguem o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-<!-- Marcadores a trocar pelos números dos PRs antes do rebase final: #PR-IDENTIDADE e #PR-FRONTEND-BASE. -->
+<!-- Marcador a trocar pelo número do PR antes do rebase final: #PR-IDENTIDADE. -->
 
 ## [Não lançado]
 
@@ -46,13 +46,15 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - Edição e consulta por id de fabricantes e fornecedores. (#19)
 - Validação e formatação de CNPJ, inclusive o CNPJ alfanumérico. (#19)
 - Cadastro de pastilhas validado e auditado. A pastilha criada já no mínimo abre o alerta, e a mudança do estoque mínimo reavalia o alerta, na mesma transação. (#19)
+- Rotas de todas as telas no frontend, com carregamento sob demanda: o gráfico do painel não entra no pacote do login. Troca de senha, página não encontrada e sem permissão estão prontas; fabricantes, fornecedores, alertas e usuários ficam como páginas provisórias. (#20)
+- Espelho da matriz de permissões no frontend: menu, botões e rotas conforme o perfil, com a página de sem permissão. A API continua autorizando. (#20)
+- Componentes comuns, layout acessível e serviços do frontend por recurso, com erros tipados. (#20)
+- Sessão no frontend que reage aos eventos da API sem recarregar a página: um 401 leva ao login com o aviso de sessão expirada, o 403 de troca obrigatória leva à tela de troca de senha, e sair ou entrar numa aba atualiza as outras. (#20)
+- Validação de CNPJ no frontend pelos dígitos verificadores, nos formatos numérico e alfanumérico, com máscara que preserva as letras. (#20)
 - Logs estruturados em JSON, com request id, redação de senhas e credenciais e nível definido por `LOG_LEVEL`. (#PR-IDENTIDADE)
 - Gestão de usuários para administradores: cadastro, edição, ativação, desativação e redefinição de senha, sem deixar o sistema sem administrador ativo. (#PR-IDENTIDADE)
 - Troca obrigatória de senha no primeiro acesso e depois de uma redefinição. (#PR-IDENTIDADE)
 - Script `redefinir-senha-admin`, que recupera o acesso de um administrador pelo servidor. (#PR-IDENTIDADE)
-- Telas de alertas, fabricantes, fornecedores, usuários e troca de senha, com rotas carregadas sob demanda. (#PR-FRONTEND-BASE)
-- Guarda de rota por perfil, componentes comuns e layout acessível no frontend. (#PR-FRONTEND-BASE)
-- Serviços do frontend por recurso, com erros tipados e uma sessão que reage aos eventos da API sem recarregar a página. (#PR-FRONTEND-BASE)
 - Documentação: decisões de arquitetura (ADR-0001 a ADR-0008), guia de implantação, manual de operação, índice da documentação e este registro de mudanças.
 
 ### Modificado
@@ -68,6 +70,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - A ENTRADA sem `fornecedorId` passa a responder 400. (#18)
 - O painel consulta o banco com os limites de 20 itens críticos e 5 movimentações. (#18)
 - A permissão é conferida antes da validação do corpo: a SAÍDA do COMPRADOR e as escritas dos cadastros sem permissão recebem 403, e não 400. (#18, #19)
+- Movimentações no frontend: fornecedor obrigatório na entrada, saída escondida para quem não pode registrá-la e limites de tamanho iguais aos do backend. (#20)
+- A edição de pastilha no frontend nunca envia `codigo` nem `saldoAtual`. (#20)
 - Códigos e mensagens de erro alinhados ao contrato da API. (#PR-IDENTIDADE)
 
 ### Removido
@@ -82,7 +86,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - `GET /api/health` sem banco responde 503 com a chave `erro`, como todo erro da API, e mantém os campos de diagnóstico. (#16)
 - Quantidade não numérica, ids acima do limite do banco, datas fora dos anos 1 a 9999 e o caractere nulo em texto respondem 400, e não 500. (#18)
 - O código da pastilha é único sem diferença de maiúsculas. (#19)
-- Uma sessão expirada numa rota protegida mantém o aviso na tela de login. (#PR-FRONTEND-BASE)
+- O frontend confere a expiração do token e protege a leitura do armazenamento local. Os dois defeitos registrados como `it.fails` no frontend viraram testes normais. (#20)
+- Uma sessão expirada numa rota protegida mantém o aviso na tela de login, e um relógio adiantado não prende o usuário num ciclo de sessão expirada. (#20)
 
 ### Segurança
 

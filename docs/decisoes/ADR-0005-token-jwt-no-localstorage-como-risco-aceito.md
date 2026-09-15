@@ -40,4 +40,4 @@ A alternativa, cookie `httpOnly` com proteção contra CSRF, fica registrada com
 - Desativar um usuário, trocar a senha dele ou mudar o perfil derruba as sessões dele na hora.
 - Trocar o `JWT_SECRET` derruba as sessões de todos ([operacao.md](../operacao.md#trocar-o-jwt_secret)).
 - Cada requisição autenticada faz uma consulta a mais no banco.
-- Situação em 14/09/2026: a expiração de 8 h, a CSP e a coluna `versao_token` já estão na `main`. O recarregamento do usuário e a conferência da versão entram na próxima entrega de autenticação, e o `it.fails` do usuário desativado vira teste normal.
+- Situação em 15/09/2026: a expiração de 8 h, a CSP e a coluna `versao_token` estão na `main`. A entrega de identidade (#PR-IDENTIDADE) recarrega o usuário a cada requisição, confere a versão do token e responde 401 com `codigo: "SESSAO_INVALIDA"` para sessão revogada. Com ela, o `it.fails` do usuário desativado vira teste normal. A base do frontend (#PR-FRONTEND-BASE) mantém o token no `localStorage` e continua sem nenhum dos sinks citados.

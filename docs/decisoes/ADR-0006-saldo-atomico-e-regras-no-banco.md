@@ -25,7 +25,7 @@ const { count } = await tx.pastilha.updateMany({
 });
 ```
 
-Com `count` igual a zero, o saldo não bastava. A API responde com o erro de saldo insuficiente, e a transação não grava nada.
+Com `count` igual a zero, o saldo não bastava. A API responde 400 com o saldo atual, e a transação não grava nada.
 
 ### Regras no banco
 
@@ -50,7 +50,7 @@ O índice parcial é a segunda barreira. Se ainda assim houver disputa, o `creat
 
 - **Conferir o saldo na aplicação, como no MVP.** Não resiste a requisições simultâneas.
 - **Só o CHECK, sem o update condicional.** O saldo nunca ficaria negativo, mas a requisição perdedora terminaria em erro 500, e não numa mensagem de saldo insuficiente.
-- **`SELECT ... FOR UPDATE` em SQL escrito à mão.** O Prisma não oferece esse bloqueio na API de consultas, e o SQL manual espalharia consultas cruas pelo código.
+- **`SELECT ... FOR UPDATE` como regra geral.** O Prisma não oferece esse bloqueio na API de consultas, e o SQL manual espalharia consultas cruas pelo código. Ele ficou restrito à resolução manual de alerta, que precisa travar a pastilha sem alterá-la ([ADR-0008](ADR-0008-ciclo-de-vida-do-alerta.md)).
 - **Isolamento SERIALIZABLE com nova tentativa.** Resolve, mas exige repetir a transação em caso de conflito e complica os testes.
 
 ## Consequências
@@ -59,4 +59,4 @@ O índice parcial é a segunda barreira. Se ainda assim houver disputa, o `creat
 - O banco recusa dados inválidos vindos de qualquer caminho, inclusive scripts e SQL manual.
 - As regras vivem só no SQL das migrations. O Prisma não as representa, e o `npm run db:verificar` aceita só a diferença do índice parcial ([ADR-0002](ADR-0002-migrations-versionadas-e-docker-compose.md)).
 - A validação da API ([ADR-0004](ADR-0004-validacao-com-zod-como-lista-de-permissao.md)) barra os casos comuns antes do banco. Os CHECK são a última barreira.
-- Situação em 14/09/2026: os CHECK, o índice parcial e o `avaliarAlerta` já estão na `main`. A SAÍDA com `updateMany` condicional substitui a leitura seguida de atualização nas próximas entregas.
+- Situação em 15/09/2026: tudo na `main`. Os CHECK, o índice parcial e o `avaliarAlerta` entraram com o PR #11, e a SAÍDA com `updateMany` condicional, com o PR #18. O mesmo PR limita a ENTRADA ao maior saldo que cabe na coluna do banco e testa 10 saídas simultâneas de 1 unidade sobre saldo 5: 5 aceitas, 5 recusadas, saldo 0 e um único alerta aberto.

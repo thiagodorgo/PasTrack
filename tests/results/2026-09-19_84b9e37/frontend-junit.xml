@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="254" failures="0" errors="0" time="57.340167">
+    <testsuite name="tests/App.spec.tsx" timestamp="2026-09-19T21:15:13.558Z" tests="12" failures="0" errors="0" skipped="0" time="13.1493039">
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; sem sessão, uma rota protegida leva ao login" time="0.5326104">
+        </testcase>
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; com o token vencido, o login avisa que a sessão expirou" time="0.0212972">
+        </testcase>
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; o painel abre na raiz, dentro do layout" time="0.5574625">
+        </testcase>
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; /pastilhas está registrada e abre dentro do layout" time="0.1999696">
+        </testcase>
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; /movimentacoes está registrada e abre dentro do layout" time="0.154977">
+        </testcase>
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; /alertas está registrada e abre dentro do layout" time="0.1494206">
+        </testcase>
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; /fabricantes está registrada e abre dentro do layout" time="0.1313278">
+        </testcase>
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; /fornecedores está registrada e abre dentro do layout" time="0.1369988">
+        </testcase>
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; /usuarios está registrada e abre dentro do layout" time="0.1114685">
+        </testcase>
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; o GESTOR que abre /usuarios vai para a página de sem permissão" time="0.0976053">
+        </testcase>
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; uma rota inexistente mostra a página não encontrada, com o menu" time="0.0680856">
+        </testcase>
+        <testcase classname="tests/App.spec.tsx" name="rotas da aplicação &gt; com a troca de senha pendente, qualquer rota leva à troca de senha, fora do layout" time="0.0396592">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/fluxos.spec.tsx" timestamp="2026-09-19T21:15:13.562Z" tests="4" failures="0" errors="0" skipped="0" time="16.1620544">
+        <testcase classname="tests/fluxos.spec.tsx" name="fluxos de sessão na aplicação inteira &gt; quem entra com a senha temporária troca a senha e chega ao painel" time="3.094739">
+        </testcase>
+        <testcase classname="tests/fluxos.spec.tsx" name="fluxos de sessão na aplicação inteira &gt; a sessão que expira durante o uso leva ao login com aviso, e entrar de novo volta ao painel" time="0.7328067">
+        </testcase>
+        <testcase classname="tests/fluxos.spec.tsx" name="fluxos de sessão na aplicação inteira &gt; quando a API exige a troca de senha, a tela de troca aparece no lugar da página" time="0.0727532">
+        </testcase>
+        <testcase classname="tests/fluxos.spec.tsx" name="fluxos de sessão na aplicação inteira &gt; sair pelo cabeçalho encerra a sessão e volta ao login" time="0.1391121">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/components/Layout.spec.tsx" timestamp="2026-09-19T21:15:13.563Z" tests="11" failures="0" errors="0" skipped="0" time="2.2829785">
+        <testcase classname="tests/components/Layout.spec.tsx" name="Layout &gt; o ADMINISTRADOR vê todos os itens do menu, inclusive Usuários" time="0.5914389">
+        </testcase>
+        <testcase classname="tests/components/Layout.spec.tsx" name="Layout &gt; o GESTOR não vê Usuários no menu" time="0.1586546">
+        </testcase>
+        <testcase classname="tests/components/Layout.spec.tsx" name="Layout &gt; o OPERADOR não vê Usuários no menu" time="0.1339245">
+        </testcase>
+        <testcase classname="tests/components/Layout.spec.tsx" name="Layout &gt; o COMPRADOR não vê Usuários no menu" time="0.1277292">
+        </testcase>
+        <testcase classname="tests/components/Layout.spec.tsx" name="Layout &gt; marca o item da página atual" time="0.1230264">
+        </testcase>
+        <testcase classname="tests/components/Layout.spec.tsx" name="Layout &gt; mostra o nome e o perfil do usuário no cabeçalho" time="0.0398569">
+        </testcase>
+        <testcase classname="tests/components/Layout.spec.tsx" name="Layout &gt; o link de pular leva o foco ao conteúdo principal" time="0.2531483">
+        </testcase>
+        <testcase classname="tests/components/Layout.spec.tsx" name="Layout &gt; Alterar senha leva à tela de troca de senha" time="0.2177915">
+        </testcase>
+        <testcase classname="tests/components/Layout.spec.tsx" name="Layout &gt; Sair encerra a sessão e leva ao login" time="0.1059237">
+        </testcase>
+        <testcase classname="tests/components/Layout.spec.tsx" name="Layout &gt; o botão Menu abre a navegação e ela fecha ao escolher uma página" time="0.265372">
+        </testcase>
+        <testcase classname="tests/components/Layout.spec.tsx" name="Layout &gt; uma página que falha mostra o limite de erro sem derrubar o menu" time="0.2543595">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/components/LimiteDeErro.spec.tsx" timestamp="2026-09-19T21:15:13.564Z" tests="4" failures="0" errors="0" skipped="0" time="0.3716051">
+        <testcase classname="tests/components/LimiteDeErro.spec.tsx" name="LimiteDeErro &gt; sem erro, só renderiza o conteúdo" time="0.0412405">
+        </testcase>
+        <testcase classname="tests/components/LimiteDeErro.spec.tsx" name="LimiteDeErro &gt; mostra uma mensagem amigável quando um componente falha" time="0.2357833">
+        </testcase>
+        <testcase classname="tests/components/LimiteDeErro.spec.tsx" name="LimiteDeErro &gt; registra o erro no console para diagnóstico" time="0.0047129">
+        </testcase>
+        <testcase classname="tests/components/LimiteDeErro.spec.tsx" name="LimiteDeErro &gt; tentar de novo renderiza o conteúdo outra vez" time="0.0807557">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/components/Mensagem.spec.tsx" timestamp="2026-09-19T21:15:13.564Z" tests="4" failures="0" errors="0" skipped="0" time="0.5413425">
+        <testcase classname="tests/components/Mensagem.spec.tsx" name="Mensagem &gt; o erro usa role=alert, anunciado na hora" time="0.4097108">
+        </testcase>
+        <testcase classname="tests/components/Mensagem.spec.tsx" name="Mensagem &gt; sucesso usa role=status com aria-live polite" time="0.0620486">
+        </testcase>
+        <testcase classname="tests/components/Mensagem.spec.tsx" name="Mensagem &gt; info usa role=status com aria-live polite" time="0.0238628">
+        </testcase>
+        <testcase classname="tests/components/Mensagem.spec.tsx" name="Mensagem &gt; aceita um id, para ser ligada a um campo" time="0.0338515">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/components/Protegido.spec.tsx" timestamp="2026-09-19T21:15:13.565Z" tests="8" failures="0" errors="0" skipped="0" time="0.1435893">
+        <testcase classname="tests/components/Protegido.spec.tsx" name="Protegido &gt; sem token, redireciona para /login" time="0.0702714">
+        </testcase>
+        <testcase classname="tests/components/Protegido.spec.tsx" name="Protegido &gt; com token, renderiza o conteúdo" time="0.0065449">
+        </testcase>
+        <testcase classname="tests/components/Protegido.spec.tsx" name="Protegido &gt; com token JWT expirado, redireciona para /login avisando que a sessão expirou" time="0.0098345">
+        </testcase>
+        <testcase classname="tests/components/Protegido.spec.tsx" name="Protegido &gt; com o usuário gravado ilegível, redireciona para /login sem quebrar a tela" time="0.0107352">
+        </testcase>
+        <testcase classname="tests/components/Protegido.spec.tsx" name="Protegido &gt; com a troca de senha pendente, redireciona para /alterar-senha" time="0.0159831">
+        </testcase>
+        <testcase classname="tests/components/Protegido.spec.tsx" name="Protegido &gt; com a troca de senha pendente, já em /alterar-senha, renderiza a tela sem redirecionar" time="0.004079">
+        </testcase>
+        <testcase classname="tests/components/Protegido.spec.tsx" name="Protegido &gt; com um perfil sem permissão para a ação, redireciona para /sem-permissao" time="0.0102927">
+        </testcase>
+        <testcase classname="tests/components/Protegido.spec.tsx" name="Protegido &gt; com um perfil que pode executar a ação, renderiza o conteúdo" time="0.0041564">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/components/SePerfil.spec.tsx" timestamp="2026-09-19T21:15:13.567Z" tests="4" failures="0" errors="0" skipped="0" time="0.3248006">
+        <testcase classname="tests/components/SePerfil.spec.tsx" name="SePerfil &gt; mostra o conteúdo a quem pode executar a ação" time="0.2942823">
+        </testcase>
+        <testcase classname="tests/components/SePerfil.spec.tsx" name="SePerfil &gt; esconde o conteúdo de quem não pode" time="0.0069121">
+        </testcase>
+        <testcase classname="tests/components/SePerfil.spec.tsx" name="SePerfil &gt; sem sessão, esconde o conteúdo" time="0.0033561">
+        </testcase>
+        <testcase classname="tests/components/SePerfil.spec.tsx" name="SePerfil &gt; mostra a alternativa a quem não pode, quando informada" time="0.0092527">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/components/TabelaMovimentacoes.spec.tsx" timestamp="2026-09-19T21:15:13.567Z" tests="4" failures="0" errors="0" skipped="0" time="0.694125">
+        <testcase classname="tests/components/TabelaMovimentacoes.spec.tsx" name="TabelaMovimentacoes &gt; tem legenda, cabeçalhos com scope e fica num contêiner que rola na horizontal" time="0.4408052">
+        </testcase>
+        <testcase classname="tests/components/TabelaMovimentacoes.spec.tsx" name="TabelaMovimentacoes &gt; a versão detalhada inclui fornecedor, documento e observação" time="0.1899705">
+        </testcase>
+        <testcase classname="tests/components/TabelaMovimentacoes.spec.tsx" name="TabelaMovimentacoes &gt; mostra o tipo por extenso e a quantidade com a unidade" time="0.044283">
+        </testcase>
+        <testcase classname="tests/components/TabelaMovimentacoes.spec.tsx" name="TabelaMovimentacoes &gt; sem movimentações, mostra a mensagem de vazio no lugar da tabela" time="0.0057005">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/mocks/acesso.spec.ts" timestamp="2026-09-19T21:15:13.568Z" tests="2" failures="0" errors="0" skipped="0" time="0.0190641">
+        <testcase classname="tests/mocks/acesso.spec.ts" name="respostas de erro dos handlers simulados &gt; todo 404 sai com o código NAO_ENCONTRADO, como na API" time="0.0070018">
+        </testcase>
+        <testcase classname="tests/mocks/acesso.spec.ts" name="respostas de erro dos handlers simulados &gt; os demais erros saem como foram montados" time="0.0012786">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/pages/Alertas.spec.tsx" timestamp="2026-09-19T21:15:13.568Z" tests="13" failures="0" errors="0" skipped="0" time="3.0393914">
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; lista só os alertas abertos por padrão" time="0.9510014">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; o filtro Resolvidos mostra quem resolveu" time="0.4165214">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; o filtro Todos mostra abertos e resolvidos" time="0.2537269">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; mostra o fechamento automático quando não há responsável" time="0.0880299">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; o ADMINISTRADOR vê Resolver em cada alerta aberto" time="0.0874657">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; o GESTOR vê Resolver em cada alerta aberto" time="0.0720343">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; o OPERADOR não vê o botão Resolver" time="0.0865155">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; o COMPRADOR não vê o botão Resolver" time="0.0796686">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; resolver pede confirmação e tira o alerta da lista de abertos" time="0.4087387">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; cancelar a confirmação não resolve nada" time="0.2560642">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; mostra a mensagem da API quando o alerta já foi resolvido por outra pessoa" time="0.2626484">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; mostra o erro quando a lista não carrega" time="0.0326747">
+        </testcase>
+        <testcase classname="tests/pages/Alertas.spec.tsx" name="página de alertas &gt; mostra uma frase quando não há alertas no filtro" time="0.0316748">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/pages/AlterarSenha.spec.tsx" timestamp="2026-09-19T21:15:13.570Z" tests="9" failures="0" errors="0" skipped="0" time="6.7514935">
+        <testcase classname="tests/pages/AlterarSenha.spec.tsx" name="página de alteração de senha &gt; mostra os três campos com o preenchimento automático adequado e a regra da nova senha" time="0.508258">
+        </testcase>
+        <testcase classname="tests/pages/AlterarSenha.spec.tsx" name="página de alteração de senha &gt; valida no cliente, liga cada erro ao seu campo e não envia nada" time="0.7461542">
+        </testcase>
+        <testcase classname="tests/pages/AlterarSenha.spec.tsx" name="página de alteração de senha &gt; exige letra e número na nova senha" time="1.1194127">
+        </testcase>
+        <testcase classname="tests/pages/AlterarSenha.spec.tsx" name="página de alteração de senha &gt; com a senha atual errada, mostra o erro no campo da senha atual" time="1.1845767">
+        </testcase>
+        <testcase classname="tests/pages/AlterarSenha.spec.tsx" name="página de alteração de senha &gt; mostra na nova senha a regra recusada pelo servidor" time="0.9691243">
+        </testcase>
+        <testcase classname="tests/pages/AlterarSenha.spec.tsx" name="página de alteração de senha &gt; um erro sem campo, como a falta de conexão, aparece como mensagem geral" time="1.0197961">
+        </testcase>
+        <testcase classname="tests/pages/AlterarSenha.spec.tsx" name="página de alteração de senha &gt; no sucesso, grava o token novo, libera a sessão e vai ao painel" time="1.0464388">
+        </testcase>
+        <testcase classname="tests/pages/AlterarSenha.spec.tsx" name="página de alteração de senha &gt; na troca obrigatória, explica o motivo e oferece sair em vez de voltar" time="0.1087566">
+        </testcase>
+        <testcase classname="tests/pages/AlterarSenha.spec.tsx" name="página de alteração de senha &gt; na troca voluntária, oferece voltar ao painel" time="0.034647">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/pages/Login.spec.tsx" timestamp="2026-09-19T21:15:13.571Z" tests="7" failures="0" errors="0" skipped="0" time="4.1028022">
+        <testcase classname="tests/pages/Login.spec.tsx" name="página de login &gt; renderiza o título e os campos com o preenchimento automático adequado" time="0.5006139">
+        </testcase>
+        <testcase classname="tests/pages/Login.spec.tsx" name="página de login &gt; com credenciais válidas, grava a sessão e leva ao painel" time="1.4220336">
+        </testcase>
+        <testcase classname="tests/pages/Login.spec.tsx" name="página de login &gt; com a senha temporária, leva à troca de senha em vez do painel" time="0.7269668">
+        </testcase>
+        <testcase classname="tests/pages/Login.spec.tsx" name="página de login &gt; com resposta 401, mostra a mensagem &apos;E-mail ou senha inválidos&apos; vinda do servidor" time="0.6438513">
+        </testcase>
+        <testcase classname="tests/pages/Login.spec.tsx" name="página de login &gt; desabilita o botão enquanto o envio está em andamento" time="0.7773592">
+        </testcase>
+        <testcase classname="tests/pages/Login.spec.tsx" name="página de login &gt; avisa que a sessão expirou quando chega do encerramento da sessão" time="0.0164396">
+        </testcase>
+        <testcase classname="tests/pages/Login.spec.tsx" name="página de login &gt; sem motivo, não mostra o aviso de sessão expirada" time="0.0040497">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/pages/Movimentacoes.spec.tsx" timestamp="2026-09-19T21:15:13.572Z" tests="6" failures="0" errors="0" skipped="0" time="3.7959378">
+        <testcase classname="tests/pages/Movimentacoes.spec.tsx" name="página de movimentações &gt; carrega o histórico, as pastilhas e os fornecedores" time="1.0184071">
+        </testcase>
+        <testcase classname="tests/pages/Movimentacoes.spec.tsx" name="página de movimentações &gt; registra uma SAÍDA e anuncia o saldo atualizado" time="1.0058495">
+        </testcase>
+        <testcase classname="tests/pages/Movimentacoes.spec.tsx" name="página de movimentações &gt; registra uma ENTRADA com fornecedor e observação" time="0.9835966">
+        </testcase>
+        <testcase classname="tests/pages/Movimentacoes.spec.tsx" name="página de movimentações &gt; na ENTRADA, o fornecedor é obrigatório: sem ele, nada é enviado" time="0.3013144">
+        </testcase>
+        <testcase classname="tests/pages/Movimentacoes.spec.tsx" name="página de movimentações &gt; o COMPRADOR não vê a opção de SAÍDA e registra só ENTRADA" time="0.0856059">
+        </testcase>
+        <testcase classname="tests/pages/Movimentacoes.spec.tsx" name="página de movimentações &gt; mostra a mensagem de saldo insuficiente devolvida pelo servidor" time="0.3910095">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/pages/NaoEncontrado.spec.tsx" timestamp="2026-09-19T21:15:13.573Z" tests="1" failures="0" errors="0" skipped="0" time="0.1542277">
+        <testcase classname="tests/pages/NaoEncontrado.spec.tsx" name="página não encontrada &gt; mostra o título e o caminho de volta ao painel" time="0.1483483">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/pages/Painel.spec.tsx" timestamp="2026-09-19T21:15:13.573Z" tests="3" failures="0" errors="0" skipped="0" time="1.0132916">
+        <testcase classname="tests/pages/Painel.spec.tsx" name="página do painel &gt; mostra os totais e os itens críticos vindos da API" time="0.9180277">
+        </testcase>
+        <testcase classname="tests/pages/Painel.spec.tsx" name="página do painel &gt; mostra a mensagem de erro do servidor quando a API falha" time="0.045057">
+        </testcase>
+        <testcase classname="tests/pages/Painel.spec.tsx" name="página do painel &gt; mostra a falta de conexão quando o servidor não responde" time="0.028683">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/pages/Pastilhas.spec.tsx" timestamp="2026-09-19T21:15:13.574Z" tests="7" failures="0" errors="0" skipped="0" time="2.1922363">
+        <testcase classname="tests/pages/Pastilhas.spec.tsx" name="página de pastilhas &gt; o ADMINISTRADOR vê o botão Nova pastilha" time="0.5422235">
+        </testcase>
+        <testcase classname="tests/pages/Pastilhas.spec.tsx" name="página de pastilhas &gt; o GESTOR vê o botão Nova pastilha" time="0.1178336">
+        </testcase>
+        <testcase classname="tests/pages/Pastilhas.spec.tsx" name="página de pastilhas &gt; o OPERADOR não vê o botão Nova pastilha" time="0.0653288">
+        </testcase>
+        <testcase classname="tests/pages/Pastilhas.spec.tsx" name="página de pastilhas &gt; o COMPRADOR não vê o botão Nova pastilha" time="0.054612">
+        </testcase>
+        <testcase classname="tests/pages/Pastilhas.spec.tsx" name="página de pastilhas &gt; lista as pastilhas com a situação do estoque" time="0.1134885">
+        </testcase>
+        <testcase classname="tests/pages/Pastilhas.spec.tsx" name="página de pastilhas &gt; busca por código ou descrição" time="0.3116567">
+        </testcase>
+        <testcase classname="tests/pages/Pastilhas.spec.tsx" name="página de pastilhas &gt; o GESTOR abre o formulário e cadastra uma pastilha" time="0.9738154">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/pages/SemPermissao.spec.tsx" timestamp="2026-09-19T21:15:13.575Z" tests="1" failures="0" errors="0" skipped="0" time="0.2483033">
+        <testcase classname="tests/pages/SemPermissao.spec.tsx" name="página sem permissão &gt; explica a recusa e mostra o caminho de volta ao painel" time="0.2399531">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/contexts/AuthContext.spec.tsx" timestamp="2026-09-19T21:15:13.576Z" tests="16" failures="0" errors="0" skipped="0" time="1.0587777">
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext &gt; numa rota protegida, a sessão expirada leva ao login sem perder o motivo" time="0.0904783">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext &gt; o evento de sessão expirada limpa a sessão e leva ao login com o motivo, sem recarregar a página" time="0.0148847">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext &gt; um 401 da API leva ao login pelo roteador" time="0.5125116">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext &gt; o evento de troca obrigatória leva a /alterar-senha e marca a sessão" time="0.0278848">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext &gt; sair encerra a sessão e leva ao login sem motivo" time="0.1078315">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext &gt; atualizarSessao grava o token e o usuário novos" time="0.1112776">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext &gt; pode segue o perfil do usuário logado: ADMINISTRADOR" time="0.006033">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext &gt; pode segue o perfil do usuário logado: GESTOR" time="0.0061391">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext &gt; sem sessão, não há usuário e nada é permitido" time="0.0052257">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext &gt; depois de desmontado, deixa de ouvir os eventos, inclusive os de outras abas" time="0.0117039">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext &gt; useAuth fora do AuthProvider lança um erro claro" time="0.0158771">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext: sessão compartilhada entre abas &gt; quando outra aba encerra a sessão e o token some, esta aba sai e vai ao login" time="0.0185257">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext: sessão compartilhada entre abas &gt; quando outra aba limpa o armazenamento inteiro, esta aba também sai" time="0.0335309">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext: sessão compartilhada entre abas &gt; quando outra aba entra com outro usuário, esta aba recarrega o usuário e vai ao painel" time="0.0516363">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext: sessão compartilhada entre abas &gt; quando só o usuário gravado muda de id, esta aba também recarrega e vai ao painel" time="0.0212509">
+        </testcase>
+        <testcase classname="tests/contexts/AuthContext.spec.tsx" name="AuthContext: sessão compartilhada entre abas &gt; mudanças em outras chaves do armazenamento são ignoradas" time="0.0128562">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/services/alertas.spec.ts" timestamp="2026-09-19T21:15:13.578Z" tests="6" failures="0" errors="0" skipped="0" time="0.1473288">
+        <testcase classname="tests/services/alertas.spec.ts" name="serviço de alertas &gt; sem filtro, pede e recebe só os alertas abertos" time="0.0710562">
+        </testcase>
+        <testcase classname="tests/services/alertas.spec.ts" name="serviço de alertas &gt; filtra os resolvidos, com a data e quem resolveu" time="0.014591">
+        </testcase>
+        <testcase classname="tests/services/alertas.spec.ts" name="serviço de alertas &gt; TODAS traz abertos e resolvidos" time="0.0061427">
+        </testcase>
+        <testcase classname="tests/services/alertas.spec.ts" name="serviço de alertas &gt; o GESTOR resolve um alerta aberto, que sai da lista de abertos" time="0.0262843">
+        </testcase>
+        <testcase classname="tests/services/alertas.spec.ts" name="serviço de alertas &gt; resolver um alerta já resolvido responde 409 ALERTA_JA_RESOLVIDO" time="0.0075234">
+        </testcase>
+        <testcase classname="tests/services/alertas.spec.ts" name="serviço de alertas &gt; o OPERADOR não resolve alertas" time="0.0086594">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/services/api.spec.ts" timestamp="2026-09-19T21:15:13.578Z" tests="18" failures="0" errors="0" skipped="0" time="0.2421754">
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de requisição &gt; injeta Authorization: Bearer &lt;token&gt; quando há token" time="0.112922">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de requisição &gt; não envia Authorization quando não há token" time="0.0070186">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de resposta &gt; um 401 limpa a sessão e dispara pastrack:sessao-expirada, sem mexer em location" time="0.0183603">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de resposta &gt; o 401 do próprio login é credencial recusada: não mexe na sessão nem dispara o evento" time="0.0086144">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de resposta &gt; um 403 TROCA_SENHA_OBRIGATORIA dispara pastrack:troca-senha-obrigatoria e preserva a sessão" time="0.0060458">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de resposta &gt; um 403 de perfil sem permissão não dispara evento" time="0.0056491">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="api: interceptor de resposta &gt; outros erros preservam a sessão e não disparam eventos" time="0.0068784">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="mensagemDeErro &gt; devolve a mensagem enviada pelo servidor" time="0.0045095">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="mensagemDeErro &gt; sem conexão com o servidor, pede para verificar a rede" time="0.0068118">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="mensagemDeErro &gt; com o tempo esgotado (ECONNABORTED), avisa que o servidor demorou" time="0.0005792">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="mensagemDeErro &gt; com o tempo esgotado (ETIMEDOUT), avisa que o servidor demorou" time="0.0001806">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="mensagemDeErro &gt; com resposta sem o campo erro, devolve a mensagem de falha de comunicação" time="0.0066275">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="mensagemDeErro &gt; para erros que não vêm do axios, devolve a mensagem de erro inesperado" time="0.0004933">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="camposDoErro &gt; devolve os erros por campo e une os do mesmo campo" time="0.0178668">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="camposDoErro &gt; ignora itens fora do formato" time="0.0094593">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="camposDoErro &gt; sem erros por campo, devolve um objeto vazio" time="0.0058496">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="codigoDoErro &gt; devolve o código estável enviado pela API" time="0.009347">
+        </testcase>
+        <testcase classname="tests/services/api.spec.ts" name="codigoDoErro &gt; sem código, devolve undefined" time="0.0064234">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/services/auth.spec.ts" timestamp="2026-09-19T21:15:13.580Z" tests="37" failures="0" errors="0" skipped="0" time="0.1832732">
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; login grava o token e o usuário devolvidos pelo servidor" time="0.1126539">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; login devolve deveTrocarSenha de quem ainda usa a senha temporária" time="0.0107814">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; sair remove o token e o usuário" time="0.0059645">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; gravarSessao grava o token e o usuário" time="0.0003993">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; me devolve o usuário do token" time="0.0047269">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; alterarSenha grava o token novo devolvido pela API" time="0.0079596">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="serviço de autenticação &gt; alterarSenha com a senha atual errada rejeita e mantém o token" time="0.0078027">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="usuarioSalvo &gt; lê o usuário gravado" time="0.0007241">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="usuarioSalvo &gt; devolve null quando não há sessão" time="0.00039">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="usuarioSalvo &gt; não lança exceção com JSON inválido: limpa a sessão e devolve null" time="0.001133">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="usuarioSalvo &gt; recusa conteúdo fora do formato de usuário e limpa a sessão" time="0.0003877">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="usuarioSalvo &gt; sessão gravada sem deveTrocarSenha conta como senha já trocada" time="0.0003673">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="marcarTrocaDeSenhaObrigatoria &gt; marca deveTrocarSenha na sessão gravada e devolve o usuário" time="0.0006306">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="marcarTrocaDeSenhaObrigatoria &gt; sem sessão, devolve null" time="0.0002536">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; o token expirado dos testes é um JWT bem formado com exp no passado" time="0.0010859">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; token dentro do prazo não expirou" time="0.0006586">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; token com exp no passado expirou" time="0.0002718">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; sem o instante de chegada, compara o exp com o instante informado" time="0.0003324">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; lê payload com acentos, codificado em base64url" time="0.0003311">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; token malformado conta como expirado: texto sem partes" time="0.0002699">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; token malformado conta como expirado: só duas partes" time="0.0001866">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; token malformado conta como expirado: payload vazio" time="0.0001726">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; token malformado conta como expirado: payload fora de base64" time="0.0003567">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; token malformado conta como expirado: payload que não é JSON" time="0.0002476">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; token malformado conta como expirado: payload sem exp" time="0.0002125">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="tokenExpirado &gt; token malformado conta como expirado: exp em texto" time="0.0002155">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="validade do token contada a partir da chegada &gt; com o relógio do posto adiantado, o token vale pela sua duração a partir da chegada" time="0.001029">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="validade do token contada a partir da chegada &gt; com o relógio do posto atrasado, o token não passa da sua duração" time="0.0005065">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="validade do token contada a partir da chegada &gt; sem iat no token, vale o exp absoluto mesmo com o instante de chegada" time="0.0003446">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="validade do token contada a partir da chegada &gt; a sessão gravada vale com o relógio do posto adiantado e acaba ao fim da duração" time="0.0040129">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="validade do token contada a partir da chegada &gt; com o relógio do posto atrasado, a sessão gravada acaba ao fim da duração do token" time="0.0008938">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="validade do token contada a partir da chegada &gt; o instante de chegada é gravado junto com o token e sai com a sessão" time="0.0006058">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="validade do token contada a partir da chegada &gt; sem o instante de chegada, ou com ele ilegível, vale o exp absoluto" time="0.0008201">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="estaAutenticado e sessaoExpirada &gt; sem token, não há sessão válida nem sessão expirada" time="0.0004196">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="estaAutenticado e sessaoExpirada &gt; com token no prazo, a sessão vale" time="0.0031971">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="estaAutenticado e sessaoExpirada &gt; com token vencido, a sessão expirou" time="0.0014642">
+        </testcase>
+        <testcase classname="tests/services/auth.spec.ts" name="estaAutenticado e sessaoExpirada &gt; com token ilegível, a sessão também conta como expirada" time="0.0007248">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/services/cadastros.spec.ts" timestamp="2026-09-19T21:15:13.584Z" tests="13" failures="0" errors="0" skipped="0" time="0.2009181">
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fabricantes &gt; lista os fabricantes em ordem alfabética" time="0.0651645">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fabricantes &gt; busca um fabricante pelo id" time="0.0069398">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fabricantes &gt; cria um fabricante, que passa a aparecer na lista" time="0.0150702">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fabricantes &gt; atualiza o nome do fabricante" time="0.0073022">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fabricantes &gt; um nome já cadastrado responde 409 DUPLICADO" time="0.0131509">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fabricantes &gt; o COMPRADOR não gerencia fabricantes" time="0.0060729">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fornecedores &gt; lista e busca fornecedores" time="0.0125158">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fornecedores &gt; cria com CNPJ sem máscara e recebe o CNPJ formatado" time="0.0084486">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fornecedores &gt; um CNPJ com dígito verificador errado responde 400 com o erro no campo cnpj" time="0.0117287">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fornecedores &gt; cria com CNPJ alfanumérico em minúsculas e recebe o CNPJ formatado em maiúsculas" time="0.0163365">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fornecedores &gt; um CNPJ alfanumérico com dígito verificador errado responde 400 no campo cnpj" time="0.0093826">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fornecedores &gt; um CNPJ já cadastrado responde 409 DUPLICADO" time="0.0085959">
+        </testcase>
+        <testcase classname="tests/services/cadastros.spec.ts" name="serviço de fornecedores &gt; atualiza o contato e mantém o CNPJ que não foi enviado" time="0.0088843">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/services/movimentacoes.spec.ts" timestamp="2026-09-19T21:15:13.586Z" tests="6" failures="0" errors="0" skipped="0" time="0.1271595">
+        <testcase classname="tests/services/movimentacoes.spec.ts" name="serviço de movimentações &gt; sem filtros, lista o histórico sem enviar parâmetros" time="0.0686064">
+        </testcase>
+        <testcase classname="tests/services/movimentacoes.spec.ts" name="serviço de movimentações &gt; envia só os filtros informados" time="0.016653">
+        </testcase>
+        <testcase classname="tests/services/movimentacoes.spec.ts" name="serviço de movimentações &gt; com página, devolve os dados da página e o total" time="0.0052337">
+        </testcase>
+        <testcase classname="tests/services/movimentacoes.spec.ts" name="serviço de movimentações &gt; registra uma ENTRADA com fornecedor e devolve o saldo atualizado" time="0.0111192">
+        </testcase>
+        <testcase classname="tests/services/movimentacoes.spec.ts" name="serviço de movimentações &gt; a ENTRADA sem fornecedor volta com o erro no campo fornecedorId" time="0.0076858">
+        </testcase>
+        <testcase classname="tests/services/movimentacoes.spec.ts" name="serviço de movimentações &gt; o COMPRADOR não registra SAIDA" time="0.0081632">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/services/pastilhas.spec.ts" timestamp="2026-09-19T21:15:13.587Z" tests="8" failures="0" errors="0" skipped="0" time="0.2105965">
+        <testcase classname="tests/services/pastilhas.spec.ts" name="serviço de pastilhas &gt; sem filtros, lista todas sem enviar parâmetros" time="0.114511">
+        </testcase>
+        <testcase classname="tests/services/pastilhas.spec.ts" name="serviço de pastilhas &gt; envia a busca aparada e o filtro de itens críticos" time="0.012477">
+        </testcase>
+        <testcase classname="tests/services/pastilhas.spec.ts" name="serviço de pastilhas &gt; busca em branco não vira parâmetro" time="0.0091035">
+        </testcase>
+        <testcase classname="tests/services/pastilhas.spec.ts" name="serviço de pastilhas &gt; busca uma pastilha pelo id" time="0.0066593">
+        </testcase>
+        <testcase classname="tests/services/pastilhas.spec.ts" name="serviço de pastilhas &gt; o GESTOR cadastra uma pastilha, que nasce com saldo zero" time="0.0179991">
+        </testcase>
+        <testcase classname="tests/services/pastilhas.spec.ts" name="serviço de pastilhas &gt; o OPERADOR não cadastra pastilhas" time="0.0114536">
+        </testcase>
+        <testcase classname="tests/services/pastilhas.spec.ts" name="serviço de pastilhas &gt; atualizarPastilha envia só os campos editáveis, nunca codigo nem saldoAtual" time="0.0185715">
+        </testcase>
+        <testcase classname="tests/services/pastilhas.spec.ts" name="serviço de pastilhas &gt; atualizarPastilha não envia os campos omitidos" time="0.0094897">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/services/usuarios.spec.ts" timestamp="2026-09-19T21:15:13.588Z" tests="8" failures="0" errors="0" skipped="0" time="0.1287785">
+        <testcase classname="tests/services/usuarios.spec.ts" name="serviço de usuários &gt; lista os usuários com a situação de cada um" time="0.0515165">
+        </testcase>
+        <testcase classname="tests/services/usuarios.spec.ts" name="serviço de usuários &gt; só o ADMINISTRADOR acessa: o GESTOR recebe 403" time="0.010376">
+        </testcase>
+        <testcase classname="tests/services/usuarios.spec.ts" name="serviço de usuários &gt; cria um usuário e recebe a senha temporária uma única vez" time="0.0143276">
+        </testcase>
+        <testcase classname="tests/services/usuarios.spec.ts" name="serviço de usuários &gt; um e-mail já cadastrado responde 409 DUPLICADO" time="0.0054658">
+        </testcase>
+        <testcase classname="tests/services/usuarios.spec.ts" name="serviço de usuários &gt; atualiza o nome e o perfil" time="0.0071766">
+        </testcase>
+        <testcase classname="tests/services/usuarios.spec.ts" name="serviço de usuários &gt; desativa e reativa um usuário" time="0.0098537">
+        </testcase>
+        <testcase classname="tests/services/usuarios.spec.ts" name="serviço de usuários &gt; ninguém desativa a si mesmo: 409" time="0.0108412">
+        </testcase>
+        <testcase classname="tests/services/usuarios.spec.ts" name="serviço de usuários &gt; redefinir a senha devolve a senha temporária e exige nova troca" time="0.0113021">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/utils/formato.spec.ts" timestamp="2026-09-19T21:15:13.589Z" tests="31" failures="0" errors="0" skipped="0" time="0.0217898">
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; aceita o CNPJ numérico válido 11.222.333/0001-81" time="0.0030211">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; aceita o CNPJ numérico válido 11222333000181" time="0.0004752">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; aceita o CNPJ numérico válido 33.000.167/0001-01" time="0.0002104">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; aceita o CNPJ numérico válido  55.666.777/0001-81 " time="0.0002134">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; aceita o CNPJ alfanumérico válido 12.ABC.345/01DE-35" time="0.0002265">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; aceita o CNPJ alfanumérico válido 12ABC34501DE35" time="0.0002358">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; aceita o CNPJ alfanumérico válido 12.abc.345/01de-35" time="0.0001734">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa dígito verificador errado (11.222.333/0001-82)" time="0.0002318">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa primeiro dígito errado (11.222.333/0001-71)" time="0.0001532">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa dígito verificador errado no alfanumérico (12.ABC.345/01DE-36)" time="0.0001409">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa primeiro dígito errado no alfanumérico (12.ABC.345/01DE-25)" time="0.0001355">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa letra nos dígitos verificadores (11.222.333/0001-8a)" time="0.0001323">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa letra nos dígitos verificadores do alfanumérico (12.ABC.345/01DE-3E)" time="0.000129">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa símbolo fora das letras e dígitos (12.AB#.345/01DE-35)" time="0.0001308">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa dígitos repetidos (00.000.000/0000-00)" time="0.0001574">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa dígitos repetidos sem máscara (11111111111111)" time="0.0001498">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa caracteres a menos (1122233300018)" time="0.0001372">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa caracteres a mais (112223330001810)" time="0.0001384">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa máscara fora do lugar (112.223.330/0018-1)" time="0.0001285">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="validarCnpj &gt; recusa valor vazio ()" time="0.0001347">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="formatarCnpj &gt; aplica a máscara aos 14 dígitos" time="0.0004322">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="formatarCnpj &gt; mantém um CNPJ já formatado" time="0.0003926">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="formatarCnpj &gt; mantém as letras do CNPJ alfanumérico, em maiúsculas" time="0.0002629">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="formatarCnpj &gt; formata parte dos caracteres, para uso durante a digitação" time="0.0002987">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="formatarCnpj &gt; descarta o que passar de 14 caracteres e o que não for letra ou dígito" time="0.0001695">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="normalizarCnpj &gt; tira a pontuação e passa as letras para maiúsculas" time="0.0002347">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="somenteDigitos &gt; remove pontuação e letras" time="0.0002938">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="formatarDataHora &gt; usa dia/mês/ano e hora:minuto no fuso local" time="0.0005511">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="formatarDataHora &gt; devolve &apos;-&apos; para valor ausente ou inválido" time="0.0004518">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="formatarQuantidade &gt; usa separador de milhar e a unidade" time="0.0007157">
+        </testcase>
+        <testcase classname="tests/utils/formato.spec.ts" name="formatarQuantidade &gt; sem unidade, mostra só o número" time="0.0005167">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/utils/permissoes.spec.ts" timestamp="2026-09-19T21:15:13.596Z" tests="6" failures="0" errors="0" skipped="0" time="0.01468">
+        <testcase classname="tests/utils/permissoes.spec.ts" name="permissões &gt; o espelho tem as mesmas ações e perfis da matriz do backend" time="0.0039598">
+        </testcase>
+        <testcase classname="tests/utils/permissoes.spec.ts" name="permissões &gt; o COMPRADOR registra entrada, mas não saída" time="0.0004993">
+        </testcase>
+        <testcase classname="tests/utils/permissoes.spec.ts" name="permissões &gt; só o ADMINISTRADOR gerencia usuários" time="0.0003866">
+        </testcase>
+        <testcase classname="tests/utils/permissoes.spec.ts" name="permissões &gt; sem perfil, nenhuma ação é permitida" time="0.000235">
+        </testcase>
+        <testcase classname="tests/utils/permissoes.spec.ts" name="permissões &gt; ehPerfil reconhece só os quatro perfis" time="0.000282">
+        </testcase>
+        <testcase classname="tests/utils/permissoes.spec.ts" name="permissões &gt; todo perfil tem um nome para exibir" time="0.0002475">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/utils/senha.spec.ts" timestamp="2026-09-19T21:15:13.598Z" tests="5" failures="0" errors="0" skipped="0" time="0.0181423">
+        <testcase classname="tests/utils/senha.spec.ts" name="problemasDaSenha &gt; aceita senha com 10 caracteres ou mais, letra e número" time="0.0050899">
+        </testcase>
+        <testcase classname="tests/utils/senha.spec.ts" name="problemasDaSenha &gt; recusa senha com menos de 10 caracteres" time="0.0007493">
+        </testcase>
+        <testcase classname="tests/utils/senha.spec.ts" name="problemasDaSenha &gt; exige pelo menos uma letra e um número" time="0.0004796">
+        </testcase>
+        <testcase classname="tests/utils/senha.spec.ts" name="problemasDaSenha &gt; conta os bytes em UTF-8: letras acentuadas ocupam 2" time="0.0004375">
+        </testcase>
+        <testcase classname="tests/utils/senha.spec.ts" name="problemasDaSenha &gt; acumula os problemas encontrados" time="0.0004443">
+        </testcase>
+    </testsuite>
+</testsuites>

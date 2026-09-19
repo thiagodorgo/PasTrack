@@ -1,0 +1,106 @@
+{
+  "data": "2026-09-19T18:13:15-03:00",
+  "sha": "84b9e37819ac9ce40e1a957cf0155d1c3006e29f",
+  "sha7": "84b9e37",
+  "branch": "main",
+  "arvoreSuja": false,
+  "situacao": "ok",
+  "ambiente": {
+    "so": "Windows 11 Pro (build 10.0.22631, x64)",
+    "node": "v20.19.5",
+    "docker": "29.6.1"
+  },
+  "suites": [
+    {
+      "nome": "backend",
+      "executada": true,
+      "status": "ok",
+      "testes": 574,
+      "ok": 574,
+      "falhas": 0,
+      "erros": 0,
+      "ignorados": 0,
+      "duracaoSegundos": 19.732
+    },
+    {
+      "nome": "frontend",
+      "executada": true,
+      "status": "ok",
+      "testes": 254,
+      "ok": 254,
+      "falhas": 0,
+      "erros": 0,
+      "ignorados": 0,
+      "duracaoSegundos": 57.34
+    },
+    {
+      "nome": "e2e",
+      "executada": false,
+      "status": "ausente",
+      "testes": null,
+      "ok": null,
+      "falhas": null,
+      "erros": null,
+      "ignorados": null,
+      "duracaoSegundos": null
+    }
+  ],
+  "cobertura": {
+    "backend": {
+      "linhas": 98.56,
+      "instrucoes": 98.5,
+      "funcoes": 97.54,
+      "branches": 94.01
+    },
+    "frontend": {
+      "linhas": 98.32,
+      "instrucoes": 97.4,
+      "funcoes": 96.89,
+      "branches": 94.64
+    }
+  },
+  "npmAudit": {
+    "backend": {
+      "critica": 0,
+      "alta": 0,
+      "moderada": 0,
+      "baixa": 0,
+      "info": 0,
+      "total": 0
+    },
+    "frontend": {
+      "critica": 0,
+      "alta": 0,
+      "moderada": 0,
+      "baixa": 0,
+      "info": 0,
+      "total": 0
+    }
+  },
+  "comandos": [
+    {
+      "comando": "docker compose -f docker-compose.test.yml up -d --wait",
+      "codigoSaida": 0
+    },
+    {
+      "comando": "npm run test:cov --prefix backend",
+      "codigoSaida": 0
+    },
+    {
+      "comando": "docker compose -f docker-compose.test.yml down -v",
+      "codigoSaida": 0
+    },
+    {
+      "comando": "npm run test:cov --prefix frontend",
+      "codigoSaida": 0
+    },
+    {
+      "comando": "npm audit --omit=dev --json --prefix backend",
+      "codigoSaida": 0
+    },
+    {
+      "comando": "npm audit --omit=dev --json --prefix frontend",
+      "codigoSaida": 0
+    }
+  ]
+}

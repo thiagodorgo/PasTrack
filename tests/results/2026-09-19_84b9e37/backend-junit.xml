@@ -1,0 +1,1235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="574" failures="0" errors="0" time="19.7320353">
+    <testsuite name="tests/unit/auditoria.spec.ts" timestamp="2026-09-19T21:14:12.059Z" tests="3" failures="0" errors="0" skipped="0" time="0.0074331">
+        <testcase classname="tests/unit/auditoria.spec.ts" name="paraJsonSeguro &gt; remove campos sensíveis em qualquer nível" time="0.0034023">
+        </testcase>
+        <testcase classname="tests/unit/auditoria.spec.ts" name="paraJsonSeguro &gt; converte datas em texto ISO" time="0.0011319">
+        </testcase>
+        <testcase classname="tests/unit/auditoria.spec.ts" name="paraJsonSeguro &gt; ignora valores ausentes" time="0.000256">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/cnpj.spec.ts" timestamp="2026-09-19T21:14:12.063Z" tests="28" failures="0" errors="0" skipped="0" time="0.0184401">
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; aceita CNPJ sem máscara" time="0.0061593">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; aceita CNPJ com máscara" time="0.0007663">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; aceita CNPJ com outros dígitos" time="0.000306">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; aceita CNPJ que começa com zeros" time="0.0001622">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; aceita CNPJ com resto zero no primeiro dígito" time="0.0001438">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; aceita CNPJ com resto um no primeiro dígito" time="0.0001187">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; aceita CNPJ alfanumérico com máscara" time="0.0001153">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; aceita CNPJ alfanumérico sem máscara" time="0.0001219">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; aceita CNPJ alfanumérico em minúsculas" time="0.0001212">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ com o segundo dígito verificador errado" time="0.0001935">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ com o primeiro dígito verificador errado" time="0.0003973">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ com todos os dígitos iguais" time="0.0002376">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ só com zeros, que passaria na conta dos dígitos" time="0.0001255">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ com todos os dígitos iguais e máscara" time="0.0001105">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ com 13 posições" time="0.000102">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ com 15 posições" time="0.000125">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ com máscara incompleta" time="0.0004545">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ com separadores fora do lugar" time="0.0002157">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ com letra no dígito verificador" time="0.0002032">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ alfanumérico com dígito verificador errado" time="0.0001934">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ alfanumérico com letra no dígito verificador" time="0.0001747">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ com letra acentuada" time="0.0001762">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ com espaços nas pontas" time="0.0003474">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="validarCnpj &gt; recusa CNPJ vazio" time="0.0001756">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="formatarCnpj &gt; aplica a máscara ao CNPJ sem máscara" time="0.0011099">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="formatarCnpj &gt; mantém o CNPJ que já vem com máscara" time="0.0004407">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="formatarCnpj &gt; passa o CNPJ alfanumérico para maiúsculas e aplica a máscara" time="0.0002719">
+        </testcase>
+        <testcase classname="tests/unit/cnpj.spec.ts" name="formatarCnpj &gt; lança erro para CNPJ inválido" time="0.0012475">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/env-inicio.spec.ts" timestamp="2026-09-19T21:14:12.067Z" tests="1" failures="0" errors="0" skipped="0" time="0.1220619">
+        <testcase classname="tests/unit/env-inicio.spec.ts" name="configuração lida na inicialização &gt; com variável inválida, lista o que corrigir e encerra o processo com código 1" time="0.1194909">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/env-limites.spec.ts" timestamp="2026-09-19T21:14:12.068Z" tests="9" failures="0" errors="0" skipped="0" time="0.0095542">
+        <testcase classname="tests/unit/env-limites.spec.ts" name="limites de requisições no ambiente &gt; aplica os padrões: 5 falhas em 15 minutos, 1000 por IP e 300 por usuário a cada minuto" time="0.0027268">
+        </testcase>
+        <testcase classname="tests/unit/env-limites.spec.ts" name="limites de requisições no ambiente &gt; aceita valores informados" time="0.000456">
+        </testcase>
+        <testcase classname="tests/unit/env-limites.spec.ts" name="limites de requisições no ambiente &gt; recusa RATE_LIMIT_LOGIN_MAX=0 e cita a variável" time="0.0017291">
+        </testcase>
+        <testcase classname="tests/unit/env-limites.spec.ts" name="limites de requisições no ambiente &gt; recusa RATE_LIMIT_LOGIN_MAX=abc e cita a variável" time="0.0007877">
+        </testcase>
+        <testcase classname="tests/unit/env-limites.spec.ts" name="limites de requisições no ambiente &gt; recusa RATE_LIMIT_LOGIN_JANELA_MIN=0 e cita a variável" time="0.0004655">
+        </testcase>
+        <testcase classname="tests/unit/env-limites.spec.ts" name="limites de requisições no ambiente &gt; recusa RATE_LIMIT_LOGIN_JANELA_MIN=2.5 e cita a variável" time="0.0003231">
+        </testcase>
+        <testcase classname="tests/unit/env-limites.spec.ts" name="limites de requisições no ambiente &gt; recusa RATE_LIMIT_GLOBAL_MAX=-1 e cita a variável" time="0.000242">
+        </testcase>
+        <testcase classname="tests/unit/env-limites.spec.ts" name="limites de requisições no ambiente &gt; recusa RATE_LIMIT_USUARIO_MAX=0 e cita a variável" time="0.0002084">
+        </testcase>
+        <testcase classname="tests/unit/env-limites.spec.ts" name="limites de requisições no ambiente &gt; recusa RATE_LIMIT_USUARIO_MAX=muitas e cita a variável" time="0.0001962">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/env.spec.ts" timestamp="2026-09-19T21:14:12.069Z" tests="13" failures="0" errors="0" skipped="0" time="0.0114725">
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; aceita a configuração mínima e aplica os padrões" time="0.0034143">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; separa a lista de origens do CORS e ignora espaços" time="0.0003956">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa JWT_SECRET ausente e cita a variável" time="0.0022904">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa JWT_SECRET curto e cita a variável" time="0.0005513">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa JWT_SECRET do exemplo e cita a variável" time="0.0003399">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa DATABASE_URL ausente e cita a variável" time="0.0002177">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa DATABASE_URL de outro banco e cita a variável" time="0.0002496">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa PORT não numérica e cita a variável" time="0.0005893">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa PORT fora da faixa e cita a variável" time="0.0002989">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa JWT_EXPIRES_IN sem unidade e cita a variável" time="0.0002809">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa NODE_ENV desconhecido e cita a variável" time="0.0003027">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; recusa custo do bcrypt baixo em produção e cita a variável" time="0.0003073">
+        </testcase>
+        <testcase classname="tests/unit/env.spec.ts" name="carregarEnv &gt; aceita custo 12 em produção" time="0.0001411">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/erros-banco.spec.ts" timestamp="2026-09-19T21:14:12.071Z" tests="10" failures="0" errors="0" skipped="0" time="0.0763759">
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; duplicidade em Fabricante vira 409 com mensagem clara" time="0.0296984">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; duplicidade em Pastilha vira 409 com mensagem clara" time="0.0052836">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; duplicidade em Fornecedor vira 409 com mensagem clara" time="0.0050275">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; duplicidade em Usuario vira 409 com mensagem clara" time="0.0040894">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; duplicidade sem modelo conhecido usa mensagem genérica" time="0.0039721">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; registro inexistente vira 404" time="0.0035679">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; referência inválida vira 400" time="0.003868">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com erros do banco &gt; outros códigos do banco viram 500 sem detalhes" time="0.0059508">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com códigos estáveis &gt; AppError com código devolve o código" time="0.0042169">
+        </testcase>
+        <testcase classname="tests/unit/erros-banco.spec.ts" name="tratarErros() com códigos estáveis &gt; dados inválidos trazem o código DADOS_INVALIDOS" time="0.0079952">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/exigir-senha-atualizada.spec.ts" timestamp="2026-09-19T21:14:12.072Z" tests="3" failures="0" errors="0" skipped="0" time="0.0458927">
+        <testcase classname="tests/unit/exigir-senha-atualizada.spec.ts" name="exigirSenhaAtualizada &gt; libera quem já trocou a senha" time="0.0302039">
+        </testcase>
+        <testcase classname="tests/unit/exigir-senha-atualizada.spec.ts" name="exigirSenhaAtualizada &gt; bloqueia com 403 TROCA_SENHA_OBRIGATORIA quem ainda precisa trocar" time="0.0077702">
+        </testcase>
+        <testcase classname="tests/unit/exigir-senha-atualizada.spec.ts" name="exigirSenhaAtualizada &gt; recusa com 401 se usada sem autenticar antes" time="0.0031279">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/logger.spec.ts" timestamp="2026-09-19T21:14:12.073Z" tests="5" failures="0" errors="0" skipped="0" time="0.0632863">
+        <testcase classname="tests/unit/logger.spec.ts" name="criarLogger &gt; redige credenciais dos cabeçalhos e todos os campos de senha" time="0.0076211">
+        </testcase>
+        <testcase classname="tests/unit/logger.spec.ts" name="criarLogger &gt; respeita o nível configurado" time="0.0010036">
+        </testcase>
+        <testcase classname="tests/unit/logger.spec.ts" name="criarLogDeAcesso &gt; registra o request id e esconde Authorization e Cookie" time="0.0334809">
+        </testcase>
+        <testcase classname="tests/unit/logger.spec.ts" name="criarLogDeAcesso &gt; usa warn para 4xx, error para 5xx e ignora a verificação de saúde que deu certo" time="0.0135569">
+        </testcase>
+        <testcase classname="tests/unit/logger.spec.ts" name="criarLogDeAcesso &gt; registra a verificação de saúde quando ela falha" time="0.0051925">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/permissoes.spec.ts" timestamp="2026-09-19T21:14:12.074Z" tests="33" failures="0" errors="0" skipped="0" time="0.0075453">
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; tem exatamente as ações previstas" time="0.0034404">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode consultar" time="0.0003185">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode consultar" time="0.0000976">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR pode consultar" time="0.0000777">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR pode consultar" time="0.0000647">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode gerenciarPastilhas" time="0.000061">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode gerenciarPastilhas" time="0.000057">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR não pode gerenciarPastilhas" time="0.0000579">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR não pode gerenciarPastilhas" time="0.0000581">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode gerenciarFabricantes" time="0.0000523">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode gerenciarFabricantes" time="0.0000521">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR não pode gerenciarFabricantes" time="0.0000507">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR não pode gerenciarFabricantes" time="0.000051">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode gerenciarFornecedores" time="0.0000505">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode gerenciarFornecedores" time="0.000051">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR não pode gerenciarFornecedores" time="0.0000542">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR pode gerenciarFornecedores" time="0.0000512">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode registrarEntrada" time="0.0000514">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode registrarEntrada" time="0.0000529">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR pode registrarEntrada" time="0.0000603">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR pode registrarEntrada" time="0.0000534">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode registrarSaida" time="0.0000515">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode registrarSaida" time="0.0000518">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR pode registrarSaida" time="0.0000503">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR não pode registrarSaida" time="0.0000518">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode resolverAlerta" time="0.0000504">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR pode resolverAlerta" time="0.0000542">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR não pode resolverAlerta" time="0.0000509">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR não pode resolverAlerta" time="0.0000518">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; ADMINISTRADOR pode gerenciarUsuarios" time="0.0000515">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; GESTOR não pode gerenciarUsuarios" time="0.0000515">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; OPERADOR não pode gerenciarUsuarios" time="0.0000522">
+        </testcase>
+        <testcase classname="tests/unit/permissoes.spec.ts" name="matriz de permissões &gt; COMPRADOR não pode gerenciarUsuarios" time="0.0000509">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/politica-senha.spec.ts" timestamp="2026-09-19T21:14:12.077Z" tests="8" failures="0" errors="0" skipped="0" time="0.0064678">
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; aceita uma senha forte" time="0.0028401">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha curta" time="0.0011109">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha sem número" time="0.0001431">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha sem letra" time="0.0000883">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha comum" time="0.0000817">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha acima de 72 bytes por causa de acentos" time="0.0000787">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; aceita exatamente 72 bytes" time="0.0001128">
+        </testcase>
+        <testcase classname="tests/unit/politica-senha.spec.ts" name="validarPoliticaDeSenha &gt; recusa senha que contém o e-mail" time="0.0001111">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/request-id.spec.ts" timestamp="2026-09-19T21:14:12.078Z" tests="13" failures="0" errors="0" skipped="0" time="0.0445247">
+        <testcase classname="tests/unit/request-id.spec.ts" name="escolherRequestId &gt; aproveita o id seguro abc-123" time="0.0029376">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="escolherRequestId &gt; aproveita o id seguro A_b-9" time="0.0002349">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="escolherRequestId &gt; aproveita o id seguro xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" time="0.0001051">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="escolherRequestId &gt; gera um UUID quando o recebido está longo demais" time="0.000594">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="escolherRequestId &gt; gera um UUID quando o recebido está com espaço" time="0.000157">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="escolherRequestId &gt; gera um UUID quando o recebido está com quebra de linha" time="0.0000879">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="escolherRequestId &gt; gera um UUID quando o recebido está com caracteres de controle de log" time="0.0000742">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="escolherRequestId &gt; gera um UUID quando o recebido está vazio" time="0.0000684">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="escolherRequestId &gt; gera um UUID quando o recebido está repetido" time="0.0000645">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="escolherRequestId &gt; gera um UUID quando o recebido está ausente" time="0.0000656">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="atribuirRequestId &gt; devolve o id recebido quando é seguro" time="0.0258007">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="atribuirRequestId &gt; troca o id recebido quando não é seguro" time="0.0049734">
+        </testcase>
+        <testcase classname="tests/unit/request-id.spec.ts" name="atribuirRequestId &gt; inclui o requestId no 500 e registra o erro no logger" time="0.0069743">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/saude.spec.ts" timestamp="2026-09-19T21:14:12.080Z" tests="1" failures="0" errors="0" skipped="0" time="0.0433593">
+        <testcase classname="tests/unit/saude.spec.ts" name="GET /health sem banco &gt; responde 503 com a chave erro e mantém os campos de diagnóstico" time="0.0403433">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/senha-aleatoria.spec.ts" timestamp="2026-09-19T21:14:12.080Z" tests="3" failures="0" errors="0" skipped="0" time="0.0178368">
+        <testcase classname="tests/unit/senha-aleatoria.spec.ts" name="gerarSenhaAleatoria &gt; gera 22 caracteres base64url que sempre atendem à política" time="0.0142838">
+        </testcase>
+        <testcase classname="tests/unit/senha-aleatoria.spec.ts" name="gerarSenhaAleatoria &gt; não repete senhas" time="0.0013749">
+        </testcase>
+        <testcase classname="tests/unit/senha-aleatoria.spec.ts" name="gerarSenhaAleatoria &gt; tenta de novo quando a senha sorteada contém o nome do e-mail" time="0.0002829">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/validar-e-erros.spec.ts" timestamp="2026-09-19T21:14:12.081Z" tests="9" failures="0" errors="0" skipped="0" time="0.2357392">
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="validar() &gt; converte e repassa os dados válidos" time="0.1978003">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="validar() &gt; recusa id não numérico com 400 e aponta o campo" time="0.0067394">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="validar() &gt; recusa campos fora do esquema" time="0.0042195">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="validar() &gt; recusa valores inválidos e aponta o campo" time="0.0035545">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="tratarErros() &gt; usa o status do AppError" time="0.0036202">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="tratarErros() &gt; captura erros de handlers assíncronos" time="0.0038026">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="tratarErros() &gt; devolve 500 sem vazar detalhes internos" time="0.0055067">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="tratarErros() &gt; devolve 400 para JSON malformado" time="0.0042682">
+        </testcase>
+        <testcase classname="tests/unit/validar-e-erros.spec.ts" name="tratarErros() &gt; devolve 413 para corpo grande demais" time="0.0035455">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/alertas.spec.ts" timestamp="2026-09-19T21:14:12.083Z" tests="33" failures="0" errors="0" skipped="0" time="1.732781">
+        <testcase classname="tests/integration/alertas.spec.ts" name="GET /api/alertas &gt; sem situação lista só os abertos, com a pastilha e sem responsável" time="0.1046294">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="GET /api/alertas &gt; situacao=RESOLVIDO traz quem resolveu, ou null quando a reposição fechou o alerta" time="0.0414833">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="GET /api/alertas &gt; situacao=TODAS traz abertos e resolvidos, dos mais recentes para os mais antigos" time="0.0399608">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="GET /api/alertas &gt; recusa situacao=aberto com 400" time="0.0205661">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="GET /api/alertas &gt; recusa situacao=FECHADO com 400" time="0.0214289">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="GET /api/alertas &gt; recusa situacao= com 400" time="0.0207798">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="GET /api/alertas &gt; recusa parâmetro desconhecido" time="0.0202978">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="GET /api/alertas &gt; qualquer perfil autenticado consulta; sem token é 401" time="0.0256765">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="PATCH /api/alertas/:id/resolver &gt; resolve o alerta aberto, grava o responsável e registra na auditoria" time="0.0569394">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="PATCH /api/alertas/:id/resolver &gt; alerta já resolvido responde 409 ALERTA_JA_RESOLVIDO e nada muda" time="0.0402148">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="PATCH /api/alertas/:id/resolver &gt; alerta fechado pela reposição do estoque também responde 409" time="0.108616">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="PATCH /api/alertas/:id/resolver &gt; alerta inexistente responde 404 e id inválido responde 400" time="0.0571553">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="PATCH /api/alertas/:id/resolver &gt; OPERADOR e COMPRADOR recebem 403 e o alerta continua aberto" time="0.0426744">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="PATCH /api/alertas/:id/resolver &gt; de duas resoluções simultâneas, uma vence e a outra recebe 409" time="0.13074">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="PATCH /api/alertas/:id/resolver &gt; a resolução espera a trava da pastilha e, solta a trava, grava o responsável" time="0.1762337">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="ciclo de vida do alerta &gt; SAÍDA que atinge o mínimo abre alerta e registra na auditoria" time="0.0581367">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="ciclo de vida do alerta &gt; ENTRADA que repõe o saldo acima do mínimo fecha o alerta automaticamente" time="0.0767904">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="ciclo de vida do alerta &gt; ENTRADA que não passa do mínimo mantém o alerta aberto" time="0.0909685">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="ciclo de vida do alerta &gt; abre um novo alerta quando o saldo volta a cair depois da reposição" time="0.1025526">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="integridade garantida pelo banco &gt; não permite saldo negativo" time="0.0251235">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="integridade garantida pelo banco &gt; não permite estoque mínimo negativo" time="0.0196021">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="integridade garantida pelo banco &gt; não permite movimentação com quantidade zero" time="0.0232652">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="integridade garantida pelo banco &gt; não permite dois alertas abertos para a mesma pastilha" time="0.0205505">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="integridade garantida pelo banco &gt; permite vários alertas resolvidos para a mesma pastilha" time="0.0236579">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="erros do banco viram respostas claras &gt; fabricante com nome repetido responde 409" time="0.0388179">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="id do alerta no limite do INT4 &gt; 2147483647 é aceito: responde 404 sem o alerta e 200 com ele" time="0.0492074">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="id do alerta no limite do INT4 &gt; 2147483648 responde 400" time="0.0228568">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="limite e paginação de GET /api/alertas &gt; sem página devolve no máximo os 100 mais recentes, em RESOLVIDO e em TODAS" time="0.0602835">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="limite e paginação de GET /api/alertas &gt; com página devolve dados, total, página e tamanho" time="0.0709754">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="limite e paginação de GET /api/alertas &gt; recusa pagina=0 com 400" time="0.0203351">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="limite e paginação de GET /api/alertas &gt; recusa pagina=x com 400" time="0.0218313">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="limite e paginação de GET /api/alertas &gt; recusa tamanho=101 com 400" time="0.0209753">
+        </testcase>
+        <testcase classname="tests/integration/alertas.spec.ts" name="desempate dos alertas pelo id &gt; alertas com a mesma dataGeracao saem do id maior para o menor, com e sem página" time="0.0543617">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/auth.spec.ts" timestamp="2026-09-19T21:14:12.087Z" tests="15" failures="0" errors="0" skipped="0" time="0.3954367">
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; devolve token e apenas os dados públicos do usuário" time="0.08015">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; avisa quando o usuário ainda precisa trocar a senha" time="0.0241923">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; emite o token HS256 com emissor, público, validade e versão" time="0.0239126">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; aceita o e-mail com maiúsculas e espaços" time="0.0300764">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; recusa senha errada com a mesma mensagem genérica" time="0.0218204">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; recusa e-mail inexistente com a mesma mensagem genérica" time="0.0224603">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; compara a senha contra um hash falso quando o e-mail não existe" time="0.0208843">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; bloqueia usuário inativo mesmo com a senha certa, com a mesma mensagem" time="0.0213497">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; exige e-mail e senha" time="0.0152966">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="POST /api/auth/login &gt; recusa campos fora do esquema" time="0.0154251">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="acesso às rotas protegidas &gt; recusa requisição sem token" time="0.0180259">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="acesso às rotas protegidas &gt; recusa token malformado" time="0.0169048">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="acesso às rotas protegidas &gt; recusa token assinado com outra chave" time="0.0169268">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="acesso às rotas protegidas &gt; aceita token válido" time="0.0277422">
+        </testcase>
+        <testcase classname="tests/integration/auth.spec.ts" name="acesso às rotas protegidas &gt; aceita o token devolvido pelo login" time="0.0291552">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/cadastros-atomicidade.spec.ts" timestamp="2026-09-19T21:14:12.089Z" tests="3" failures="0" errors="0" skipped="0" time="0.2044086">
+        <testcase classname="tests/integration/cadastros-atomicidade.spec.ts" name="fabricantes e fornecedores em uma única transação &gt; PUT de fabricante com a auditoria falhando responde 500 e não renomeia" time="0.1031201">
+        </testcase>
+        <testcase classname="tests/integration/cadastros-atomicidade.spec.ts" name="fabricantes e fornecedores em uma única transação &gt; PUT de fornecedor com a auditoria falhando responde 500 e não altera nada" time="0.0399129">
+        </testcase>
+        <testcase classname="tests/integration/cadastros-atomicidade.spec.ts" name="fabricantes e fornecedores em uma única transação &gt; POST de fabricante e de fornecedor com a auditoria falhando não gravam nada" time="0.0437255">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/cadastros-permissoes.spec.ts" timestamp="2026-09-19T21:14:12.090Z" tests="10" failures="0" errors="0" skipped="0" time="0.4237298">
+        <testcase classname="tests/integration/cadastros-permissoes.spec.ts" name="a permissão é conferida antes da validação nas rotas de escrita dos cadastros &gt; POST /api/pastilhas responde 403 para OPERADOR mesmo com corpo inválido" time="0.1047135">
+        </testcase>
+        <testcase classname="tests/integration/cadastros-permissoes.spec.ts" name="a permissão é conferida antes da validação nas rotas de escrita dos cadastros &gt; POST /api/pastilhas responde 403 para COMPRADOR mesmo com corpo inválido" time="0.0335806">
+        </testcase>
+        <testcase classname="tests/integration/cadastros-permissoes.spec.ts" name="a permissão é conferida antes da validação nas rotas de escrita dos cadastros &gt; PUT /api/pastilhas/:id responde 403 para OPERADOR mesmo com corpo inválido" time="0.0409652">
+        </testcase>
+        <testcase classname="tests/integration/cadastros-permissoes.spec.ts" name="a permissão é conferida antes da validação nas rotas de escrita dos cadastros &gt; PUT /api/pastilhas/:id responde 403 para COMPRADOR mesmo com corpo inválido" time="0.0432913">
+        </testcase>
+        <testcase classname="tests/integration/cadastros-permissoes.spec.ts" name="a permissão é conferida antes da validação nas rotas de escrita dos cadastros &gt; POST /api/fabricantes responde 403 para OPERADOR mesmo com corpo inválido" time="0.030071">
+        </testcase>
+        <testcase classname="tests/integration/cadastros-permissoes.spec.ts" name="a permissão é conferida antes da validação nas rotas de escrita dos cadastros &gt; POST /api/fabricantes responde 403 para COMPRADOR mesmo com corpo inválido" time="0.0280604">
+        </testcase>
+        <testcase classname="tests/integration/cadastros-permissoes.spec.ts" name="a permissão é conferida antes da validação nas rotas de escrita dos cadastros &gt; PUT /api/fabricantes/:id responde 403 para OPERADOR mesmo com corpo inválido" time="0.030188">
+        </testcase>
+        <testcase classname="tests/integration/cadastros-permissoes.spec.ts" name="a permissão é conferida antes da validação nas rotas de escrita dos cadastros &gt; PUT /api/fabricantes/:id responde 403 para COMPRADOR mesmo com corpo inválido" time="0.0334222">
+        </testcase>
+        <testcase classname="tests/integration/cadastros-permissoes.spec.ts" name="a permissão é conferida antes da validação nas rotas de escrita dos cadastros &gt; POST /api/fornecedores responde 403 para OPERADOR mesmo com corpo inválido" time="0.0240053">
+        </testcase>
+        <testcase classname="tests/integration/cadastros-permissoes.spec.ts" name="a permissão é conferida antes da validação nas rotas de escrita dos cadastros &gt; PUT /api/fornecedores/:id responde 403 para OPERADOR mesmo com corpo inválido" time="0.0380811">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/campos-nao-permitidos.spec.ts" timestamp="2026-09-19T21:14:12.091Z" tests="16" failures="0" errors="0" skipped="0" time="0.4446504">
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; GET /api/pastilhas diz qual campo não é permitido" time="0.0727004">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; POST /api/pastilhas diz qual campo não é permitido" time="0.03517">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; PUT /api/pastilhas/:id diz qual campo não é permitido" time="0.0302841">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; GET /api/fabricantes diz qual campo não é permitido" time="0.0221358">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; POST /api/fabricantes diz qual campo não é permitido" time="0.0238402">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; PUT /api/fabricantes/:id diz qual campo não é permitido" time="0.0252165">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; GET /api/fornecedores diz qual campo não é permitido" time="0.0210047">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; POST /api/fornecedores diz qual campo não é permitido" time="0.0230004">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; PUT /api/fornecedores/:id diz qual campo não é permitido" time="0.0236433">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; POST /api/usuarios diz qual campo não é permitido" time="0.0231474">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; PUT /api/usuarios/:id diz qual campo não é permitido" time="0.0250544">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; PATCH /api/usuarios/:id/ativo diz qual campo não é permitido" time="0.0244793">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; PATCH /api/auth/senha diz qual campo não é permitido" time="0.021653">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; GET /api/alertas diz qual campo não é permitido" time="0.0215433">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; GET /api/movimentacoes diz qual campo não é permitido" time="0.0230014">
+        </testcase>
+        <testcase classname="tests/integration/campos-nao-permitidos.spec.ts" name="campos fora do esquema &gt; POST /api/auth/login diz qual campo não é permitido" time="0.0189779">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/fabricantes.spec.ts" timestamp="2026-09-19T21:14:12.094Z" tests="28" failures="0" errors="0" skipped="0" time="1.0218408">
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="POST /api/fabricantes &gt; cadastra sem os espaços das pontas e registra na auditoria" time="0.1015564">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="POST /api/fabricantes &gt; recusa sem nome com 400" time="0.0309804">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="POST /api/fabricantes &gt; recusa nome com 1 caractere depois de tirar os espaços com 400" time="0.0259471">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="POST /api/fabricantes &gt; recusa nome com mais de 100 caracteres com 400" time="0.0268658">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="POST /api/fabricantes &gt; recusa nome que não é texto com 400" time="0.0257594">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="POST /api/fabricantes &gt; recusa nome com caractere nulo com 400" time="0.0318228">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="POST /api/fabricantes &gt; recusa campo extra id com 400" time="0.0314304">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="POST /api/fabricantes &gt; recusa pastilhas aninhadas com 400" time="0.0271996">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="POST /api/fabricantes &gt; nome repetido responde 409, mesmo com espaços nas pontas" time="0.040202">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="POST /api/fabricantes &gt; OPERADOR não cadastra fabricante" time="0.025618">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="POST /api/fabricantes &gt; COMPRADOR não cadastra fabricante" time="0.0250035">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="GET /api/fabricantes &gt; lista em ordem alfabética para qualquer perfil" time="0.0337516">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="GET /api/fabricantes &gt; recusa parâmetro desconhecido na query com 400" time="0.0246978">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="GET /api/fabricantes/:id &gt; devolve o fabricante para qualquer perfil" time="0.0290511">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="GET /api/fabricantes/:id &gt; responde 404 para id inexistente e 400 para id inválido" time="0.057608">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; renomeia e registra antes e depois na auditoria" time="0.0551607">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; GESTOR recebe 200 ao editar" time="0.0445983">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; ADMINISTRADOR recebe 200 ao editar" time="0.0355471">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; OPERADOR recebe 403 ao editar" time="0.0259656">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; COMPRADOR recebe 403 ao editar" time="0.0286665">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; nome de outro fabricante responde 409 sem alterar nada" time="0.040942">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; id inexistente responde 404" time="0.031854">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; recusa corpo vazio com 400 sem alterar nada" time="0.0384826">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; recusa nome curto com 400 sem alterar nada" time="0.0359449">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; recusa nome com caractere nulo com 400 sem alterar nada" time="0.0337905">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; recusa id no corpo com 400 sem alterar nada" time="0.0339452">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; recusa pastilhas.deleteMany com 400 sem alterar nada" time="0.0360704">
+        </testcase>
+        <testcase classname="tests/integration/fabricantes.spec.ts" name="PUT /api/fabricantes/:id &gt; recusa pastilhas.updateMany com 400 sem alterar nada" time="0.0314652">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/fornecedores.spec.ts" timestamp="2026-09-19T21:14:12.098Z" tests="37" failures="0" errors="0" skipped="0" time="1.3794559">
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; cadastra com o CNPJ sem máscara, grava com máscara e registra na auditoria" time="0.1100014">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; CNPJ e contato são opcionais; vazios gravam null" time="0.0441294">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa sem nome com 400" time="0.0282554">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa nome com 1 caractere com 400" time="0.024466">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa nome com mais de 150 caracteres com 400" time="0.0256423">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa nome com caractere nulo com 400" time="0.025883">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa CNPJ com dígito verificador errado com 400" time="0.0248188">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa CNPJ com todos os dígitos iguais com 400" time="0.0253372">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa CNPJ com letras com 400" time="0.0286952">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa CNPJ com máscara incompleta com 400" time="0.0281843">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa CNPJ numérico com 400" time="0.0273261">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa contato com mais de 150 caracteres com 400" time="0.025749">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa contato com caractere nulo com 400" time="0.0243293">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa campo extra id com 400" time="0.0271251">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa movimentações aninhadas com 400" time="0.0266496">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; CNPJ repetido responde 409, com ou sem máscara" time="0.055971">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; aceita CNPJ alfanumérico, grava em maiúsculas com máscara e detecta a duplicidade" time="0.0432066">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="POST /api/fornecedores &gt; recusa CNPJ alfanumérico com dígito verificador errado" time="0.0256847">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="GET /api/fornecedores &gt; lista em ordem alfabética para qualquer perfil" time="0.0324768">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="GET /api/fornecedores &gt; recusa parâmetro desconhecido na query com 400" time="0.0264117">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="GET /api/fornecedores/:id &gt; devolve o fornecedor para qualquer perfil" time="0.02837">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="GET /api/fornecedores/:id &gt; responde 404 para id inexistente e 400 para id inválido" time="0.039576">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; edita só o contato, mantém o resto e registra antes e depois na auditoria" time="0.0430384">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; troca o CNPJ aplicando a máscara e limpa CNPJ e contato com null ou vazio" time="0.0734395">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; COMPRADOR recebe 200 ao editar" time="0.0403291">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; GESTOR recebe 200 ao editar" time="0.0362248">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; ADMINISTRADOR recebe 200 ao editar" time="0.0390771">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; OPERADOR recebe 403 ao editar" time="0.0275607">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; COMPRADOR edita fornecedor, mas não fabricante" time="0.0453841">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; CNPJ de outro fornecedor responde 409 sem alterar nada" time="0.0391099">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; id inexistente responde 404" time="0.0295649">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; recusa corpo vazio com 400 sem alterar nada" time="0.0433646">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; recusa CNPJ inválido com 400 sem alterar nada" time="0.0369255">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; recusa contato só com o caractere nulo com 400 sem alterar nada" time="0.0372521">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; recusa id no corpo com 400 sem alterar nada" time="0.038081">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; recusa criadoEm com 400 sem alterar nada" time="0.0406791">
+        </testcase>
+        <testcase classname="tests/integration/fornecedores.spec.ts" name="PUT /api/fornecedores/:id &gt; recusa movimentacoes.deleteMany com 400 sem alterar nada" time="0.0399505">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/movimentacoes-rollback.spec.ts" timestamp="2026-09-19T21:14:12.103Z" tests="2" failures="0" errors="0" skipped="0" time="0.1722245">
+        <testcase classname="tests/integration/movimentacoes-rollback.spec.ts" name="rollback do registro de movimentação &gt; SAIDA: a falha depois do desconto desfaz o saldo e a movimentação" time="0.1057886">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes-rollback.spec.ts" name="rollback do registro de movimentação &gt; ENTRADA: a falha depois do incremento desfaz o saldo e a movimentação" time="0.0434899">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/movimentacoes.spec.ts" timestamp="2026-09-19T21:14:12.104Z" tests="66" failures="0" errors="0" skipped="0" time="2.4425538">
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="POST /api/movimentacoes &gt; ENTRADA soma ao saldo e registra o responsável e o fornecedor" time="0.1173856">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="POST /api/movimentacoes &gt; SAÍDA desconta do saldo" time="0.0441505">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="POST /api/movimentacoes &gt; recusa SAÍDA maior que o saldo sem alterar nada" time="0.0346606">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="POST /api/movimentacoes &gt; recusa pastilha inexistente com 404" time="0.0238932">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="POST /api/movimentacoes &gt; abre um único alerta quando o saldo chega ao mínimo" time="0.0580784">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="POST /api/movimentacoes &gt; quantidade não numérica em POST /api/movimentacoes devolve 400" time="0.0287683">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; ENTRADA sem fornecedor devolve 400 e não mexe no saldo" time="0.027268">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; ENTRADA com fornecedorId que não é id válido devolve 400" time="0.058817">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; SAÍDA com fornecedor devolve 400 e não mexe no saldo" time="0.0296527">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; tipo ausente ou desconhecido devolve 400" time="0.03531">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; pastilha ausente ou em texto devolve 400" time="0.0359863">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa a quantidade 0" time="0.030016">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa a quantidade -1" time="0.0290291">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa a quantidade 1.5" time="0.0291977">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa a quantidade 1000001" time="0.0312594">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa a quantidade &quot;5&quot;" time="0.0305671">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa a quantidade null" time="0.0284418">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa a quantidade undefined" time="0.0286956">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; aceita as quantidades nos limites de 1 e 1.000.000" time="0.0569116">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa documento e observação longos demais, de outro tipo ou com o caractere nulo" time="0.0551809">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; apara os espaços antes de medir documento e observação" time="0.0388799">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa o campo extra saldoAtual" time="0.0289741">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa o campo extra usuarioId" time="0.0311236">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa o campo extra dataHora" time="0.037436">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa o campo extra id" time="0.0398638">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="validação do corpo de POST /api/movimentacoes &gt; recusa corpo que não é objeto" time="0.0462708">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="regras do registro &gt; ENTRADA com fornecedor inexistente devolve 400 REFERENCIA_INVALIDA sem gravar nada" time="0.047842">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="regras do registro &gt; pastilha inexistente responde 404 antes de conferir o fornecedor" time="0.0362503">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="regras do registro &gt; SAÍDA de todo o saldo é aceita e zera o estoque" time="0.0384547">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="regras do registro &gt; saldo insuficiente informa o saldo atual e a unidade da pastilha" time="0.0395376">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="regras do registro &gt; devolve só a movimentação criada e o saldo atual" time="0.0475023">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; sem página devolve o array das 100 mais recentes com pastilha, usuário e fornecedor" time="0.0570133">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; ordena pela data e desempata pelo id, da mais nova para a mais antiga" time="0.0458992">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; com página devolve dados, total, página e tamanho" time="0.0937513">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; aceita o tamanho máximo de 100 por página" time="0.0499341">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; filtra por tipo, pastilha e período, com e sem página" time="0.1107077">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa pagina=0 com 400" time="0.0210117">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa pagina=abc com 400" time="0.0212765">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa pagina=1.5 com 400" time="0.0213656">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa tamanho=0 com 400" time="0.0216114">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa tamanho=101 com 400" time="0.0197263">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa tipo=TRANSFERENCIA com 400" time="0.0209467">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa pastilhaId=0 com 400" time="0.020488">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa pastilhaId=x com 400" time="0.0203746">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa de=14/09/2026 com 400" time="0.019722">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa de=2026-13-01 com 400" time="0.0199466">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa de=2026-09-10T12:00:00 com 400" time="0.0197089">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa ate=ontem com 400" time="0.0191658">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="GET /api/movimentacoes &gt; recusa parâmetro desconhecido e período invertido" time="0.0268512">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="ids no limite do INT4 &gt; aceita 2147483647 como pastilhaId e fornecedorId" time="0.0579076">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="ids no limite do INT4 &gt; pastilha inexistente com id 2147483647 responde 404" time="0.0236292">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="ids no limite do INT4 &gt; recusa pastilhaId igual a 2147483648 com 400" time="0.0291016">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="ids no limite do INT4 &gt; recusa fornecedorId igual a 2147483648 com 400" time="0.027267">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="ids no limite do INT4 &gt; o filtro pastilhaId aceita 2147483647 e recusa 2147483648" time="0.0318778">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="SAIDA de quem só registra ENTRADA &gt; COMPRADOR com SAIDA de quantidade 0 recebe 403, não 400" time="0.030314">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="SAIDA de quem só registra ENTRADA &gt; COMPRADOR com SAIDA cheia de campos inválidos também recebe 403" time="0.0193875">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="SAIDA de quem só registra ENTRADA &gt; a ENTRADA inválida do COMPRADOR continua recebendo 400" time="0.0262656">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="documento e observação vazios &gt; só com espaços, documento e observação gravam null" time="0.0381879">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="documento e observação vazios &gt; aceita null em documento e observação e grava null" time="0.0400087">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="limites do período de GET /api/movimentacoes &gt; aceita datas nos extremos dos anos 1 e 9999" time="0.0294845">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="limites do período de GET /api/movimentacoes &gt; recusa de=0000-01-01, fora dos anos 1 a 9999 em UTC" time="0.023269">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="limites do período de GET /api/movimentacoes &gt; recusa de=0001-01-01T00:00:00+03:00, fora dos anos 1 a 9999 em UTC" time="0.0226442">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="limites do período de GET /api/movimentacoes &gt; recusa ate=0000-12-31, fora dos anos 1 a 9999 em UTC" time="0.0204614">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="limites do período de GET /api/movimentacoes &gt; recusa ate=9999-12-31T23:00:00-03:00, fora dos anos 1 a 9999 em UTC" time="0.0205233">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="saldo máximo do banco &gt; a ENTRADA que passaria de 2147483647 responde 400 sem gravar nada" time="0.0707967">
+        </testcase>
+        <testcase classname="tests/integration/movimentacoes.spec.ts" name="estoque mínimo 0 nas movimentações &gt; a saída que zera o saldo de uma pastilha sem mínimo não abre alerta" time="0.0378683">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/painel.spec.ts" timestamp="2026-09-19T21:14:12.112Z" tests="7" failures="0" errors="0" skipped="0" time="0.3902115">
+        <testcase classname="tests/integration/painel.spec.ts" name="GET /api/painel/resumo &gt; devolve totais, itens críticos e últimas movimentações no formato de sempre" time="0.117438">
+        </testcase>
+        <testcase classname="tests/integration/painel.spec.ts" name="GET /api/painel/resumo &gt; traz só as 5 movimentações mais recentes, com o limite aplicado no banco" time="0.0470606">
+        </testcase>
+        <testcase classname="tests/integration/painel.spec.ts" name="GET /api/painel/resumo &gt; limita os itens críticos a 20, começando pelos de menor saldo" time="0.084327">
+        </testcase>
+        <testcase classname="tests/integration/painel.spec.ts" name="GET /api/painel/resumo &gt; não conta como crítica a pastilha com estoque mínimo 0" time="0.0369148">
+        </testcase>
+        <testcase classname="tests/integration/painel.spec.ts" name="GET /api/painel/resumo &gt; com o banco vazio devolve zeros e listas vazias" time="0.0318072">
+        </testcase>
+        <testcase classname="tests/integration/painel.spec.ts" name="GET /api/painel/resumo &gt; exige autenticação" time="0.015882">
+        </testcase>
+        <testcase classname="tests/integration/painel.spec.ts" name="desempate dos itens críticos do painel &gt; pastilhas com o mesmo saldo saem do id menor para o maior" time="0.0426341">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/pastilhas-concorrencia.spec.ts" timestamp="2026-09-19T21:14:12.113Z" tests="1" failures="0" errors="0" skipped="0" time="0.2437635">
+        <testcase classname="tests/integration/pastilhas-concorrencia.spec.ts" name="edição concorrente da pastilha &gt; espera a trava da linha, audita o valor gravado pela outra transação e mantém o alerta coerente" time="0.2074679">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/pastilhas-transacao.spec.ts" timestamp="2026-09-19T21:14:12.114Z" tests="2" failures="0" errors="0" skipped="0" time="0.1937606">
+        <testcase classname="tests/integration/pastilhas-transacao.spec.ts" name="pastilha em uma única transação &gt; se a avaliação do alerta falha na criação, a pastilha e a auditoria não ficam gravadas" time="0.1213548">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas-transacao.spec.ts" name="pastilha em uma única transação &gt; se a avaliação do alerta falha na edição, o estoque mínimo e a auditoria ficam como estavam" time="0.0516963">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/pastilhas.spec.ts" timestamp="2026-09-19T21:14:12.114Z" tests="85" failures="0" errors="0" skipped="0" time="2.9840934">
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; cadastra com os padrões, tira os espaços das pontas e devolve o fabricante" time="0.127766">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; grava os campos opcionais informados" time="0.0423775">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; registra a criação na auditoria, sem o fabricante embutido" time="0.0438006">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; com estoque mínimo acima de 0 já abre o alerta na mesma transação, porque o saldo nasce 0" time="0.0484921">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; com estoque mínimo 0 não abre alerta, porque o mínimo zerado desliga a reposição" time="0.0368275">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; a primeira entrada acima do mínimo fecha o alerta aberto na criação" time="0.0713974">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa sem código com 400" time="0.0261996">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa código em branco com 400" time="0.0308108">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa código com mais de 40 caracteres com 400" time="0.0304409">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa sem descrição com 400" time="0.0261143">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa descrição com mais de 200 caracteres com 400" time="0.0230701">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa modelo com mais de 60 caracteres com 400" time="0.0240349">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa aplicação com mais de 200 caracteres com 400" time="0.0264108">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa unidade com mais de 10 caracteres com 400" time="0.0251924">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa unidade em branco com 400" time="0.0259404">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa estoque mínimo negativo com 400" time="0.0265072">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa estoque mínimo acima de 1.000.000 com 400" time="0.0263905">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa estoque mínimo fracionado com 400" time="0.0353694">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa estoque mínimo em texto com 400" time="0.0367691">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa sem fabricante com 400" time="0.0364765">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa fabricante zero com 400" time="0.0292008">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa fabricante em texto com 400" time="0.0262859">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa fabricante fora da faixa do banco com 400" time="0.0247916">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa código com caractere nulo com 400" time="0.0278272">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa descrição com caractere nulo com 400" time="0.0281562">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa modelo só com o caractere nulo com 400" time="0.0243818">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa aplicação com caractere nulo com 400" time="0.0259225">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa unidade com caractere nulo com 400" time="0.0307751">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa o campo extra saldoAtual com 400 sem gravar nada" time="0.0308761">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa o campo extra id com 400 sem gravar nada" time="0.0283624">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa o campo extra criadoEm com 400 sem gravar nada" time="0.0305724">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa o campo extra fabricante com 400 sem gravar nada" time="0.0294281">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; recusa o campo extra movimentacoes com 400 sem gravar nada" time="0.0293905">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; grava o código em maiúsculas, sem os espaços das pontas" time="0.0357274">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; cnmg 120408 e CNMG 120408 colidem em 409 DUPLICADO" time="0.0517623">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; código repetido &quot;CNMG 120408&quot; responde 409, sem diferenciar maiúsculas nem espaços nas pontas" time="0.0383652">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; código repetido &quot; CNMG 120408 &quot; responde 409, sem diferenciar maiúsculas nem espaços nas pontas" time="0.0341951">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; código repetido &quot;cnmg 120408&quot; responde 409, sem diferenciar maiúsculas nem espaços nas pontas" time="0.032464">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; código repetido &quot;Cnmg 120408 &quot; responde 409, sem diferenciar maiúsculas nem espaços nas pontas" time="0.0322377">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; fabricante inexistente responde 400 sem gravar nada" time="0.0308168">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; OPERADOR não cadastra pastilha" time="0.0251307">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="POST /api/pastilhas &gt; COMPRADOR não cadastra pastilha" time="0.0251693">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; edita os campos permitidos sem mexer no código nem no saldo" time="0.0467988">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; campo ausente fica como está; vazio ou null limpa modelo e aplicação" time="0.0373473">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; registra antes e depois na auditoria" time="0.0377223">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; GESTOR recebe 200 ao editar" time="0.0382493">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; ADMINISTRADOR recebe 200 ao editar" time="0.0371958">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; OPERADOR recebe 403 ao editar" time="0.0265608">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; COMPRADOR recebe 403 ao editar" time="0.0274515">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; id inexistente responde 404" time="0.0256657">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; id abc responde 400" time="0.0200233">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; id 0 responde 400" time="0.0201899">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; id -1 responde 400" time="0.0203859">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; id 1.5 responde 400" time="0.0225125">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; id 2147483648 responde 400" time="0.0202424">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; corpo vazio responde 400" time="0.0266895">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id &gt; fabricante inexistente responde 400 sem alterar a pastilha nem auditar" time="0.0361279">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id contra mass assignment &gt; PUT /api/pastilhas/:id não aceita saldoAtual (mass assignment)" time="0.0265364">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id contra mass assignment &gt; recusa saldoAtual junto de um campo válido com 400 sem alterar nada" time="0.0404359">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id contra mass assignment &gt; recusa saldoAtual com incremento com 400 sem alterar nada" time="0.0377576">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id contra mass assignment &gt; recusa id com 400 sem alterar nada" time="0.0363897">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id contra mass assignment &gt; recusa codigo com 400 sem alterar nada" time="0.0374682">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id contra mass assignment &gt; recusa atualizadoEm com 400 sem alterar nada" time="0.0632817">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id contra mass assignment &gt; recusa movimentacoes.deleteMany com 400 sem alterar nada" time="0.0498426">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id contra mass assignment &gt; recusa alertas.deleteMany com 400 sem alterar nada" time="0.0425042">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id contra mass assignment &gt; recusa fabricante.update com 400 sem alterar nada" time="0.0419359">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id contra mass assignment &gt; recusa descrição com caractere nulo com 400 sem alterar nada" time="0.042455">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="PUT /api/pastilhas/:id contra mass assignment &gt; recusa __proto__ no corpo sem alterar nada" time="0.0250731">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="estoque mínimo e alerta na edição da pastilha &gt; zerar o mínimo fecha o alerta aberto, sem responsável" time="0.049297">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="estoque mínimo e alerta na edição da pastilha &gt; subir o mínimo até o saldo abre o alerta e baixar de novo fecha" time="0.0736628">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="estoque mínimo e alerta na edição da pastilha &gt; editar sem mudar o mínimo, partindo de saldo 2, mínimo 5 e sem alerta, não abre nem fecha alerta" time="0.0463634">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="estoque mínimo e alerta na edição da pastilha &gt; editar sem mudar o mínimo, partindo de saldo 10, mínimo 2 e alerta aberto, não abre nem fecha alerta" time="0.0465166">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas &gt; criticas=true devolve só as pastilhas no mínimo ou abaixo" time="0.035707">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas &gt; criticas=true ignora pastilhas com estoque mínimo 0, mesmo com saldo zerado" time="0.0350122">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas &gt; criticas=false ou ausente não filtra" time="0.038553">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas &gt; a busca olha código e descrição, sem diferenciar maiúsculas, e combina com críticas" time="0.0429602">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas &gt; recusa criticas fora de true ou false com 400" time="0.0215327">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas &gt; recusa criticas como número com 400" time="0.0212369">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas &gt; recusa criticas repetido com 400" time="0.0209688">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas &gt; recusa busca com mais de 100 caracteres com 400" time="0.0219668">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas &gt; recusa parâmetro desconhecido com 400" time="0.0218612">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas &gt; recusa busca com caractere nulo com 400" time="0.0216906">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas &gt; o painel e o filtro criticas=true trazem as mesmas pastilhas" time="0.063572">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas/:id &gt; devolve a pastilha com o fabricante" time="0.0360171">
+        </testcase>
+        <testcase classname="tests/integration/pastilhas.spec.ts" name="GET /api/pastilhas/:id &gt; responde 404 para id inexistente e 400 para id inválido" time="0.0333929">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/permissoes.spec.ts" timestamp="2026-09-19T21:14:12.123Z" tests="6" failures="0" errors="0" skipped="0" time="0.3927293">
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; OPERADOR não cadastra pastilha" time="0.0991202">
+        </testcase>
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; GESTOR cadastra fabricante e pastilha" time="0.0868074">
+        </testcase>
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; COMPRADOR cadastra fornecedor e OPERADOR não" time="0.0527794">
+        </testcase>
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; COMPRADOR registra entrada, mas não registra saída" time="0.0641954">
+        </testcase>
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; OPERADOR não resolve alerta" time="0.0297672">
+        </testcase>
+        <testcase classname="tests/integration/permissoes.spec.ts" name="permissões por perfil nas rotas &gt; só ADMINISTRADOR passa pela porta de /api/usuarios" time="0.0356312">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/redefinir-senha-admin.spec.ts" timestamp="2026-09-19T21:14:12.124Z" tests="9" failures="0" errors="0" skipped="0" time="0.3382749">
+        <testcase classname="tests/integration/redefinir-senha-admin.spec.ts" name="redefinirSenhaDoAdministrador &gt; reativa, gera senha temporária, obriga a troca e derruba as sessões" time="0.1363636">
+        </testcase>
+        <testcase classname="tests/integration/redefinir-senha-admin.spec.ts" name="redefinirSenhaDoAdministrador &gt; usa a NOVA_SENHA informada quando ela atende à política" time="0.0329446">
+        </testcase>
+        <testcase classname="tests/integration/redefinir-senha-admin.spec.ts" name="redefinirSenhaDoAdministrador &gt; recusa NOVA_SENHA fora da política sem alterar nada" time="0.0248702">
+        </testcase>
+        <testcase classname="tests/integration/redefinir-senha-admin.spec.ts" name="redefinirSenhaDoAdministrador &gt; recusa e-mail inexistente" time="0.0175718">
+        </testcase>
+        <testcase classname="tests/integration/redefinir-senha-admin.spec.ts" name="redefinirSenhaDoAdministrador &gt; recusa usuário que não é ADMINISTRADOR" time="0.0238491">
+        </testcase>
+        <testcase classname="tests/integration/redefinir-senha-admin.spec.ts" name="linha de comando redefinir-senha-admin &gt; exibe a senha gerada uma única vez e sai com 0" time="0.0321475">
+        </testcase>
+        <testcase classname="tests/integration/redefinir-senha-admin.spec.ts" name="linha de comando redefinir-senha-admin &gt; com NOVA_SENHA não exibe a senha" time="0.0250311">
+        </testcase>
+        <testcase classname="tests/integration/redefinir-senha-admin.spec.ts" name="linha de comando redefinir-senha-admin &gt; sem e-mail mostra como usar e sai com 1" time="0.0120818">
+        </testcase>
+        <testcase classname="tests/integration/redefinir-senha-admin.spec.ts" name="linha de comando redefinir-senha-admin &gt; transforma falhas em mensagem e código 1" time="0.0153334">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/saude.spec.ts" timestamp="2026-09-19T21:14:12.125Z" tests="6" failures="0" errors="0" skipped="0" time="0.1565093">
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; GET /api/health responde ok com o banco disponível" time="0.0578147">
+        </testcase>
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; não expõe o cabeçalho X-Powered-By" time="0.0158717">
+        </testcase>
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; responde 404 em JSON fora da API" time="0.0133094">
+        </testcase>
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; recusa JSON malformado com 400" time="0.0241699">
+        </testcase>
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; recusa corpo acima de 100 kB com 413" time="0.0161929">
+        </testcase>
+        <testcase classname="tests/integration/saude.spec.ts" name="infraestrutura da API &gt; libera CORS só para as origens configuradas" time="0.020566">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/seed.spec.ts" timestamp="2026-09-19T21:14:12.126Z" tests="6" failures="0" errors="0" skipped="0" time="0.2505227">
+        <testcase classname="tests/integration/seed.spec.ts" name="criarAdministradorInicial &gt; cria o administrador uma vez e nunca troca a senha depois" time="0.0594589">
+        </testcase>
+        <testcase classname="tests/integration/seed.spec.ts" name="criarAdministradorInicial &gt; recusa senha fraca sem criar nada" time="0.0154021">
+        </testcase>
+        <testcase classname="tests/integration/seed.spec.ts" name="criarAdministradorInicial &gt; gera uma senha aleatória válida em desenvolvimento" time="0.0181659">
+        </testcase>
+        <testcase classname="tests/integration/seed.spec.ts" name="criarAdministradorInicial &gt; exige a senha em produção" time="0.0136994">
+        </testcase>
+        <testcase classname="tests/integration/seed.spec.ts" name="criarDadosDeDemonstracao &gt; é idempotente e abre alerta só para o item abaixo do mínimo" time="0.114254">
+        </testcase>
+        <testcase classname="tests/integration/seed.spec.ts" name="criarDadosDeDemonstracao &gt; recusa senha fraca para os usuários de demonstração" time="0.0102692">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/usuarios.spec.ts" timestamp="2026-09-19T21:14:12.127Z" tests="32" failures="0" errors="0" skipped="0" time="1.410778">
+        <testcase classname="tests/integration/usuarios.spec.ts" name="acesso à gestão de usuários &gt; GESTOR recebe 403 em todas as rotas" time="0.1278229">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="acesso à gestão de usuários &gt; OPERADOR recebe 403 em todas as rotas" time="0.0538635">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="acesso à gestão de usuários &gt; COMPRADOR recebe 403 em todas as rotas" time="0.0613747">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="acesso à gestão de usuários &gt; sem token recebe 401" time="0.0133695">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="acesso à gestão de usuários &gt; administrador com a troca de senha pendente também é barrado" time="0.0238842">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; lista em ordem de nome, só com os campos públicos" time="0.0315595">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; cria com senha temporária exibida uma vez, troca obrigatória e e-mail normalizado" time="0.0561108">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; recusa e-mail já cadastrado, sem diferenciar maiúsculas, com 409 DUPLICADO" time="0.0537007">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; recusa a criação sem perfil com 400 DADOS_INVALIDOS" time="0.0287135">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; recusa a criação com perfil inexistente com 400 DADOS_INVALIDOS" time="0.0276331">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; recusa a criação com e-mail inválido com 400 DADOS_INVALIDOS" time="0.0245652">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; recusa a criação com nome curto com 400 DADOS_INVALIDOS" time="0.0228025">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; recusa a criação com senha no corpo com 400 DADOS_INVALIDOS" time="0.0232611">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; muda o nome sem derrubar a sessão do usuário" time="0.0552831">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; mudar o perfil derruba a sessão do usuário" time="0.0576107">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; recusa a atualização vazia" time="0.029052">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; recusa a atualização com campo desconhecido" time="0.0265691">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; recusa a atualização com perfil inválido" time="0.0264409">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; responde 404 para usuário inexistente e 400 para id inválido" time="0.0696596">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; desativar derruba a sessão e reativar devolve o acesso com um novo login" time="0.0800453">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; repetir o estado atual não muda nada" time="0.0295358">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="CRUD de usuários &gt; redefinir a senha gera outra senha temporária e derruba a sessão" time="0.0611975">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="proteções dos administradores &gt; ninguém desativa a si mesmo" time="0.0255445">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="proteções dos administradores &gt; ninguém rebaixa a si mesmo, mas pode mudar o próprio nome" time="0.0495502">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="proteções dos administradores &gt; um administrador rebaixa e desativa outros administradores" time="0.0550196">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="proteções dos administradores &gt; o serviço nunca remove o último administrador ativo" time="0.0299751">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="proteções dos administradores &gt; duas desativações simultâneas entre administradores deixam um ativo" time="0.0393795">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="usuário criado pelo administrador &gt; passa pelo primeiro acesso até liberar o sistema" time="0.0848042">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="redefinição da própria senha pela gestão de usuários &gt; responde 409 e aponta para a troca de senha, sem mexer em nada" time="0.0325276">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="rotas sem corpo ou sem filtros &gt; GET /api/usuarios recusa parâmetros na query" time="0.0211638">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="rotas sem corpo ou sem filtros &gt; POST /redefinir-senha recusa corpo com campos, sem mexer na senha" time="0.0279538">
+        </testcase>
+        <testcase classname="tests/integration/usuarios.spec.ts" name="rotas sem corpo ou sem filtros &gt; sem query e com corpo vazio, as duas rotas continuam funcionando" time="0.0413835">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security/auth-tokens.spec.ts" timestamp="2026-09-19T21:14:12.130Z" tests="22" failures="0" errors="0" skipped="0" time="0.5650761">
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; controle: o token legítimo é aceito, com o esquema Bearer em qualquer caixa" time="0.0879964">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 1. token ausente" time="0.0168172">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 2. token sem o prefixo Bearer" time="0.0264718">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 3. token malformado: nao-e-um-jwt" time="0.0153745">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 3. token malformado: abc.def.ghi" time="0.0145239">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 3. token malformado: eyJhbGciOiJIUzI1NiJ9.e30" time="0.0158509">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 4. alg none, sem assinatura" time="0.0190741">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 5. assinado com outro segredo" time="0.0192367">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 6. assinado com algoritmo fora da lista (HS512), mesmo com o segredo certo" time="0.0205316">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 7. expirado" time="0.0219207">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 8. emissor errado" time="0.0188543">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 9. público errado" time="0.0196194">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 10. payload sem sub" time="0.020904">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 11. payload inválido: sub não numérico" time="0.0194177">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 11. payload inválido: sub fora do intervalo do banco" time="0.0189966">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 11. payload inválido: sem a versão v" time="0.0182789">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 11. payload inválido: versão negativa" time="0.0200141">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 11. payload inválido: perfil desconhecido" time="0.0204525">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 12. versão antiga depois da troca de senha" time="0.0699228">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 13. versão diferente da do banco, mesmo que maior" time="0.0219323">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 14. usuário apagado" time="0.0250954">
+        </testcase>
+        <testcase classname="tests/security/auth-tokens.spec.ts" name="tokens recusados nas rotas protegidas &gt; 15. o perfil do token não vale: o perfil vem do banco" time="0.0247738">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security/bruteforce.spec.ts" timestamp="2026-09-19T21:14:12.133Z" tests="7" failures="0" errors="0" skipped="0" time="0.6028559">
+        <testcase classname="tests/security/bruteforce.spec.ts" name="limite de tentativas de login &gt; usa o padrão de 5 falhas" time="0.0452807">
+        </testcase>
+        <testcase classname="tests/security/bruteforce.spec.ts" name="limite de tentativas de login &gt; a 6ª falha responde 429 com Retry-After e bloqueia até a senha certa" time="0.1058677">
+        </testcase>
+        <testcase classname="tests/security/bruteforce.spec.ts" name="limite de tentativas de login &gt; logins bem-sucedidos não contam como tentativa" time="0.0988358">
+        </testcase>
+        <testcase classname="tests/security/bruteforce.spec.ts" name="limite de tentativas de login &gt; outro e-mail usa outro contador" time="0.0775845">
+        </testcase>
+        <testcase classname="tests/security/bruteforce.spec.ts" name="limite de tentativas de login &gt; maiúsculas e espaços no e-mail não abrem um contador novo" time="0.0524074">
+        </testcase>
+        <testcase classname="tests/security/bruteforce.spec.ts" name="limite de tentativas de login &gt; com TRUST_PROXY=0, X-Forwarded-For forjado não burla o limite" time="0.0609227">
+        </testcase>
+        <testcase classname="tests/security/bruteforce.spec.ts" name="limite de tentativas na troca de senha &gt; a 6ª senha atual errada responde 429; senha fraca não conta" time="0.1520511">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security/concorrencia.spec.ts" timestamp="2026-09-19T21:14:12.134Z" tests="3" failures="0" errors="0" skipped="0" time="0.7824826">
+        <testcase classname="tests/security/concorrencia.spec.ts" name="movimentações concorrentes &gt; 10 SAÍDAs simultâneas de 1 unidade sobre saldo 5: 5 aceitas, 5 recusadas e um só alerta" time="0.3421123">
+        </testcase>
+        <testcase classname="tests/security/concorrencia.spec.ts" name="movimentações concorrentes &gt; uma ENTRADA simultânea a várias SAÍDAs mantém o saldo coerente com o histórico" time="0.2840098">
+        </testcase>
+        <testcase classname="tests/security/concorrencia.spec.ts" name="movimentações concorrentes &gt; SAÍDAs simultâneas de quantidades diferentes nunca deixam o saldo negativo" time="0.1452428">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security/headers.spec.ts" timestamp="2026-09-19T21:14:12.134Z" tests="8" failures="0" errors="0" skipped="0" time="0.2291292">
+        <testcase classname="tests/security/headers.spec.ts" name="cabeçalhos de segurança HTTP &gt; aplica nosniff, Referrer-Policy e uma CSP que não libera nada" time="0.0853403">
+        </testcase>
+        <testcase classname="tests/security/headers.spec.ts" name="cabeçalhos de segurança HTTP &gt; não expõe X-Powered-By nem força HTTPS (acesso por HTTP na rede local)" time="0.0184448">
+        </testcase>
+        <testcase classname="tests/security/headers.spec.ts" name="cabeçalhos de segurança HTTP &gt; proíbe cache das respostas da API" time="0.0166832">
+        </testcase>
+        <testcase classname="tests/security/headers.spec.ts" name="cabeçalhos de segurança HTTP &gt; mantém os cabeçalhos em respostas de erro" time="0.0214167">
+        </testcase>
+        <testcase classname="tests/security/headers.spec.ts" name="cabeçalhos de segurança HTTP &gt; gera um X-Request-Id quando a requisição não traz um" time="0.0149886">
+        </testcase>
+        <testcase classname="tests/security/headers.spec.ts" name="cabeçalhos de segurança HTTP &gt; devolve o X-Request-Id recebido quando é seguro e troca quando não é" time="0.0197827">
+        </testcase>
+        <testcase classname="tests/security/headers.spec.ts" name="cabeçalhos de segurança HTTP &gt; aplica o limite geral por IP antes da autenticação" time="0.0154531">
+        </testcase>
+        <testcase classname="tests/security/headers.spec.ts" name="cabeçalhos de segurança HTTP &gt; deixa o frontend ler X-Request-Id e Retry-After via CORS" time="0.0167407">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security/limites-por-usuario.spec.ts" timestamp="2026-09-19T21:14:12.136Z" tests="3" failures="0" errors="0" skipped="0" time="0.2669057">
+        <testcase classname="tests/security/limites-por-usuario.spec.ts" name="limites atrás do nginx, com TRUST_PROXY=1 &gt; cada posto tem o próprio contador por IP, que só barra varredura" time="0.0818526">
+        </testcase>
+        <testcase classname="tests/security/limites-por-usuario.spec.ts" name="limites atrás do nginx, com TRUST_PROXY=1 &gt; o X-Forwarded-For forjado pelo cliente não abre um contador novo" time="0.0631098">
+        </testcase>
+        <testcase classname="tests/security/limites-por-usuario.spec.ts" name="limites atrás do nginx, com TRUST_PROXY=1 &gt; usuários do mesmo posto têm orçamentos separados, e o de cada um vale em qualquer IP" time="0.0740769">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security/login-robusto.spec.ts" timestamp="2026-09-19T21:14:12.136Z" tests="5" failures="0" errors="0" skipped="0" time="0.2147865">
+        <testcase classname="tests/security/login-robusto.spec.ts" name="caracteres de controle nas entradas de identidade &gt; o login recusa e-mail com byte nulo com 400, sem chegar ao banco" time="0.0649217">
+        </testcase>
+        <testcase classname="tests/security/login-robusto.spec.ts" name="caracteres de controle nas entradas de identidade &gt; a gestão de usuários recusa nome com caractere de controle" time="0.0330629">
+        </testcase>
+        <testcase classname="tests/security/login-robusto.spec.ts" name="limite de login conta só a credencial recusada &gt; corpos inválidos em sequência não bloqueiam o login certo" time="0.0430379">
+        </testcase>
+        <testcase classname="tests/security/login-robusto.spec.ts" name="custo do bcrypt no login &gt; o login certo regrava o hash no custo atual sem derrubar a sessão" time="0.0397105">
+        </testcase>
+        <testcase classname="tests/security/login-robusto.spec.ts" name="custo do bcrypt no login &gt; com o custo igual, o hash gravado não muda" time="0.0251429">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security/primeiro-acesso.spec.ts" timestamp="2026-09-19T21:14:12.137Z" tests="15" failures="0" errors="0" skipped="0" time="0.7033267">
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; fluxo completo: bloqueio, troca, token antigo recusado e token novo liberado" time="0.2215527">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; a troca derruba as outras sessões do mesmo usuário" time="0.080383">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; registra a troca na auditoria sem guardar nenhuma senha" time="0.0495884">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; recusa a senha atual errada com 400, e não 401, e mantém a sessão" time="0.0419792">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; recusa nova senha igual à atual, apontando o campo" time="0.0266493">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; recusa nova senha fora da política: curta" time="0.0294281">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; recusa nova senha fora da política: sem número" time="0.0270211">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; recusa nova senha fora da política: sem letra" time="0.0290954">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; recusa nova senha fora da política: com o nome do e-mail" time="0.0288947">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; recusa nova senha fora da política: comum demais" time="0.0263357">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; valida o corpo da troca: sem a nova senha" time="0.0280766">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; valida o corpo da troca: com campo a mais" time="0.0221797">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; valida o corpo da troca: com tipo errado" time="0.0238501">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; /me e /senha exigem estar autenticado" time="0.0217176">
+        </testcase>
+        <testcase classname="tests/security/primeiro-acesso.spec.ts" name="primeiro acesso com troca obrigatória de senha &gt; health e login continuam públicos" time="0.0269378">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security/travas-administradores.spec.ts" timestamp="2026-09-19T21:14:12.140Z" tests="2" failures="0" errors="0" skipped="0" time="0.6501129">
+        <testcase classname="tests/security/travas-administradores.spec.ts" name="trava dos administradores ativos com ações cruzadas &gt; A redefine a senha de B enquanto B desativa A: as duas terminam, sem deadlock" time="0.3904309">
+        </testcase>
+        <testcase classname="tests/security/travas-administradores.spec.ts" name="trava dos administradores ativos com ações cruzadas &gt; pela API, as duas ações cruzadas em Promise.all nunca dão erro 500" time="0.2489823">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security/troca-concorrente.spec.ts" timestamp="2026-09-19T21:14:12.141Z" tests="4" failures="0" errors="0" skipped="0" time="0.2876432">
+        <testcase classname="tests/security/troca-concorrente.spec.ts" name="troca de senha concorrente com uma ação do administrador &gt; a redefinição de senha no meio do caminho vence, e a troca responde 401 sem emitir token" time="0.125851">
+        </testcase>
+        <testcase classname="tests/security/troca-concorrente.spec.ts" name="troca de senha concorrente com uma ação do administrador &gt; a recuperação pelo script no meio do caminho vence, e a troca responde 401 sem emitir token" time="0.0506243">
+        </testcase>
+        <testcase classname="tests/security/troca-concorrente.spec.ts" name="troca de senha concorrente com uma ação do administrador &gt; a desativação no meio do caminho vence, e a troca responde 401 sem emitir token" time="0.052723">
+        </testcase>
+        <testcase classname="tests/security/troca-concorrente.spec.ts" name="troca de senha concorrente com uma ação do administrador &gt; sem ação concorrente, a mesma troca grava e devolve um token novo" time="0.0386937">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/security/usuario-inativo.spec.ts" timestamp="2026-09-19T21:14:12.141Z" tests="2" failures="0" errors="0" skipped="0" time="0.142002">
+        <testcase classname="tests/security/usuario-inativo.spec.ts" name="usuário desativado &gt; perde o acesso mesmo com token ainda válido" time="0.0854742">
+        </testcase>
+        <testcase classname="tests/security/usuario-inativo.spec.ts" name="usuário desativado &gt; perde o acesso em todas as rotas protegidas, inclusive nas de escrita" time="0.0431225">
+        </testcase>
+    </testsuite>
+</testsuites>

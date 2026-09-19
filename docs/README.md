@@ -12,6 +12,7 @@
 | integrar com a API                  | [Contrato da API](api.md)                              |
 | conferir a evidência dos testes     | [Resultados dos testes](../tests/results/README.md)    |
 | entender a segurança do sistema     | [Segurança](seguranca.md)                              |
+| aprender a usar o sistema           | [Manual do usuário](manual-do-usuario.md)              |
 | saber o que o sistema precisa fazer | [Requisitos](requisitos.md)                            |
 | conferir uma instalação nova        | [Guia de implantação](deploy.md#conferir-a-instalação) |
 | saber o que mudou em cada versão    | [CHANGELOG](../CHANGELOG.md)                           |
@@ -35,6 +36,8 @@
 | [seguranca.md](seguranca.md)                                     | Segurança: controles em uso, riscos aceitos, LGPD e onde está a prova de cada um.                           |
 | [seguranca/asvs-l1-checklist.md](seguranca/asvs-l1-checklist.md) | Autoavaliação contra o ASVS 4.0.3 nível 1, requisito por requisito.                                         |
 | [seguranca/modelo-de-ameacas.md](seguranca/modelo-de-ameacas.md) | Modelo de ameaças: o que o sistema guarda, quem pode atacar e a resposta de cada ameaça.                    |
+| [manual-do-usuario.md](manual-do-usuario.md)                     | Manual do usuário: entrar, cadastrar, movimentar, alertas, usuários e o que fazer quando dá erro.           |
+| [roteiro-demo.md](roteiro-demo.md)                               | Roteiro da demonstração de 10 minutos, com preparo, tempos e perguntas prováveis.                           |
 | [decisoes/](decisoes/README.md)                                  | Decisões de arquitetura, do ADR-0001 ao ADR-0008.                                                           |
 | [tests/results/README.md](../tests/results/README.md)            | Estrutura e protocolo dos resultados de testes versionados.                                                 |
 | [testes/evidencias/](testes/evidencias/)                         | Evidências de execuções manuais, como a implantação em clone limpo com backup e restauração.                |
@@ -42,10 +45,3 @@
 | [CHANGELOG.md](../CHANGELOG.md)                                  | Registro de mudanças por versão.                                                                            |
 | [CONTRIBUTING.md](../CONTRIBUTING.md)                            | Como contribuir: ambiente, testes, fluxo de branches e commits, migrations e estilo.                        |
 | [SECURITY.md](../SECURITY.md)                                    | Como relatar uma vulnerabilidade, versões suportadas, controles em uso e riscos aceitos.                    |
-
-## Em elaboração
-
-Estes documentos ainda não existem:
-
-- `manual-do-usuario.md`: uso do sistema;
-- `roteiro-demo.md`: roteiro da demonstração.

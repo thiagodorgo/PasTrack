@@ -477,6 +477,14 @@ select:focus {
   gap: 12px;
 }
 
+/* Botões lado a lado, como os filtros e a confirmação da tela de alertas. */
+.grupo-botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block: 12px;
+}
+
 .campo-largo {
   grid-column: 1 / -1;
 }

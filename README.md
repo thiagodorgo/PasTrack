@@ -1,8 +1,18 @@
 # PasTrack
 
+[![CI](https://github.com/thiagodorgo/PasTrack/actions/workflows/ci.yml/badge.svg)](https://github.com/thiagodorgo/PasTrack/actions/workflows/ci.yml)
+
 Sistema web para controle de estoque de pastilhas industriais, desenvolvido na UC Projeto Aplicado IV do Centro Universitário SENAI Santa Catarina, a partir de uma demanda real da DDA Usinagem Industrial publicada na plataforma SAGA SENAI de Inovação.
 
 O sistema substitui o controle em planilhas por registros centralizados: cadastro de pastilhas, fabricantes e fornecedores, entradas e saídas de estoque com validação de saldo, alertas automáticos de estoque mínimo, painel com a situação geral e histórico completo das movimentações.
+
+## O que ele faz
+
+- **Saldo que não se digita:** ele é consequência das entradas e saídas, numa operação atômica que nunca deixa o estoque negativo.
+- **Alerta automático de reposição:** abre quando o saldo chega ao estoque mínimo e fecha sozinho quando a reposição passa dele. Mínimo zero desliga o alerta.
+- **Rastreabilidade:** toda movimentação guarda quem registrou, quando e com qual documento; cadastros e senhas deixam trilha de auditoria.
+- **Acesso por perfil:** administrador, gestor, operador e comprador, com a permissão conferida no servidor.
+- **Dez telas:** login, primeiro acesso, painel, pastilhas, movimentações, alertas, fabricantes, fornecedores, usuários e a página de acesso negado.
 
 ## Modelagem de dados
 
@@ -83,12 +93,40 @@ O seed cria um único administrador com o e-mail de `SEED_ADMIN_EMAIL` e a senha
 
 Para carregar dados de demonstração (fabricantes, fornecedores, pastilhas e um usuário de cada perfil), defina `SEED_DEMO=true` no `.env` e rode `npm run db:seed:demo`.
 
+## Testes
+
+```bash
+docker compose -f docker-compose.test.yml up -d --wait   # banco de teste, na porta 5433
+npm run test:tudo                                        # backend e frontend
+docker compose -f docker-compose.test.yml down -v
+```
+
+A última execução registrada tem **574 testes no backend** e **295 no frontend**, com cobertura de linhas acima de 98% nos dois. As evidências ficam em [tests/results/](tests/results/README.md), e a estratégia em [docs/testes.md](docs/testes.md).
+
+Para conferir uma instalação recém-criada de ponta a ponta, use `npm run verificar:implantacao`, descrito no [guia de implantação](docs/deploy.md#conferir-a-instalação).
+
+## Documentação
+
+| Para                               | Leia                                                                                                 |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| usar o sistema no dia a dia        | [Manual do usuário](docs/manual-do-usuario.md)                                                       |
+| instalar na empresa                | [Guia de implantação](docs/deploy.md)                                                                |
+| cuidar do sistema no servidor      | [Manual de operação](docs/operacao.md)                                                               |
+| integrar com a API                 | [Contrato da API](docs/api.md)                                                                       |
+| entender as decisões e a segurança | [Arquitetura](docs/arquitetura.md), [Segurança](docs/seguranca.md) e [ADRs](docs/decisoes/README.md) |
+| conferir requisitos e testes       | [Requisitos](docs/requisitos.md) e [Plano de testes](docs/testes/plano-de-testes.md)                 |
+
+O índice completo está em [docs/README.md](docs/README.md).
+
 ## Estrutura do projeto
 
 ```
-backend/   API REST organizada em camadas (routes, controllers, services, repositories)
-frontend/  SPA React com as telas de login, painel, pastilhas e movimentações
-docs/      diagramas do projeto (MER conceitual, MER lógico e arquitetura)
+backend/        API REST em camadas (routes, controllers, services, repositories), com Prisma e os testes
+frontend/       SPA React com as dez telas e os testes de interface
+e2e/            testes ponta a ponta com Playwright
+docs/           documentação e diagramas do projeto
+scripts/        geradores e o relatório de testes
+tests/results/  evidências versionadas das execuções de teste
 ```
 
 ## Equipe

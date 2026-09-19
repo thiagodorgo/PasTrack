@@ -1,3 +1,5 @@
+import { randomBytes } from "node:crypto";
+
 /** Política mínima de senha do PasTrack. */
 export const TAMANHO_MINIMO_SENHA = 10;
 /** O bcrypt considera no máximo 72 bytes; acentos ocupam 2 bytes em UTF-8. */
@@ -47,4 +49,17 @@ export function validarPoliticaDeSenha(senha: string, email?: string): string[] 
   }
   if (SENHAS_COMUNS.has(senha.toLowerCase())) problemas.push("essa senha é comum demais");
   return problemas;
+}
+
+/**
+ * Gera uma senha aleatória de 22 caracteres (120 bits sorteados) que sempre atende à política:
+ * letra e número garantidos e, se o e-mail for informado, sem conter o nome de usuário dele.
+ */
+export function gerarSenhaAleatoria(email?: string): string {
+  for (;;) {
+    const senha = randomBytes(15).toString("base64url") + "a1";
+    if (validarPoliticaDeSenha(senha, email).length === 0) {
+      return senha;
+    }
+  }
 }

@@ -1,8 +1,13 @@
 import bcrypt from "bcryptjs";
-import { randomBytes } from "node:crypto";
+
 import { env, Env } from "../config/env";
 import { prisma } from "../config/prisma";
-import { validarPoliticaDeSenha } from "../services/politica-senha";
+import { usuarioRepository } from "../repositories/usuario.repository";
+import { registrarAuditoria } from "../services/auditoria.service";
+import { gerarSenhaAleatoria, validarPoliticaDeSenha } from "../services/politica-senha";
+
+// continua exportada daqui para quem já importava deste módulo, como o seed-demo.ts
+export { gerarSenhaAleatoria };
 
 export interface OpcoesAdministrador {
   email: string;
@@ -16,11 +21,6 @@ export interface ResultadoAdministrador {
   email: string;
   /** Preenchida só quando a senha foi gerada aqui; deve ser exibida uma única vez. */
   senhaGerada?: string;
-}
-
-/** Gera uma senha aleatória que sempre atende à política (letra e número garantidos). */
-export function gerarSenhaAleatoria(): string {
-  return `${randomBytes(15).toString("base64url")}a1`;
 }
 
 /**
@@ -44,7 +44,7 @@ export async function criarAdministradorInicial(
     if (ambiente === "production") {
       throw new Error("Defina SEED_ADMIN_SENHA para criar o administrador inicial em produção.");
     }
-    senha = gerarSenhaAleatoria();
+    senha = gerarSenhaAleatoria(email);
     senhaGerada = senha;
   }
 
@@ -63,4 +63,54 @@ export async function criarAdministradorInicial(
   });
 
   return { criado: true, email, senhaGerada };
+}
+
+export interface OpcoesRecuperacao {
+  email: string;
+  /** Senha escolhida pelo operador (variável NOVA_SENHA). Sem ela, uma senha temporária é gerada. */
+  novaSenha?: string;
+}
+
+export interface ResultadoRecuperacao {
+  email: string;
+  /** Preenchida só quando a senha foi gerada aqui; deve ser exibida uma única vez. */
+  senhaGerada?: string;
+}
+
+/**
+ * Recupera o acesso de um administrador: reativa o usuário, grava uma senha temporária (ou a informada),
+ * obriga a troca no próximo acesso e derruba todas as sessões dele. Só vale para ADMINISTRADOR; os
+ * demais perfis têm a senha redefinida pela tela de usuários.
+ */
+export async function redefinirSenhaDoAdministrador(
+  opcoes: OpcoesRecuperacao
+): Promise<ResultadoRecuperacao> {
+  const email = opcoes.email.trim().toLowerCase();
+  const usuario = await prisma.usuario.findUnique({ where: { email }, select: { id: true, perfil: true } });
+  if (!usuario) {
+    throw new Error(`Nenhum usuário cadastrado com o e-mail ${email}.`);
+  }
+  if (usuario.perfil !== "ADMINISTRADOR") {
+    throw new Error(`O usuário ${email} não é ADMINISTRADOR. Redefina a senha dele pela tela de usuários.`);
+  }
+
+  const senha = opcoes.novaSenha || gerarSenhaAleatoria(email);
+  const problemas = validarPoliticaDeSenha(senha, email);
+  if (problemas.length > 0) {
+    throw new Error(`A senha de NOVA_SENHA não atende à política de senha: ${problemas.join("; ")}.`);
+  }
+
+  const senhaHash = await bcrypt.hash(senha, env.BCRYPT_CUSTO);
+  await prisma.$transaction(async (tx) => {
+    await usuarioRepository.redefinirSenha(usuario.id, senhaHash, { cliente: tx, reativar: true });
+    await registrarAuditoria(tx, {
+      usuarioId: null,
+      acao: "usuario.acesso_recuperado",
+      entidade: "usuario",
+      entidadeId: usuario.id,
+      depois: { ativo: true, deveTrocarSenha: true, origem: "redefinir-senha-admin" },
+    });
+  });
+
+  return { email, senhaGerada: opcoes.novaSenha ? undefined : senha };
 }

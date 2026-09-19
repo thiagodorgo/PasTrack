@@ -2,6 +2,7 @@ import express from "express";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import { z } from "zod";
+import { logger } from "../../src/config/logger";
 import { AppError, capturar, tratarErros } from "../../src/middlewares/erros";
 import { validar } from "../../src/middlewares/validar";
 import { idParam } from "../../src/schemas/comum.schema";
@@ -75,7 +76,7 @@ describe("tratarErros()", () => {
   });
 
   it("devolve 500 sem vazar detalhes internos", async () => {
-    const espiao = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const espiao = vi.spyOn(logger, "error").mockImplementation(() => undefined);
     const resposta = await request(montarApp()).get("/quebra");
     expect(resposta.status).toBe(500);
     expect(resposta.body).toEqual({ erro: "Erro interno no servidor" });

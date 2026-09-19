@@ -34,6 +34,14 @@ const esquemaEnv = z
     TRUST_PROXY: z.coerce.number().int().min(0).max(10).default(0),
     BCRYPT_CUSTO: z.coerce.number().int().min(4).max(15).default(12),
     LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
+    /** Falhas de login permitidas por IP e e-mail dentro da janela. */
+    RATE_LIMIT_LOGIN_MAX: z.coerce.number().int().min(1).max(1000).default(5),
+    /** Janela do limite de login, em minutos. */
+    RATE_LIMIT_LOGIN_JANELA_MIN: z.coerce.number().int().min(1).max(1440).default(15),
+    /** Requisições por minuto de cada IP em /api, antes da autenticação: só contra varredura. */
+    RATE_LIMIT_GLOBAL_MAX: z.coerce.number().int().min(1).max(1_000_000).default(1000),
+    /** Requisições por minuto de cada usuário autenticado. */
+    RATE_LIMIT_USUARIO_MAX: z.coerce.number().int().min(1).max(1_000_000).default(300),
   })
   .superRefine((valores, contexto) => {
     if (valores.NODE_ENV === "production" && valores.BCRYPT_CUSTO < 12) {

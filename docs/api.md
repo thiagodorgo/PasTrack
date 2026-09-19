@@ -133,17 +133,17 @@ Erro `503`, quando o banco não responde. Segue o envelope de erro e mantém os 
 
 ### `POST /api/auth/login`
 
-Público. Existente.
+Público. Existente. Tem limite de tentativas.
 
-Corpo: `{ email, senha }`, ambos obrigatórios. O e-mail não diferencia maiúsculas e ignora espaços nas pontas.
+Corpo: `{ email, senha }`, ambos obrigatórios e sem outros campos. O e-mail não diferencia maiúsculas e ignora espaços nas pontas.
 
-Resposta `200`: `{ token, usuario: { id, nome, email, perfil, deveTrocarSenha } }`. O `deveTrocarSenha` já existe no banco, mas o login ainda não o devolve **(em implementação)**; hoje `usuario` traz só `id`, `nome`, `email` e `perfil`.
+Resposta `200`: `{ token, usuario: { id, nome, email, perfil, deveTrocarSenha } }`. Com `deveTrocarSenha: true`, o frontend deve levar o usuário direto para a troca de senha: até a troca, as demais rotas respondem `403` com `codigo: "TROCA_SENHA_OBRIGATORIA"`.
 
 Erros:
 
-- `400` `"Informe e-mail e senha"`, quando falta um dos campos.
-- `401` `"E-mail ou senha inválidos"`, para senha errada, e-mail inexistente ou usuário desativado. A mensagem é a mesma nos três casos.
-- `429` **(em implementação)** com `codigo: "MUITAS_TENTATIVAS"`, depois de 5 falhas em 15 minutos para o mesmo IP + e-mail, com o cabeçalho `Retry-After` em segundos. O IP segue a configuração de `TRUST_PROXY` (`1` no Docker Compose, atrás do nginx).
+- `400` com `codigo: "DADOS_INVALIDOS"` e `campos`, quando falta um dos campos, vem um campo a mais ou um valor não é texto.
+- `401` `"E-mail ou senha inválidos"`, sem `codigo`, para senha errada, e-mail inexistente ou usuário desativado. A mensagem e o tempo de resposta são os mesmos nos três casos: quando o e-mail não existe, a API compara a senha com um hash falso de mesmo custo.
+- `429` com `codigo: "MUITAS_TENTATIVAS"` e o cabeçalho `Retry-After` em segundos, depois de `RATE_LIMIT_LOGIN_MAX` falhas (padrão 5) em `RATE_LIMIT_LOGIN_JANELA_MIN` minutos (padrão 15) para o mesmo IP + e-mail. Logins bem-sucedidos não contam, cada e-mail tem o seu contador e maiúsculas ou espaços no e-mail não abrem um contador novo. Enquanto o limite vale, até a senha certa recebe `429`. O IP segue a configuração de `TRUST_PROXY` (`1` no Docker Compose, atrás do nginx); com `0`, um `X-Forwarded-For` enviado pelo cliente é ignorado.
 
 ```json
 { "email": "maria@pastrack.local", "senha": "Torno2026seguro" }
@@ -162,13 +162,20 @@ Erros:
 }
 ```
 
+```json
+{
+  "erro": "Muitas tentativas de login. Aguarde alguns minutos e tente de novo.",
+  "codigo": "MUITAS_TENTATIVAS"
+}
+```
+
 ### `GET /api/auth/me`
 
-Todos os perfis, inclusive com a troca de senha pendente. **(em implementação)**
+Todos os perfis, inclusive com a troca de senha pendente.
 
-Resposta `200`: o usuário logado, no mesmo formato de `usuario` do login.
+Resposta `200`: o usuário logado, lido do banco na hora, no mesmo formato de `usuario` do login. Serve para o frontend conferir a sessão e o `deveTrocarSenha` ao abrir.
 
-Erros: `401`.
+Erros: `401` (veja [Sessão](#sessão)).
 
 ```json
 {
@@ -182,16 +189,18 @@ Erros: `401`.
 
 ### `PATCH /api/auth/senha`
 
-Todos os perfis, inclusive com a troca de senha pendente. **(em implementação)**
+Todos os perfis, inclusive com a troca de senha pendente.
 
-Corpo: `{ senhaAtual, novaSenha }`. A `novaSenha` segue a política de senha abaixo.
+Corpo: `{ senhaAtual, novaSenha }`, sem outros campos. A `novaSenha` segue a política de senha abaixo e precisa ser diferente da atual.
 
-Resposta `200`: `{ token }`. É um token novo: os emitidos antes, inclusive o usado nesta chamada, deixam de valer, e o frontend deve substituir o token guardado. Depois da troca, `deveTrocarSenha` passa a `false`.
+Resposta `200`: `{ token }`. É um token novo: os emitidos antes, inclusive o usado nesta chamada e os de outras sessões do mesmo usuário, deixam de valer e passam a receber `401` com `codigo: "SESSAO_INVALIDA"`. O frontend deve substituir o token guardado. Depois da troca, `deveTrocarSenha` passa a `false`. A troca fica na trilha de auditoria como `usuario.senha_alterada`, sem as senhas.
 
 Erros:
 
-- `400` para dados inválidos, senha atual incorreta ou nova senha fora da política, com `campos` apontando o campo. A senha atual incorreta não usa `401`, reservado aos problemas de sessão, que levariam o frontend de volta ao login.
+- `400` com `codigo: "DADOS_INVALIDOS"` e `campos`, para corpo inválido e para a nova senha igual à atual ou fora da política. Nesses dois casos, cada problema vem em `campos` com `caminho: "novaSenha"`.
+- `400` com `codigo: "SENHA_ATUAL_INCORRETA"` (`"A senha atual não confere"`), sem `campos`. Não usa `401`, reservado aos problemas de sessão, que levariam o frontend de volta ao login: a sessão continua valendo.
 - `401` para token ausente, inválido ou expirado, ou sessão invalidada.
+- `429` com `codigo: "MUITAS_TENTATIVAS"` e `Retry-After`, depois de `RATE_LIMIT_LOGIN_MAX` senhas atuais erradas do mesmo usuário na janela de `RATE_LIMIT_LOGIN_JANELA_MIN` minutos. Erros de política e de validação não contam.
 
 ```json
 { "senhaAtual": "Provisoria7k2m9x", "novaSenha": "Fresa2026retifica" }
@@ -201,20 +210,35 @@ Erros:
 { "token": "eyJhbGciOiJIUzI1NiJ9..." }
 ```
 
+```json
+{
+  "erro": "Dados inválidos",
+  "codigo": "DADOS_INVALIDOS",
+  "campos": [
+    { "caminho": "novaSenha", "mensagem": "use pelo menos 10 caracteres" },
+    { "caminho": "novaSenha", "mensagem": "inclua pelo menos um número" }
+  ]
+}
+```
+
 ### Política de senha
 
-Vale para a `novaSenha` de `PATCH /api/auth/senha` **(em implementação)**. As regras já existem em `backend/src/services/politica-senha.ts`:
+Vale para a `novaSenha` de `PATCH /api/auth/senha`, para a `NOVA_SENHA` do script de recuperação e para as senhas temporárias geradas pela API. As regras ficam em `backend/src/services/politica-senha.ts`:
 
 - de 10 caracteres a 72 bytes em UTF-8 (letras acentuadas ocupam 2 bytes);
 - pelo menos uma letra e um número;
 - sem conter o e-mail: a parte antes do `@`, quando tem 3 caracteres ou mais, sem diferenciar maiúsculas;
 - fora da lista de senhas comuns, também sem diferenciar maiúsculas.
 
+As mensagens que saem em `campos` são `"use pelo menos 10 caracteres"`, `"use no máximo 72 bytes"`, `"inclua pelo menos uma letra"`, `"inclua pelo menos um número"`, `"não use o seu e-mail na senha"`, `"essa senha é comum demais"` e `"a nova senha precisa ser diferente da atual"`.
+
+As senhas temporárias da criação de usuário, da redefinição e do script de recuperação têm 22 caracteres aleatórios e sempre atendem à política.
+
 ### Troca obrigatória de senha
 
-**(em implementação)** Enquanto o usuário tiver `deveTrocarSenha = true`, qualquer rota responde `403` com `codigo: "TROCA_SENHA_OBRIGATORIA"`. As exceções são `POST /api/auth/login`, `GET /api/auth/me`, `PATCH /api/auth/senha` e `GET /api/health`. O usuário criado por `POST /api/usuarios` ou com a senha redefinida fica com `deveTrocarSenha = true`.
+Enquanto o usuário tiver `deveTrocarSenha = true`, qualquer rota autenticada responde `403` com `codigo: "TROCA_SENHA_OBRIGATORIA"`, inclusive as de administrador. As exceções são `POST /api/auth/login`, `GET /api/auth/me`, `PATCH /api/auth/senha` e `GET /api/health`. Ficam com `deveTrocarSenha = true` o usuário criado por `POST /api/usuarios`, o que teve a senha redefinida e o administrador recuperado pelo script.
 
-O campo já existe no banco, com padrão `true`: o administrador inicial criado pelo seed também começa com a troca pendente, e só os usuários de demonstração começam com `false`.
+O campo tem padrão `true` no banco: o administrador inicial criado pelo seed também começa com a troca pendente, e só os usuários de demonstração começam com `false`.
 
 ```json
 { "erro": "Troque a sua senha para continuar", "codigo": "TROCA_SENHA_OBRIGATORIA" }
@@ -222,26 +246,41 @@ O campo já existe no banco, com padrão `true`: o administrador inicial criado 
 
 ### Sessão
 
-- Hoje o token vale até expirar, mesmo que o usuário seja desativado ou mude de perfil nesse meio-tempo.
-- **(em implementação)** Desativar, rebaixar ou trocar a senha de um usuário invalida os tokens emitidos antes da mudança. O token de usuário desativado, com versão de token antiga ou de usuário apagado recebe `401` com `codigo: "SESSAO_INVALIDA"`.
-- O `versaoToken`, que sustenta esse controle, já existe no banco e é interno: não aparece em nenhuma resposta.
+- O token é um JWT HS256 com emissor `pastrack-api`, público `pastrack-web`, validade de `JWT_EXPIRES_IN` e a versão de token do usuário. A API recusa outro algoritmo (inclusive `none`), outro emissor ou público e qualquer payload fora do formato. Continue tratando o token como opaco.
+- A cada requisição, a API recarrega o usuário do banco: o perfil e o `deveTrocarSenha` valem na hora, sem esperar o token expirar. O perfil que vem dentro do token não é usado.
+- Trocar a própria senha, ter a senha redefinida, ser desativado ou ter o perfil alterado invalida os tokens emitidos antes da mudança. Mudar só o nome não derruba a sessão.
+- Respostas `401`:
+  - sem token ou sem o esquema `Bearer`: `"Token não informado"`, sem `codigo`;
+  - token malformado, expirado, com assinatura, algoritmo, emissor ou público errados, ou com payload inválido: `"Token inválido ou expirado"`, sem `codigo`;
+  - token de usuário desativado, com versão de token antiga ou de usuário apagado: `codigo: "SESSAO_INVALIDA"`.
+- O `versaoToken`, que sustenta esse controle, é interno: não aparece em nenhuma resposta.
 - O `senhaHash` nunca aparece em nenhuma resposta.
 
 ```json
-{ "erro": "Sessão encerrada. Entre novamente.", "codigo": "SESSAO_INVALIDA" }
+{ "erro": "Sessão expirada. Entre novamente.", "codigo": "SESSAO_INVALIDA" }
 ```
+
+### Limites de requisição
+
+- Toda rota de `/api`, inclusive o login e o health check, tem um limite geral de `RATE_LIMIT_GLOBAL_MAX` requisições por minuto para cada IP (padrão 300), aplicado antes da autenticação. Ao estourar, responde `429` com `codigo: "MUITAS_TENTATIVAS"` e `Retry-After`.
+- As respostas trazem os cabeçalhos `RateLimit` e `RateLimit-Policy` (rascunho 8 do IETF). O CORS expõe `Retry-After` e `X-Request-Id` ao frontend.
 
 ## 5. Usuários
 
-**(em implementação)** Todas as rotas exigem ADMINISTRADOR (ação `gerenciarUsuarios`); os demais perfis recebem `403`. Hoje `/api/usuarios` só faz essa verificação de perfil, e um administrador recebe `404`.
+Todas as rotas exigem ADMINISTRADOR (ação `gerenciarUsuarios`) com a troca de senha em dia; os demais perfis recebem `403` `"Acesso negado para este perfil"`. Toda mudança fica na trilha de auditoria com o administrador responsável, sem senhas: `usuario.criado`, `usuario.atualizado`, `usuario.desativado`, `usuario.reativado` e `usuario.senha_redefinida`.
 
-O usuário nas respostas é `{ id, nome, email, perfil, ativo, deveTrocarSenha }`. O `senhaHash` e o `versaoToken` nunca aparecem.
+O usuário nas respostas é `{ id, nome, email, perfil, ativo, deveTrocarSenha, criadoEm, atualizadoEm }`. O `senhaHash` e o `versaoToken` nunca aparecem.
 
-Ninguém desativa ou rebaixa a si mesmo, nem o último administrador ativo: essas tentativas respondem `409`.
+Proteções, com `409` e só a chave `erro`, sem `codigo`:
+
+- ninguém desativa a si mesmo (`"Você não pode desativar o seu próprio usuário"`) nem rebaixa o próprio perfil (`"Você não pode rebaixar o seu próprio perfil"`);
+- o último administrador ativo não pode ser desativado nem rebaixado (`"O PasTrack precisa de pelo menos um administrador ativo"`). A regra vale também para duas mudanças simultâneas.
+
+Um `:id` que não é inteiro positivo responde `400` com `codigo: "DADOS_INVALIDOS"`. Usuário inexistente responde `404` `"Usuário não encontrado"`, sem `codigo`.
 
 ### `GET /api/usuarios`
 
-Resposta `200`: array de usuários.
+Resposta `200`: array de usuários em ordem de nome.
 
 ```json
 [
@@ -251,18 +290,20 @@ Resposta `200`: array de usuários.
     "email": "admin@pastrack.local",
     "perfil": "ADMINISTRADOR",
     "ativo": true,
-    "deveTrocarSenha": false
+    "deveTrocarSenha": false,
+    "criadoEm": "2026-09-14T12:00:00.000Z",
+    "atualizadoEm": "2026-09-14T12:30:00.000Z"
   }
 ]
 ```
 
 ### `POST /api/usuarios`
 
-Corpo: `{ nome, email, perfil }`.
+Corpo: `{ nome, email, perfil }`, sem outros campos: a senha não vai no corpo. O `nome` tem de 2 a 120 caracteres, sem os espaços das pontas; o `email` precisa ser válido e é gravado em minúsculas; o `perfil` é um dos quatro.
 
-Resposta `201`: o usuário mais `senhaTemporaria`, exibida uma única vez: a API não a devolve de novo.
+Resposta `201`: o usuário, com `deveTrocarSenha: true`, mais `senhaTemporaria`, com 22 caracteres e exibida uma única vez: a API não a devolve de novo.
 
-Erros: `400` para dados inválidos; `409` com `codigo: "DUPLICADO"` (`"Já existe um usuário com este e-mail"`) para e-mail já cadastrado.
+Erros: `400` com `codigo: "DADOS_INVALIDOS"` para dados inválidos; `409` com `codigo: "DUPLICADO"` (`"Já existe um usuário com este e-mail"`) para e-mail já cadastrado, sem diferenciar maiúsculas.
 
 ```json
 { "nome": "João Lima", "email": "joao@pastrack.local", "perfil": "OPERADOR" }
@@ -276,15 +317,17 @@ Erros: `400` para dados inválidos; `409` com `codigo: "DUPLICADO"` (`"Já exist
   "perfil": "OPERADOR",
   "ativo": true,
   "deveTrocarSenha": true,
-  "senhaTemporaria": "Provisoria7k2m9x"
+  "criadoEm": "2026-09-14T13:05:00.000Z",
+  "atualizadoEm": "2026-09-14T13:05:00.000Z",
+  "senhaTemporaria": "Xq3vT9kLm2Pw7Rz4Bn8Ya1"
 }
 ```
 
 ### `PUT /api/usuarios/:id`
 
-Corpo: `{ nome?, perfil? }`.
+Corpo: `{ nome?, perfil? }`, com pelo menos um dos dois e sem outros campos.
 
-Resposta `200`: o usuário atualizado. Rebaixar o perfil invalida os tokens anteriores do usuário.
+Resposta `200`: o usuário atualizado. Mudar o perfil, para cima ou para baixo, invalida os tokens anteriores do usuário; mudar só o nome não.
 
 Erros: `400`; `404` para usuário inexistente; `409` ao rebaixar a si mesmo ou o último administrador ativo.
 
@@ -296,7 +339,7 @@ Erros: `400`; `404` para usuário inexistente; `409` ao rebaixar a si mesmo ou o
 
 Corpo: `{ ativo }`, booleano.
 
-Resposta `200`: o usuário atualizado. Desativar invalida os tokens anteriores do usuário.
+Resposta `200`: o usuário atualizado. Desativar invalida os tokens anteriores do usuário. Reativar não ressuscita esses tokens: o usuário entra de novo pelo login. Enviar o estado que o usuário já tem não muda nada.
 
 Erros: `400`; `404`; `409` ao desativar a si mesmo ou o último administrador ativo.
 
@@ -308,13 +351,23 @@ Erros: `400`; `404`; `409` ao desativar a si mesmo ou o último administrador at
 
 Sem corpo.
 
-Resposta `200`: `{ senhaTemporaria }`, exibida uma única vez. Os tokens anteriores do usuário deixam de valer, e ele volta a `deveTrocarSenha = true`.
+Resposta `200`: `{ senhaTemporaria }`, exibida uma única vez. Os tokens anteriores do usuário deixam de valer, e ele volta a `deveTrocarSenha = true`. A redefinição não reativa um usuário desativado.
 
-Erros: `404`.
+Erros: `400` para `:id` inválido; `404`.
 
 ```json
-{ "senhaTemporaria": "Provisoria3q8w1z" }
+{ "senhaTemporaria": "Hd7sKq2Wm9Lp4Xz8Vb3Ra1" }
 ```
+
+### Recuperação do administrador
+
+Não tem rota na API. Quando nenhum administrador consegue entrar, quem opera o servidor roda:
+
+```bash
+docker compose exec api node dist/scripts/redefinir-senha-admin.js admin@pastrack.local
+```
+
+O script reativa o administrador, grava uma senha temporária e a exibe uma única vez, liga a troca obrigatória e invalida os tokens dele. Com `NOVA_SENHA` definida no ambiente (`docker compose exec -e NOVA_SENHA=... api ...`), usa essa senha, que precisa atender à política, e não a exibe. Só aceita usuários ADMINISTRADOR. A ação fica na trilha de auditoria como `usuario.acesso_recuperado`.
 
 ## 6. Painel
 

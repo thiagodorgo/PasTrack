@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { ZodError } from "zod";
+import { logger } from "../config/logger";
 
 export class AppError extends Error {
   constructor(
@@ -71,7 +72,7 @@ function responder(res: Response, resposta: RespostaDeErro) {
   return res.status(resposta.status).json(corpo);
 }
 
-export function tratarErros(erro: Error, _req: Request, res: Response, _next: NextFunction) {
+export function tratarErros(erro: Error, req: Request, res: Response, _next: NextFunction) {
   if (erro instanceof AppError) {
     return responder(res, { status: erro.status, erro: erro.message, codigo: erro.codigo });
   }
@@ -89,6 +90,8 @@ export function tratarErros(erro: Error, _req: Request, res: Response, _next: Ne
   if (conhecido) {
     return responder(res, conhecido);
   }
-  console.error(erro);
-  return res.status(500).json({ erro: "Erro interno no servidor" });
+  // o requestId liga a resposta ao erro completo nos logs, sem expor detalhes ao cliente
+  const requestId = typeof req.id === "string" ? req.id : undefined;
+  logger.error({ err: erro, requestId }, "Erro não tratado ao processar a requisição");
+  return res.status(500).json({ erro: "Erro interno no servidor", requestId });
 }

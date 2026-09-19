@@ -1,109 +1,121 @@
 # Contrato da API do PasTrack
 
-Este documento descreve a API REST do backend: o que já funciona hoje e as mudanças aprovadas para esta semana. O frontend e os testes se guiam por ele.
-
-Itens marcados com **(em implementação)** fazem parte do contrato, mas ainda não foram entregues. O resto descreve o comportamento atual do código em `backend/src`.
+Este documento descreve a API REST do backend, do jeito que o código de `backend/src` funciona hoje. O frontend e os testes se guiam por ele.
 
 ## 1. Convenções
 
 - **Base:** todas as rotas ficam sob `/api`, e a API responde em `http://localhost:3333/api`. O frontend chama o caminho relativo `/api`: em desenvolvimento o Vite encaminha para a porta 3333, e no Docker Compose o nginx de `http://localhost:8080` encaminha para o container da API.
 - **Formato:** requisições e respostas em JSON (`Content-Type: application/json`). O corpo aceita até 100 kB.
-- **Autenticação:** fora `GET /api/health` e `POST /api/auth/login`, toda rota exige o cabeçalho `Authorization: Bearer <token>`, com o token devolvido pelo login. O token vale pelo tempo de `JWT_EXPIRES_IN` (padrão `8h`) e deve ser tratado como opaco.
+- **Autenticação:** fora `GET /api/health` e `POST /api/auth/login`, toda rota exige o cabeçalho `Authorization: Bearer <token>`, com o token devolvido pelo login. O token vale pelo tempo de `JWT_EXPIRES_IN` (padrão `8h`) e deve ser tratado como opaco. Enquanto a senha for temporária, só `GET /api/auth/me` e `PATCH /api/auth/senha` respondem; as outras rotas autenticadas devolvem `403` com `TROCA_SENHA_OBRIGATORIA`.
 - **Identificadores:** `id` e os campos terminados em `Id` são inteiros.
-- **Datas:** texto ISO 8601 em UTC, como `"2026-09-14T13:05:00.000Z"`. Pastilhas, fabricantes e fornecedores trazem `criadoEm` e `atualizadoEm`.
+- **Datas:** texto ISO 8601 em UTC, como `"2026-09-14T13:05:00.000Z"`. Pastilhas, fabricantes, fornecedores e usuários trazem `criadoEm` e `atualizadoEm`.
 - **Perfis:** `ADMINISTRADOR`, `GESTOR`, `OPERADOR` e `COMPRADOR`. Quem pode fazer o quê vem da matriz de `backend/src/config/permissoes.ts`, e cada rota cita a ação correspondente. As rotas de consulta exigem só o login, o que equivale à ação `consultar` (os quatro perfis).
-- **CORS:** só as origens listadas em `CORS_ORIGINS` recebem liberação. Pelo nginx do Docker Compose, o site e a API ficam na mesma origem.
+- **CORS:** só as origens listadas em `CORS_ORIGINS` recebem liberação. Pelo nginx do Docker Compose, o site e a API ficam na mesma origem. Os cabeçalhos `X-Request-Id` e `Retry-After` ficam legíveis pelo frontend.
+- **Limites de requisição:**
+  - Antes da autenticação, todo o `/api` tem um teto por IP a cada minuto, `RATE_LIMIT_GLOBAL_MAX`, com padrão 1000. Ele serve só contra varredura.
+  - Depois da autenticação, cada usuário tem o próprio limite por minuto, `RATE_LIMIT_USUARIO_MAX`, com padrão 300. Ele vale em qualquer posto, então postos que dividem o mesmo IP não se bloqueiam.
+  - O login tem um limite por IP e e-mail: `RATE_LIMIT_LOGIN_MAX` tentativas erradas, com padrão 5, a cada `RATE_LIMIT_LOGIN_JANELA_MIN` minutos, com padrão 15.
+  - A troca de senha aceita até 5 senhas atuais erradas em 15 minutos por usuário.
+  - Passar de um limite responde `429` com `MUITAS_TENTATIVAS` e o cabeçalho `Retry-After`.
+- **Rastreio:** toda resposta traz o cabeçalho `X-Request-Id`. A API reaproveita o valor recebido quando ele tem até 64 caracteres entre letras, números, `_` e `-`; senão, gera um novo.
+- **Cache:** as respostas de `/api` vêm com `Cache-Control: no-store`.
 - **Rota inexistente:** `404` com `{ "erro": "Rota não encontrada" }`. Dentro de `/api` o token é verificado antes, então uma rota inexistente chamada sem token responde `401`.
 - **Sessão no frontend:** o frontend trata qualquer `401` fora da tela de login como sessão encerrada e volta para o login.
-- **Auditoria:** a abertura e o fechamento automático de alertas ficam registrados na trilha de auditoria do banco, que não tem rota na API e nunca guarda senhas.
+- **Auditoria:** criações e alterações de pastilhas, fabricantes, fornecedores e usuários, trocas e redefinições de senha e a abertura, o fechamento e a resolução de alertas ficam na trilha de auditoria do banco. Ela não tem rota na API e nunca guarda senhas.
 
 ### Envelope de erro
 
 Toda resposta de erro é um objeto JSON com a chave `erro`, que o frontend exibe.
 
-| Campo       | Tipo   | Presença | Descrição                                                                                                  |
-| ----------- | ------ | -------- | ---------------------------------------------------------------------------------------------------------- |
-| `erro`      | string | sempre   | Mensagem para exibir ao usuário.                                                                           |
-| `codigo`    | string | opcional | Código estável para o frontend reagir sem depender do texto. Veja a tabela de códigos abaixo.              |
-| `campos`    | array  | opcional | Vem com `DADOS_INVALIDOS`: `[{ "caminho": string, "mensagem": string }]`, com `caminho` apontando o campo. |
-| `requestId` | string | opcional | **(em implementação)** Identificador da requisição, para localizar o erro nos logs do servidor.            |
+| Campo       | Tipo   | Presença | Descrição                                                                                                     |
+| ----------- | ------ | -------- | ------------------------------------------------------------------------------------------------------------- |
+| `erro`      | string | sempre   | Mensagem para exibir ao usuário.                                                                              |
+| `codigo`    | string | opcional | Código estável para o frontend reagir sem depender do texto. Veja a tabela de códigos abaixo.                 |
+| `campos`    | array  | opcional | Vem com `DADOS_INVALIDOS`: `[{ "caminho": string, "mensagem": string }]`, com `caminho` apontando o campo.    |
+| `requestId` | string | no `500` | Identificador da requisição, o mesmo do cabeçalho `X-Request-Id`, para localizar o erro nos logs do servidor. |
 
-O tratador de erros já responde às falhas de validação com `400`, `codigo: "DADOS_INVALIDOS"` e `campos`. As rotas passam a validar a entrada com ele **(em implementação)**; até lá, parte dos valores de tipo errado ainda cai no `500`.
+Todas as rotas validam body, params e query com esquemas estritos. Campo desconhecido, tipo errado ou valor fora do limite responde `400` com `codigo: "DADOS_INVALIDOS"` e `campos`.
 
 ```json
 {
   "erro": "Dados inválidos",
   "codigo": "DADOS_INVALIDOS",
-  "campos": [{ "caminho": "quantidade", "mensagem": "deve ser um inteiro entre 1 e 1000000" }],
-  "requestId": "3f6c1a9e-8b2d-4c1e-9a7f-2d5b8e0c4a11"
+  "campos": [{ "caminho": "quantidade", "mensagem": "deve ser um inteiro entre 1 e 1000000" }]
 }
 ```
 
 ### Códigos
 
-| Código                    | Status | Quando                                                                                   | Situação         |
-| ------------------------- | ------ | ---------------------------------------------------------------------------------------- | ---------------- |
-| `DADOS_INVALIDOS`         | `400`  | Falha de validação, com `campos`.                                                        | existente        |
-| `REFERENCIA_INVALIDA`     | `400`  | O registro relacionado não existe, como um `fabricanteId` ou `fornecedorId` inexistente. | existente        |
-| `SESSAO_INVALIDA`         | `401`  | Token de usuário desativado, com versão de token antiga ou de usuário apagado.           | em implementação |
-| `TROCA_SENHA_OBRIGATORIA` | `403`  | Troca de senha pendente.                                                                 | em implementação |
-| `NAO_ENCONTRADO`          | `404`  | O banco não achou o registro a alterar, como ao resolver um alerta inexistente.          | existente        |
-| `DUPLICADO`               | `409`  | Valor único já cadastrado: e-mail, nome do fabricante, CNPJ ou código da pastilha.       | existente        |
-| `ALERTA_JA_RESOLVIDO`     | `409`  | Resolver um alerta que já está resolvido.                                                | em implementação |
-| `MUITAS_TENTATIVAS`       | `429`  | Excesso de tentativas de login.                                                          | em implementação |
+| Código                    | Status | Quando                                                                                                                    |
+| ------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `DADOS_INVALIDOS`         | `400`  | Falha de validação, com `campos`.                                                                                         |
+| `REFERENCIA_INVALIDA`     | `400`  | O registro relacionado não existe, como um `fabricanteId` ou `fornecedorId` inexistente.                                  |
+| `SENHA_ATUAL_INCORRETA`   | `400`  | A senha atual informada na troca de senha não confere.                                                                    |
+| `SESSAO_INVALIDA`         | `401`  | Sessão revogada: usuário desativado ou apagado, ou token anterior a uma troca de senha, redefinição ou mudança de perfil. |
+| `TROCA_SENHA_OBRIGATORIA` | `403`  | A senha ainda é temporária.                                                                                               |
+| `NAO_ENCONTRADO`          | `404`  | O registro pedido não existe: pastilha, fabricante, fornecedor, alerta ou usuário.                                        |
+| `DUPLICADO`               | `409`  | Valor único já cadastrado: e-mail, nome do fabricante, CNPJ ou código da pastilha.                                        |
+| `ALERTA_JA_RESOLVIDO`     | `409`  | Resolver um alerta que já está resolvido.                                                                                 |
+| `MUITAS_TENTATIVAS`       | `429`  | Passou de um limite de requisições. Veja "Limites de requisição".                                                         |
 
-Mensagens atuais: `REFERENCIA_INVALIDA` usa `"Referência inválida: o registro relacionado não existe"`; `NAO_ENCONTRADO` usa `"Registro não encontrado"`; `DUPLICADO` usa `"Já existe um usuário com este e-mail"`, `"Já existe um fabricante com este nome"`, `"Já existe um fornecedor com este CNPJ"` ou `"Já existe uma pastilha com este código"`, e `"Registro duplicado"` nos demais casos.
+Mensagens atuais:
 
-Os outros erros das rotas existentes vêm só com `erro`, sem `codigo`, como `"Pastilha não encontrada"` (`404`) e `"Saldo insuficiente: ..."` (`400`).
+- `REFERENCIA_INVALIDA`: `"Referência inválida: o registro relacionado não existe"`, ou `"Fornecedor não encontrado"` no registro de movimentação.
+- `NAO_ENCONTRADO`: `"Pastilha não encontrada"`, `"Fabricante não encontrado"`, `"Fornecedor não encontrado"`, `"Usuário não encontrado"` ou `"Registro não encontrado"`.
+- `DUPLICADO`: `"Já existe um usuário com este e-mail"`, `"Já existe um fabricante com este nome"`, `"Já existe um fornecedor com este CNPJ"` ou `"Já existe uma pastilha com este código"`, e `"Registro duplicado"` nos demais casos.
+
+Alguns erros vêm só com `erro`, sem `codigo`: o `401` de token ausente ou inválido, o login recusado, o `403` de perfil sem permissão, o `400` de saldo insuficiente e os `409` de proteção dos usuários. Trate esses casos pelo status.
 
 ### Status
 
-| Status | Quando                                                                                                                                                                                                                                                                                           |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `400`  | Dados inválidos (`DADOS_INVALIDOS`), referência inexistente (`REFERENCIA_INVALIDA`), JSON malformado (`"JSON malformado"`) ou saldo insuficiente.                                                                                                                                                |
-| `401`  | Sem token (`"Token não informado"`) ou token inválido ou expirado (`"Token inválido ou expirado"`), sem `codigo`. **(em implementação)** `SESSAO_INVALIDA` para usuário desativado, versão de token antiga ou usuário apagado. No login, credenciais recusadas, inclusive de usuário desativado. |
-| `403`  | Perfil sem permissão (`"Acesso negado para este perfil"`) ou, **(em implementação)**, `TROCA_SENHA_OBRIGATORIA`.                                                                                                                                                                                 |
-| `404`  | Recurso ou rota inexistente; `NAO_ENCONTRADO` quando a falta é detectada pelo banco.                                                                                                                                                                                                             |
-| `409`  | Duplicidade (`DUPLICADO`). **(em implementação)** Alerta já resolvido (`ALERTA_JA_RESOLVIDO`) e as regras de proteção dos usuários.                                                                                                                                                              |
-| `413`  | Corpo acima de 100 kB (`"Corpo da requisição grande demais"`).                                                                                                                                                                                                                                   |
-| `429`  | **(em implementação)** `MUITAS_TENTATIVAS`, com o cabeçalho `Retry-After`.                                                                                                                                                                                                                       |
-| `500`  | Erro interno, sempre `{ "erro": "Erro interno no servidor" }`, sem detalhes internos. Por ora inclui as violações das restrições do banco (saldo ou estoque mínimo negativos) e os tipos que as rotas ainda não validam.                                                                         |
-| `503`  | Health check com o banco indisponível.                                                                                                                                                                                                                                                           |
+| Status | Quando                                                                                                                                                                                                                                       |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `400`  | Dados inválidos (`DADOS_INVALIDOS`), referência inexistente (`REFERENCIA_INVALIDA`), senha atual errada (`SENHA_ATUAL_INCORRETA`), JSON malformado (`"JSON malformado"`) ou saldo insuficiente (`"Saldo insuficiente: há 3 un em estoque"`). |
+| `401`  | Sem token (`"Token não informado"`), token inválido ou expirado (`"Token inválido ou expirado"`) ou sessão revogada (`SESSAO_INVALIDA`). No login, credenciais recusadas (`"E-mail ou senha inválidos"`), inclusive de usuário desativado.   |
+| `403`  | Perfil sem permissão (`"Acesso negado para este perfil"` ou `"Seu perfil só pode registrar entradas"`) ou senha temporária (`TROCA_SENHA_OBRIGATORIA`).                                                                                      |
+| `404`  | Registro inexistente (`NAO_ENCONTRADO`) ou rota inexistente (`"Rota não encontrada"`).                                                                                                                                                       |
+| `409`  | Duplicidade (`DUPLICADO`), alerta já resolvido (`ALERTA_JA_RESOLVIDO`) ou proteção dos usuários: desativar ou rebaixar a si mesmo, redefinir a própria senha pela gestão de usuários ou deixar o sistema sem administrador ativo.            |
+| `413`  | Corpo acima de 100 kB (`"Corpo da requisição grande demais"`).                                                                                                                                                                               |
+| `429`  | `MUITAS_TENTATIVAS`, com o cabeçalho `Retry-After` em segundos.                                                                                                                                                                              |
+| `500`  | Erro interno: `{ "erro": "Erro interno no servidor", "requestId": "..." }`, sem detalhes internos.                                                                                                                                           |
+| `503`  | Health check com o banco indisponível.                                                                                                                                                                                                       |
 
-As mensagens citadas entre aspas nas partes existentes são os textos atuais do código. Nas partes em implementação, os textos dos exemplos são ilustrativos: trate o erro pelo status e por `codigo`.
+As mensagens citadas entre aspas são os textos atuais do código. Para reagir a um erro, use o status e o `codigo`, porque o texto pode mudar.
 
 ## 2. Resumo das rotas
 
-"Todos" são os quatro perfis, com login. "Público" dispensa o token. Uma rota "existente" pode ter regras novas, marcadas na seção do recurso. Enquanto a troca de senha estiver pendente, só o login, o health check, `GET /api/auth/me` e `PATCH /api/auth/senha` respondem normalmente.
+"Todos" são os quatro perfis, com login. "Público" dispensa o token. Enquanto a troca de senha estiver pendente, só o login, o health check, `GET /api/auth/me` e `PATCH /api/auth/senha` respondem normalmente.
 
-| Método  | Caminho                             | Perfis                                         | Situação         |
-| ------- | ----------------------------------- | ---------------------------------------------- | ---------------- |
-| `GET`   | `/api/health`                       | Público                                        | existente        |
-| `POST`  | `/api/auth/login`                   | Público                                        | existente        |
-| `GET`   | `/api/auth/me`                      | Todos                                          | em implementação |
-| `PATCH` | `/api/auth/senha`                   | Todos                                          | em implementação |
-| `GET`   | `/api/usuarios`                     | ADMINISTRADOR                                  | em implementação |
-| `POST`  | `/api/usuarios`                     | ADMINISTRADOR                                  | em implementação |
-| `PUT`   | `/api/usuarios/:id`                 | ADMINISTRADOR                                  | em implementação |
-| `PATCH` | `/api/usuarios/:id/ativo`           | ADMINISTRADOR                                  | em implementação |
-| `POST`  | `/api/usuarios/:id/redefinir-senha` | ADMINISTRADOR                                  | em implementação |
-| `GET`   | `/api/painel/resumo`                | Todos                                          | existente        |
-| `GET`   | `/api/pastilhas`                    | Todos                                          | existente        |
-| `GET`   | `/api/pastilhas/:id`                | Todos                                          | existente        |
-| `POST`  | `/api/pastilhas`                    | ADMINISTRADOR, GESTOR                          | existente        |
-| `PUT`   | `/api/pastilhas/:id`                | ADMINISTRADOR, GESTOR                          | existente        |
-| `GET`   | `/api/fabricantes`                  | Todos                                          | existente        |
-| `POST`  | `/api/fabricantes`                  | ADMINISTRADOR, GESTOR                          | existente        |
-| `PUT`   | `/api/fabricantes/:id`              | ADMINISTRADOR, GESTOR                          | em implementação |
-| `GET`   | `/api/fornecedores`                 | Todos                                          | existente        |
-| `POST`  | `/api/fornecedores`                 | ADMINISTRADOR, GESTOR, COMPRADOR               | existente        |
-| `PUT`   | `/api/fornecedores/:id`             | ADMINISTRADOR, GESTOR, COMPRADOR               | em implementação |
-| `GET`   | `/api/movimentacoes`                | Todos                                          | existente        |
-| `POST`  | `/api/movimentacoes`                | Todos (SAIDA: ADMINISTRADOR, GESTOR, OPERADOR) | existente        |
-| `GET`   | `/api/alertas`                      | Todos                                          | existente        |
-| `PATCH` | `/api/alertas/:id/resolver`         | ADMINISTRADOR, GESTOR                          | existente        |
+| Método  | Caminho                             | Perfis                                         |
+| ------- | ----------------------------------- | ---------------------------------------------- |
+| `GET`   | `/api/health`                       | Público                                        |
+| `POST`  | `/api/auth/login`                   | Público                                        |
+| `GET`   | `/api/auth/me`                      | Todos                                          |
+| `PATCH` | `/api/auth/senha`                   | Todos                                          |
+| `GET`   | `/api/usuarios`                     | ADMINISTRADOR                                  |
+| `POST`  | `/api/usuarios`                     | ADMINISTRADOR                                  |
+| `PUT`   | `/api/usuarios/:id`                 | ADMINISTRADOR                                  |
+| `PATCH` | `/api/usuarios/:id/ativo`           | ADMINISTRADOR                                  |
+| `POST`  | `/api/usuarios/:id/redefinir-senha` | ADMINISTRADOR                                  |
+| `GET`   | `/api/painel/resumo`                | Todos                                          |
+| `GET`   | `/api/pastilhas`                    | Todos                                          |
+| `GET`   | `/api/pastilhas/:id`                | Todos                                          |
+| `POST`  | `/api/pastilhas`                    | ADMINISTRADOR, GESTOR                          |
+| `PUT`   | `/api/pastilhas/:id`                | ADMINISTRADOR, GESTOR                          |
+| `GET`   | `/api/fabricantes`                  | Todos                                          |
+| `GET`   | `/api/fabricantes/:id`              | Todos                                          |
+| `POST`  | `/api/fabricantes`                  | ADMINISTRADOR, GESTOR                          |
+| `PUT`   | `/api/fabricantes/:id`              | ADMINISTRADOR, GESTOR                          |
+| `GET`   | `/api/fornecedores`                 | Todos                                          |
+| `GET`   | `/api/fornecedores/:id`             | Todos                                          |
+| `POST`  | `/api/fornecedores`                 | ADMINISTRADOR, GESTOR, COMPRADOR               |
+| `PUT`   | `/api/fornecedores/:id`             | ADMINISTRADOR, GESTOR, COMPRADOR               |
+| `GET`   | `/api/movimentacoes`                | Todos                                          |
+| `POST`  | `/api/movimentacoes`                | Todos (SAIDA: ADMINISTRADOR, GESTOR, OPERADOR) |
+| `GET`   | `/api/alertas`                      | Todos                                          |
+| `PATCH` | `/api/alertas/:id/resolver`         | ADMINISTRADOR, GESTOR                          |
 
-São 24 rotas: 15 existentes e 9 em implementação.
+São 26 rotas.
 
 ## 3. Saúde
 
@@ -379,7 +391,7 @@ Resposta `200`:
 
 - `totalPastilhas`: quantidade de pastilhas cadastradas;
 - `alertasAbertos`: quantidade de alertas `ABERTO`;
-- `itensCriticos`: até 20 pastilhas com `saldoAtual <= estoqueMinimo`, do menor saldo para o maior (o `id` desempata), cada uma com `{ id, codigo, descricao, saldoAtual, estoqueMinimo }`;
+- `itensCriticos`: até 20 pastilhas com `estoqueMinimo` maior que `0` e `saldoAtual <= estoqueMinimo`, do menor saldo para o maior (o `id` desempata), cada uma com `{ id, codigo, descricao, saldoAtual, estoqueMinimo }`;
 - `ultimasMovimentacoes`: as 5 movimentações mais recentes, no formato de `GET /api/movimentacoes`.
 
 Os limites de 20 itens críticos e 5 movimentações são aplicados na consulta ao banco.
@@ -414,7 +426,7 @@ Todos os perfis. Existente.
 Query, toda opcional:
 
 - `busca`: até 100 caracteres; filtra por trecho de `codigo` ou de `descricao`, sem diferenciar maiúsculas;
-- `criticas`: `true` devolve só as pastilhas com `saldoAtual <= estoqueMinimo`, o mesmo critério do painel; `false` equivale a não enviar o filtro.
+- `criticas`: `true` devolve só as pastilhas com `estoqueMinimo` maior que `0` e `saldoAtual <= estoqueMinimo`, o mesmo critério do painel e dos alertas; `false` equivale a não enviar o filtro.
 
 `busca` e `criticas` podem ser combinados. Outro valor de `criticas`, parâmetro repetido ou parâmetro desconhecido responde `400`.
 
@@ -472,7 +484,7 @@ Corpo:
 
 Em `modelo` e `aplicacao`, `null` e texto vazio (ou só com espaços) gravam `null`. Qualquer outro campo, inclusive `saldoAtual`, `id` e relações como `movimentacoes`, responde `400`: a pastilha sempre nasce com saldo `0`.
 
-A criação grava a auditoria e avalia o alerta na mesma transação. Como o saldo nasce `0` e o `estoqueMinimo` nunca é negativo, a pastilha nasce com um alerta `ABERTO`, que fecha sozinho quando uma entrada leva o saldo acima do mínimo.
+A criação grava a auditoria e avalia o alerta na mesma transação. Como o saldo nasce `0`, uma pastilha criada com `estoqueMinimo` maior que `0` já nasce com um alerta `ABERTO`, que fecha sozinho quando uma entrada leva o saldo acima do mínimo. Com `estoqueMinimo` igual a `0`, a pastilha não tem reposição controlada e nunca gera alerta.
 
 Resposta `201`: a pastilha criada.
 
@@ -499,7 +511,7 @@ ADMINISTRADOR e GESTOR (ação `gerenciarPastilhas`). Existente.
 
 Corpo: só `descricao`, `modelo`, `aplicacao`, `unidade`, `estoqueMinimo` e `fabricanteId`, com as mesmas regras do `POST`. Todos são opcionais, mas pelo menos um precisa vir. Campo ausente mantém o valor atual; em `modelo` e `aplicacao`, `null` e texto vazio limpam o valor. `codigo` e `saldoAtual` nunca são aceitos: o saldo só muda por movimentação. Qualquer outro campo, inclusive `saldoAtual`, `codigo`, `id` e escritas aninhadas como `{ "movimentacoes": { "deleteMany": {} } }`, responde `400` sem alterar nada.
 
-Mudar `estoqueMinimo` reavalia o alerta na mesma transação: abre o alerta quando o saldo fica menor ou igual ao novo mínimo e fecha o alerta aberto quando o saldo fica acima dele.
+Mudar `estoqueMinimo` reavalia o alerta na mesma transação. O alerta abre quando o novo mínimo é maior que `0` e o saldo fica menor ou igual a ele. O alerta aberto fecha quando o saldo fica acima do novo mínimo ou quando o mínimo vai para `0`.
 
 Resposta `200`: a pastilha atualizada.
 
@@ -782,7 +794,7 @@ O alerta nas listagens é `{ id, dataGeracao, situacao, dataResolucao, pastilhaI
 
 `resolvidoPor` é `{ id, nome }` de quem resolveu manualmente, ou `null` quando o alerta está aberto ou foi fechado automaticamente. Do usuário saem só esses dois campos.
 
-Um alerta abre quando, depois de uma movimentação, o saldo fica menor ou igual ao `estoqueMinimo` e não há alerta aberto para a pastilha. Se alguém resolver o alerta com o saldo ainda baixo, a próxima movimentação abre outro.
+Um alerta abre quando o `estoqueMinimo` é maior que `0`, o saldo fica menor ou igual a ele e não há alerta aberto para a pastilha. A avaliação acontece depois de cada movimentação, na criação da pastilha e quando o mínimo muda. Pastilhas com `estoqueMinimo` igual a `0` nunca geram alerta. Se alguém resolver o alerta com o saldo ainda baixo, a próxima movimentação abre outro.
 
 ### `GET /api/alertas`
 

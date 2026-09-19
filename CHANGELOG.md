@@ -54,6 +54,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - Troca obrigatória de senha no primeiro acesso e depois de uma redefinição. (#21)
 - Script `redefinir-senha-admin`, que recupera o acesso de um administrador pelo servidor. (#21)
 - Documentação: decisões de arquitetura (ADR-0001 a ADR-0008), guia de implantação, manual de operação, índice da documentação e este registro de mudanças.
+- Documentação de arquitetura e de banco de dados, `CONTRIBUTING.md` e `SECURITY.md`. (#28)
+- Matriz de perfis em `docs/perfis-e-permissoes.md`, gerada de `backend/src/config/permissoes.ts` com `npm run docs:perfis` e conferida no CI. (#28)
 
 ### Modificado
 

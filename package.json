@@ -18,6 +18,7 @@
     "test:tudo": "npm test --prefix backend && npm test --prefix frontend",
     "test:relatorio": "node scripts/relatorio-testes.mjs",
     "test:scripts": "node --test scripts/",
+    "docs:perfis": "node scripts/gerar-doc-perfis.mjs",
     "e2e": "npm test --prefix e2e"
   }
 }

@@ -17,10 +17,12 @@ O escopo inclui a interface web, a API, o esquema de dados e a implantação des
 ## Controles em uso
 
 - A API exige token nas rotas protegidas e confere permissões por ação; veja [autenticação](backend/src/middlewares/auth.ts), [rotas](backend/src/routes/index.ts) e [matriz de perfis](docs/perfis-e-permissoes.md).
+- Cada requisição revalida a sessão no banco. Trocar a senha, mudar o perfil ou desativar o usuário invalida os tokens emitidos antes. A senha inicial e a redefinida por um administrador [precisam ser trocadas](backend/src/middlewares/exigir-senha-atualizada.ts) no primeiro acesso.
+- Os [limites de requisição](backend/src/middlewares/rate-limit.ts) respondem 429 com `Retry-After`: falhas de login por IP e e-mail, senha atual errada na troca de senha, total por IP e total por usuário.
 - Senhas são comparadas com hash bcrypt. A [configuração](backend/src/config/env.ts) exige chave de assinatura adequada e custo bcrypt de pelo menos 12 em produção. As [variáveis de ambiente](.env.example) ficam fora do controle de versão.
 - A entrada das rotas passa pelos [esquemas Zod](backend/src/middlewares/validar.ts). A [migration de integridade](backend/prisma/migrations/20260914130000_seguranca_integridade/migration.sql) protege saldo, quantidade e unicidade do alerta aberto.
 - A [auditoria](backend/src/services/auditoria.service.ts) remove campos sensíveis antes de gravar estados. O [dicionário do banco](docs/banco-de-dados.md#auditoria) descreve a tabela.
-- O [nginx](frontend/nginx.conf) define política de conteúdo e cabeçalhos de proteção. O banco é publicado apenas no host, e a API não é publicada diretamente pelo [Compose](docker-compose.yml).
+- O [nginx](frontend/nginx.conf) define política de conteúdo e cabeçalhos de proteção. A [API](backend/src/app.ts) aplica os próprios cabeçalhos e impede o cache das respostas. O banco é publicado apenas no host, e a API não é publicada diretamente pelo [Compose](docker-compose.yml).
 
 ## Riscos aceitos
 

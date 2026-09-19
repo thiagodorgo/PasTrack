@@ -21,19 +21,21 @@ A [matriz de permissões](perfis-e-permissoes.md) define os perfis autorizados p
 
 ## Caminho de uma requisição autenticada
 
-1. O nginx encaminha `/api/*` para a API. O Express aplica CORS e o leitor de JSON, com limite de 100 kB.
-2. O router `/api` tenta as rotas públicas de saúde e login. Para as demais, `autenticar` verifica o token Bearer.
-3. Nas rotas com ação restrita, `autorizar` confere o perfil antes da validação. No registro de movimentação, uma checagem adicional recusa a saída de quem só pode registrar entrada.
-4. `validar` confere parâmetros, consulta e corpo com Zod. O controller chama o service por meio de `capturar`, que encaminha falhas assíncronas.
-5. Uma rota ausente recebe 404. O [tratador de erros](../backend/src/middlewares/erros.ts) converte falhas conhecidas em JSON e responde 500 para falhas inesperadas.
+1. O nginx encaminha `/api/*` para a API. O Express atribui um identificador à requisição, registra o acesso e aplica os cabeçalhos de segurança e o CORS. As respostas de `/api` saem com `Cache-Control: no-store`. O leitor de JSON aceita corpos de até 100 kB.
+2. O router `/api` aplica o limite de requisições por IP e tenta as rotas públicas de saúde e login. O login tem um limite próprio de falhas por IP e e-mail.
+3. Para as demais rotas, `autenticar` verifica o token Bearer e revalida a sessão no banco: o usuário precisa existir, estar ativo e ter a mesma versão de token. Trocar a senha, mudar o perfil ou desativar o usuário derruba os tokens emitidos antes, com 401 `SESSAO_INVALIDA`.
+4. Em seguida vêm o limite de requisições por usuário e `exigirSenhaAtualizada`, que responde 403 `TROCA_SENHA_OBRIGATORIA` enquanto a senha inicial ou redefinida não for trocada. `GET /api/auth/me` e `PATCH /api/auth/senha` ficam fora dessa exigência, porque servem à troca.
+5. Nas rotas com ação restrita, `autorizar` confere o perfil antes da validação. No registro de movimentação, uma checagem adicional recusa a saída de quem só pode registrar entrada.
+6. `validar` confere parâmetros, consulta e corpo com Zod. O controller chama o service por meio de `capturar`, que encaminha falhas assíncronas.
+7. Uma rota ausente recebe 404. O [tratador de erros](../backend/src/middlewares/erros.ts) converte falhas conhecidas em JSON. Uma falha inesperada vai para o log e responde 500 com o identificador da requisição.
 
-Essa ordem pode ser conferida em [app.ts](../backend/src/app.ts), [routes/index.ts](../backend/src/routes/index.ts), [auth.ts](../backend/src/middlewares/auth.ts) e [validar.ts](../backend/src/middlewares/validar.ts).
+Essa ordem pode ser conferida em [app.ts](../backend/src/app.ts), [routes/index.ts](../backend/src/routes/index.ts), [auth.ts](../backend/src/middlewares/auth.ts), [rate-limit.ts](../backend/src/middlewares/rate-limit.ts), [exigir-senha-atualizada.ts](../backend/src/middlewares/exigir-senha-atualizada.ts) e [validar.ts](../backend/src/middlewares/validar.ts).
 
 ## Registro de uma movimentação
 
 O [service de movimentação](../backend/src/services/movimentacao.service.ts) abre uma transação e confirma que a pastilha existe. Numa entrada, confirma também que o fornecedor existe e incrementa `saldo_atual` apenas se o resultado couber no inteiro do banco. Numa saída, decrementa o saldo apenas quando ele cobre a quantidade. A atualização condicional ocorre numa única instrução SQL e trava a linha até o fim da transação. Isso serializa movimentações concorrentes da mesma pastilha.
 
-Após alterar o saldo, o service grava a movimentação e chama [avaliarAlerta](../backend/src/services/estoque/avaliar-alerta.ts) na mesma transação. Com saldo menor ou igual ao mínimo, abre um alerta se não houver outro aberto. Acima do mínimo, resolve automaticamente o alerta aberto. O índice único parcial do banco impede dois alertas abertos para a mesma pastilha. A abertura e a resolução automática entram na [auditoria](../backend/src/services/auditoria.service.ts). Se alguma etapa falhar, a transação desfaz todas as mudanças.
+Após alterar o saldo, o service grava a movimentação e chama [avaliarAlerta](../backend/src/services/estoque/avaliar-alerta.ts) na mesma transação. Com estoque mínimo maior que zero e saldo menor ou igual a ele, abre um alerta se não houver outro aberto. Com saldo acima do mínimo, ou com mínimo zero, resolve automaticamente o alerta aberto. Uma pastilha com estoque mínimo zero nunca gera alerta. O índice único parcial do banco impede dois alertas abertos para a mesma pastilha. A abertura e a resolução automática entram na [auditoria](../backend/src/services/auditoria.service.ts). Se alguma etapa falhar, a transação desfaz todas as mudanças.
 
 ## Organização das pastas
 

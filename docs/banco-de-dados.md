@@ -92,18 +92,18 @@ O diagrama usa `string` para os três tipos enumerados. No banco, `perfil` é `P
 
 ### `usuario`
 
-| Coluna              | Tipo          | Nulo | Padrão            | Descrição                                           |
-| ------------------- | ------------- | ---- | ----------------- | --------------------------------------------------- |
-| `id`                | SERIAL        | Não  | sequência         | Identificador.                                      |
-| `nome`              | TEXT          | Não  | —                 | Nome exibido.                                       |
-| `email`             | TEXT          | Não  | —                 | E-mail único usado no login.                        |
-| `senha_hash`        | TEXT          | Não  | —                 | Hash da senha; nunca é devolvido como dado público. |
-| `perfil`            | PerfilUsuario | Não  | OPERADOR          | Perfil de acesso.                                   |
-| `ativo`             | BOOLEAN       | Não  | true              | Permite ou bloqueia o acesso.                       |
-| `deve_trocar_senha` | BOOLEAN       | Não  | true              | Indica troca de senha pendente.                     |
-| `versao_token`      | INTEGER       | Não  | 0                 | Versão reservada para invalidar sessões anteriores. |
-| `criado_em`         | TIMESTAMP(3)  | Não  | CURRENT_TIMESTAMP | Criação do registro.                                |
-| `atualizado_em`     | TIMESTAMP(3)  | Não  | CURRENT_TIMESTAMP | Atualização feita pelo Prisma.                      |
+| Coluna              | Tipo          | Nulo | Padrão            | Descrição                                                                                     |
+| ------------------- | ------------- | ---- | ----------------- | --------------------------------------------------------------------------------------------- |
+| `id`                | SERIAL        | Não  | sequência         | Identificador.                                                                                |
+| `nome`              | TEXT          | Não  | —                 | Nome exibido.                                                                                 |
+| `email`             | TEXT          | Não  | —                 | E-mail único usado no login.                                                                  |
+| `senha_hash`        | TEXT          | Não  | —                 | Hash da senha; nunca é devolvido como dado público.                                           |
+| `perfil`            | PerfilUsuario | Não  | OPERADOR          | Perfil de acesso.                                                                             |
+| `ativo`             | BOOLEAN       | Não  | true              | Permite ou bloqueia o acesso.                                                                 |
+| `deve_trocar_senha` | BOOLEAN       | Não  | true              | Obriga a troca no próximo acesso: senha inicial ou redefinida por um administrador.           |
+| `versao_token`      | INTEGER       | Não  | 0                 | Sobe a cada troca de senha, desativação ou mudança de perfil e invalida os tokens anteriores. |
+| `criado_em`         | TIMESTAMP(3)  | Não  | CURRENT_TIMESTAMP | Criação do registro.                                                                          |
+| `atualizado_em`     | TIMESTAMP(3)  | Não  | CURRENT_TIMESTAMP | Atualização feita pelo Prisma.                                                                |
 
 ### `fabricante`
 
@@ -127,19 +127,19 @@ O diagrama usa `string` para os três tipos enumerados. No banco, `perfil` é `P
 
 ### `pastilha`
 
-| Coluna           | Tipo         | Nulo | Padrão            | Descrição                                        |
-| ---------------- | ------------ | ---- | ----------------- | ------------------------------------------------ |
-| `id`             | SERIAL       | Não  | sequência         | Identificador.                                   |
-| `codigo`         | TEXT         | Não  | —                 | Código único do item.                            |
-| `descricao`      | TEXT         | Não  | —                 | Descrição da pastilha.                           |
-| `modelo`         | TEXT         | Sim  | —                 | Modelo informado no cadastro.                    |
-| `aplicacao`      | TEXT         | Sim  | —                 | Aplicação prevista.                              |
-| `unidade`        | TEXT         | Não  | un                | Unidade de medida.                               |
-| `estoque_minimo` | INTEGER      | Não  | 0                 | Limite para alerta; nunca negativo.              |
-| `saldo_atual`    | INTEGER      | Não  | 0                 | Quantidade disponível; só muda por movimentação. |
-| `id_fabricante`  | INTEGER      | Não  | —                 | Referência a `fabricante.id`.                    |
-| `criado_em`      | TIMESTAMP(3) | Não  | CURRENT_TIMESTAMP | Criação do registro.                             |
-| `atualizado_em`  | TIMESTAMP(3) | Não  | CURRENT_TIMESTAMP | Atualização feita pelo Prisma.                   |
+| Coluna           | Tipo         | Nulo | Padrão            | Descrição                                                  |
+| ---------------- | ------------ | ---- | ----------------- | ---------------------------------------------------------- |
+| `id`             | SERIAL       | Não  | sequência         | Identificador.                                             |
+| `codigo`         | TEXT         | Não  | —                 | Código único do item.                                      |
+| `descricao`      | TEXT         | Não  | —                 | Descrição da pastilha.                                     |
+| `modelo`         | TEXT         | Sim  | —                 | Modelo informado no cadastro.                              |
+| `aplicacao`      | TEXT         | Sim  | —                 | Aplicação prevista.                                        |
+| `unidade`        | TEXT         | Não  | un                | Unidade de medida.                                         |
+| `estoque_minimo` | INTEGER      | Não  | 0                 | Limite para alerta; nunca negativo. Zero desliga o alerta. |
+| `saldo_atual`    | INTEGER      | Não  | 0                 | Quantidade disponível; só muda por movimentação.           |
+| `id_fabricante`  | INTEGER      | Não  | —                 | Referência a `fabricante.id`.                              |
+| `criado_em`      | TIMESTAMP(3) | Não  | CURRENT_TIMESTAMP | Criação do registro.                                       |
+| `atualizado_em`  | TIMESTAMP(3) | Não  | CURRENT_TIMESTAMP | Atualização feita pelo Prisma.                             |
 
 ### `movimentacao`
 

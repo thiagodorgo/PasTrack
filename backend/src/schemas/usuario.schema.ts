@@ -28,6 +28,9 @@ export const atualizarUsuarioSchema = z
   .strict()
   .refine((dados) => dados.nome !== undefined || dados.perfil !== undefined, "informe o nome ou o perfil");
 
+/** Rotas sem corpo ou sem filtros: qualquer campo enviado é recusado. */
+export const semCampos = z.object({}).strict();
+
 export const alterarAtivoSchema = z
   .object({ ativo: z.boolean({ error: "informe ativo como true ou false" }) })
   .strict();

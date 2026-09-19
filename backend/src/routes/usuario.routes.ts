@@ -7,6 +7,7 @@ import {
   alterarAtivoSchema,
   atualizarUsuarioSchema,
   criarUsuarioSchema,
+  semCampos,
   usuarioIdParam,
 } from "../schemas/usuario.schema";
 
@@ -15,7 +16,7 @@ export const usuarioRotas = Router();
 
 usuarioRotas.use(autorizar("gerenciarUsuarios"));
 
-usuarioRotas.get("/", capturar(usuarioController.listar));
+usuarioRotas.get("/", validar({ query: semCampos }), capturar(usuarioController.listar));
 usuarioRotas.post("/", validar({ body: criarUsuarioSchema }), capturar(usuarioController.criar));
 usuarioRotas.put(
   "/:id",
@@ -29,6 +30,6 @@ usuarioRotas.patch(
 );
 usuarioRotas.post(
   "/:id/redefinir-senha",
-  validar({ params: usuarioIdParam }),
+  validar({ params: usuarioIdParam, body: semCampos }),
   capturar(usuarioController.redefinirSenha)
 );

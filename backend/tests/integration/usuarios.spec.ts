@@ -414,3 +414,37 @@ describe("redefinição da própria senha pela gestão de usuários", () => {
     expect(await prisma.auditoria.count()).toBe(0);
   });
 });
+
+describe("rotas sem corpo ou sem filtros", () => {
+  it("GET /api/usuarios recusa parâmetros na query", async () => {
+    const { token } = await criarAdministrador();
+    const resposta = await api().get("/api/usuarios?ativo=true").set(autorizacao(token));
+    expect(resposta.status).toBe(400);
+    expect(resposta.body.codigo).toBe("DADOS_INVALIDOS");
+  });
+
+  it("POST /redefinir-senha recusa corpo com campos, sem mexer na senha", async () => {
+    const admin = await criarAdministrador();
+    const alvo = await criarUsuario();
+    const resposta = await api()
+      .post(rota(alvo.usuario.id, "/redefinir-senha"))
+      .set(autorizacao(admin.token))
+      .send({ senha: "Escolhida2026" });
+    expect(resposta.status).toBe(400);
+    expect(resposta.body.codigo).toBe("DADOS_INVALIDOS");
+    const depois = await prisma.usuario.findUniqueOrThrow({ where: { id: alvo.usuario.id } });
+    expect(depois).toMatchObject({ versaoToken: 0, deveTrocarSenha: false });
+    expect(await prisma.auditoria.count()).toBe(0);
+  });
+
+  it("sem query e com corpo vazio, as duas rotas continuam funcionando", async () => {
+    const admin = await criarAdministrador();
+    const alvo = await criarUsuario();
+    expect((await api().get("/api/usuarios").set(autorizacao(admin.token))).status).toBe(200);
+    const redefinir = await api()
+      .post(rota(alvo.usuario.id, "/redefinir-senha"))
+      .set(autorizacao(admin.token))
+      .send({});
+    expect(redefinir.status).toBe(200);
+  });
+});

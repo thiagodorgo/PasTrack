@@ -367,7 +367,7 @@ Não tem rota na API. Quando nenhum administrador consegue entrar, quem opera o 
 docker compose exec api node dist/scripts/redefinir-senha-admin.js admin@pastrack.local
 ```
 
-O script reativa o administrador, grava uma senha temporária e a exibe uma única vez, liga a troca obrigatória e invalida os tokens dele. Com `NOVA_SENHA` definida no ambiente (`docker compose exec -e NOVA_SENHA=... api ...`), usa essa senha, que precisa atender à política, e não a exibe. Só aceita usuários ADMINISTRADOR. A ação fica na trilha de auditoria como `usuario.acesso_recuperado`.
+O script reativa o administrador, grava uma senha temporária e a exibe uma única vez, liga a troca obrigatória e invalida os tokens dele. Com `NOVA_SENHA` definida no ambiente, usa essa senha, que precisa atender à política, e não a exibe. O caminho recomendado é a senha temporária gerada pelo script. Para escolher a senha, passe a variável sem escrevê-la na linha de comando, como mostra o manual de operação em `docs/operacao.md`. Só aceita usuários ADMINISTRADOR. A ação fica na trilha de auditoria como `usuario.acesso_recuperado`.
 
 ## 6. Painel
 

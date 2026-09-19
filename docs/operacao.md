@@ -133,7 +133,24 @@ O script:
 - encerra todas as sessões abertas dessa conta;
 - registra `usuario.acesso_recuperado` na auditoria.
 
-Para escolher a senha em vez de receber uma temporária, passe `NOVA_SENHA` só para esse comando, com `docker compose exec -e NOVA_SENHA=<senha> api node dist/scripts/redefinir-senha-admin.js <e-mail>`. A senha segue a política do administrador inicial, mas fica no histórico do terminal. Prefira a temporária.
+Prefira a senha temporária que o script gera. Se precisar escolher a senha, não a escreva na linha de comando, porque ela fica no histórico do terminal. Leia a senha sem mostrar na tela e passe ao `docker compose exec` só o nome da variável. A senha precisa seguir a política de senha.
+
+No PowerShell:
+
+```powershell
+$segura = Read-Host "Nova senha" -AsSecureString
+$env:NOVA_SENHA = [System.Net.NetworkCredential]::new("", $segura).Password
+docker compose exec -e NOVA_SENHA api node dist/scripts/redefinir-senha-admin.js <e-mail>
+Remove-Item Env:NOVA_SENHA
+```
+
+No bash:
+
+```bash
+read -rs NOVA_SENHA && export NOVA_SENHA
+docker compose exec -e NOVA_SENHA api node dist/scripts/redefinir-senha-admin.js <e-mail>
+unset NOVA_SENHA
+```
 
 O script só vale para ADMINISTRADOR. A senha dos outros perfis é redefinida por um administrador, na gestão de usuários. Enquanto a tela de usuários é provisória, isso é feito pela API, com `POST /api/usuarios/:id/redefinir-senha` ([contrato da API](api.md)).
 

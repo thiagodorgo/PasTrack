@@ -381,6 +381,12 @@ select:focus {
   color: var(--verde);
 }
 
+/* Sem mínimo definido: a pastilha não entra no controle de reposição. */
+.selo-neutro {
+  background: #eef2f7;
+  color: #475569;
+}
+
 .selo-entrada {
   background: #e7f5ec;
   color: var(--verde);

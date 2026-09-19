@@ -197,6 +197,33 @@ A resposta esperada é parecida com:
 
 Com o banco fora do ar, a resposta é 503, com `"erro": "Banco de dados indisponível"` e `"banco": "indisponivel"`.
 
+## Conferir a instalação
+
+Este passo é opcional e roda **antes** do primeiro acesso, com a instalação ainda vazia. Ele percorre o sistema pelo mesmo caminho do navegador: login, troca obrigatória de senha, cadastro de fabricante, fornecedor e pastilha, entrada, saída, abertura e fechamento do alerta, criação de um operador e o limite de perfil.
+
+A conferência **cadastra dados de teste** e troca a senha do administrador. Por isso ela recusa qualquer instalação que já tenha pastilhas ou outros usuários, e no fim os dados precisam ser apagados.
+
+Na pasta do projeto, com o sistema no ar:
+
+```bash
+docker compose exec -T api node - --url http://web:8080 --senha "<senha do SEED_ADMIN_SENHA>" < scripts/verificar-implantacao.mjs
+```
+
+O comando roda dentro do container da API, então a máquina servidora não precisa ter o Node instalado. Numa máquina de desenvolvimento, com Node 20, o mesmo roteiro roda direto:
+
+```bash
+npm run verificar:implantacao -- --senha "<senha do SEED_ADMIN_SENHA>"
+```
+
+O fim da saída mostra `20/20 conferências ok`. Cada falha aparece com o valor esperado e o obtido, e o comando termina com código diferente de zero.
+
+Depois da conferência, zere tudo para começar a instalação real com o banco limpo:
+
+```bash
+docker compose down -v
+docker compose up -d --wait
+```
+
 ## Primeiro acesso
 
 1. Na máquina servidora, abra http://localhost:8080.

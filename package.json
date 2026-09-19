@@ -17,6 +17,7 @@
     "build": "npm run build --prefix backend && npm run build --prefix frontend",
     "test:tudo": "npm test --prefix backend && npm test --prefix frontend",
     "test:relatorio": "node scripts/relatorio-testes.mjs",
+    "verificar:implantacao": "node scripts/verificar-implantacao.mjs",
     "test:scripts": "node --test scripts/",
     "docs:perfis": "node scripts/gerar-doc-perfis.mjs",
     "e2e": "npm test --prefix e2e"

@@ -108,10 +108,12 @@ export const usuarioRepository = {
   /**
    * Trava as linhas dos administradores ativos até o fim da transação e devolve os ids, sempre na mesma
    * ordem. Duas remoções simultâneas esperam uma pela outra, e a segunda já enxerga o resultado da primeira.
+   * FOR NO KEY UPDATE, e não FOR UPDATE, para não bloquear a checagem de chave estrangeira (FOR KEY SHARE)
+   * que a auditoria faz na linha do administrador autor: isso evita deadlock com ações cruzadas.
    */
   async travarAdministradoresAtivos(cliente: Cliente): Promise<number[]> {
     const linhas = await cliente.$queryRaw<{ id: number }[]>`
-      SELECT id FROM "usuario" WHERE perfil = 'ADMINISTRADOR' AND ativo = true ORDER BY id FOR UPDATE
+      SELECT id FROM "usuario" WHERE perfil = 'ADMINISTRADOR' AND ativo = true ORDER BY id FOR NO KEY UPDATE
     `;
     return linhas.map((linha) => linha.id);
   },

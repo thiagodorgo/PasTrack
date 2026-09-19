@@ -3,7 +3,8 @@ import { fabricanteController } from "../controllers/fabricante.controller";
 import { autorizar } from "../middlewares/auth";
 import { capturar } from "../middlewares/erros";
 import { validar } from "../middlewares/validar";
-import { consultaFabricantesSchema, fabricanteIdParam, fabricanteSchema } from "../schemas/fabricante.schema";
+import { idParam } from "../schemas/comum.schema";
+import { consultaFabricantesSchema, fabricanteSchema } from "../schemas/fabricante.schema";
 
 export const fabricanteRotas = Router();
 
@@ -13,11 +14,7 @@ fabricanteRotas.get(
   validar({ query: consultaFabricantesSchema }),
   capturar(fabricanteController.listar)
 );
-fabricanteRotas.get(
-  "/:id",
-  validar({ params: fabricanteIdParam }),
-  capturar(fabricanteController.buscarPorId)
-);
+fabricanteRotas.get("/:id", validar({ params: idParam }), capturar(fabricanteController.buscarPorId));
 fabricanteRotas.post(
   "/",
   autorizar("gerenciarFabricantes"),
@@ -27,6 +24,6 @@ fabricanteRotas.post(
 fabricanteRotas.put(
   "/:id",
   autorizar("gerenciarFabricantes"),
-  validar({ params: fabricanteIdParam, body: fabricanteSchema }),
+  validar({ params: idParam, body: fabricanteSchema }),
   capturar(fabricanteController.atualizar)
 );

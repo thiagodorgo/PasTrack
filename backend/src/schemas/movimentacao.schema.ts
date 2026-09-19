@@ -1,25 +1,12 @@
 import { z } from "zod";
+import { ID_MAXIMO, objetoEstrito, semCaractereNulo } from "./comum.schema";
 
 /** Maior quantidade aceita numa única movimentação. */
 export const QUANTIDADE_MAXIMA = 1_000_000;
 
-/** Maior id que cabe na coluna INT4 do banco; acima dele, a consulta falharia no banco. */
-export const ID_MAXIMO = 2_147_483_647;
-
-/** Objeto que recusa campos fora do esquema e diz quais foram enviados. */
-function objetoEstrito<Forma extends z.core.$ZodLooseShape>(forma: Forma) {
-  return z.strictObject(forma, {
-    error: (problema) =>
-      problema.code === "unrecognized_keys" ? `Campo não permitido: ${problema.keys.join(", ")}` : undefined,
-  });
-}
-
 function identificador(mensagem: string) {
   return z.number(mensagem).int(mensagem).positive(mensagem).max(ID_MAXIMO, mensagem);
 }
-
-/** O PostgreSQL não grava o caractere nulo (U+0000) em texto. */
-const CARACTERE_NULO = String.fromCharCode(0);
 
 /**
  * Texto opcional: apara as pontas, limita o tamanho e recusa o caractere nulo.
@@ -30,7 +17,7 @@ function textoOpcional(campo: string, limite: number) {
     .string(`${campo} deve ser um texto`)
     .trim()
     .max(limite, `${campo} deve ter até ${limite} caracteres`)
-    .refine((texto) => !texto.includes(CARACTERE_NULO), `${campo} não pode ter o caractere nulo (U+0000)`)
+    .refine(semCaractereNulo, `${campo} não pode ter o caractere nulo (U+0000)`)
     .nullish()
     .transform((texto) => texto || null);
 }

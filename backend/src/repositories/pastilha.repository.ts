@@ -11,8 +11,8 @@ type CamposEditaveis = "descricao" | "modelo" | "aplicacao" | "unidade" | "estoq
 export type NovaPastilha = Pick<Prisma.PastilhaUncheckedCreateInput, "codigo" | CamposEditaveis>;
 export type AlteracaoPastilha = Pick<Prisma.PastilhaUncheckedUpdateInput, CamposEditaveis>;
 
-/** Mínimo definido (maior que zero) e saldo no mínimo ou abaixo dele. */
-const CRITICAS: Prisma.PastilhaWhereInput = {
+/** Mínimo definido (maior que zero) e saldo no mínimo ou abaixo dele. O filtro criticas=true e o painel usam a mesma regra. */
+export const PASTILHAS_CRITICAS: Prisma.PastilhaWhereInput = {
   estoqueMinimo: { gt: 0 },
   saldoAtual: { lte: prisma.pastilha.fields.estoqueMinimo },
 };
@@ -28,7 +28,7 @@ export const pastilhaRepository = {
         ],
       });
     }
-    if (filtro.criticas) condicoes.push(CRITICAS);
+    if (filtro.criticas) condicoes.push(PASTILHAS_CRITICAS);
     return prisma.pastilha.findMany({
       where: { AND: condicoes },
       include: { fabricante: true },
@@ -52,10 +52,5 @@ export const pastilhaRepository = {
 
   atualizar(tx: Prisma.TransactionClient, id: number, dados: AlteracaoPastilha) {
     return tx.pastilha.update({ where: { id }, data: dados, include: { fabricante: true } });
-  },
-
-  /** Usada pelo painel. */
-  listarCriticas() {
-    return prisma.pastilha.findMany({ where: CRITICAS, orderBy: { saldoAtual: "asc" } });
   },
 };

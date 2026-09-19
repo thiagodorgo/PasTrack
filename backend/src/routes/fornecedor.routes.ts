@@ -3,11 +3,11 @@ import { fornecedorController } from "../controllers/fornecedor.controller";
 import { autorizar } from "../middlewares/auth";
 import { capturar } from "../middlewares/erros";
 import { validar } from "../middlewares/validar";
+import { idParam } from "../schemas/comum.schema";
 import {
   atualizarFornecedorSchema,
   consultaFornecedoresSchema,
   criarFornecedorSchema,
-  fornecedorIdParam,
 } from "../schemas/fornecedor.schema";
 
 export const fornecedorRotas = Router();
@@ -18,11 +18,7 @@ fornecedorRotas.get(
   validar({ query: consultaFornecedoresSchema }),
   capturar(fornecedorController.listar)
 );
-fornecedorRotas.get(
-  "/:id",
-  validar({ params: fornecedorIdParam }),
-  capturar(fornecedorController.buscarPorId)
-);
+fornecedorRotas.get("/:id", validar({ params: idParam }), capturar(fornecedorController.buscarPorId));
 fornecedorRotas.post(
   "/",
   autorizar("gerenciarFornecedores"),
@@ -32,6 +28,6 @@ fornecedorRotas.post(
 fornecedorRotas.put(
   "/:id",
   autorizar("gerenciarFornecedores"),
-  validar({ params: fornecedorIdParam, body: atualizarFornecedorSchema }),
+  validar({ params: idParam, body: atualizarFornecedorSchema }),
   capturar(fornecedorController.atualizar)
 );

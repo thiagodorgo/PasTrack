@@ -1,5 +1,6 @@
 import { PerfilUsuario } from "@prisma/client";
 import { z } from "zod";
+import { semCaracteresDeControle } from "./comum.schema";
 
 /** Maior valor da coluna inteira do Postgres: acima disso, o id nem chega ao banco. */
 const MAIOR_ID = 2_147_483_647;
@@ -10,7 +11,8 @@ const nome = z
   .string({ error: "informe o nome" })
   .trim()
   .min(2, "use pelo menos 2 caracteres")
-  .max(120, "use no máximo 120 caracteres");
+  .max(120, "use no máximo 120 caracteres")
+  .refine(semCaracteresDeControle, "o nome tem caracteres inválidos");
 
 const email = z
   .string({ error: "informe o e-mail" })

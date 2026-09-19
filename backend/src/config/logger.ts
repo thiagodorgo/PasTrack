@@ -42,17 +42,18 @@ export const logger = criarLogger();
 
 /**
  * Log de acesso: uma linha por requisição, com o request id, sem o corpo e sem credenciais.
- * Respostas 4xx saem como warn e 5xx como error. A verificação de saúde não gera log.
+ * Respostas 4xx saem como warn e 5xx como error. A verificação de saúde só gera log quando falha.
  */
 export function criarLogDeAcesso(base: Logger) {
   return pinoHttp({
     logger: base,
     genReqId: (req) => req.id ?? randomUUID(),
-    customLogLevel: (_req, res, erro) => {
+    customLogLevel: (req, res, erro) => {
+      const caminho = ((req as { originalUrl?: string }).originalUrl ?? req.url)?.split("?")[0];
+      if (!erro && res.statusCode < 400 && caminho === "/api/health") return "silent";
       if (erro || res.statusCode >= 500) return "error";
       if (res.statusCode >= 400) return "warn";
       return "info";
     },
-    autoLogging: { ignore: (req) => req.url?.split("?")[0] === "/api/health" },
   });
 }

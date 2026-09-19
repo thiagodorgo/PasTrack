@@ -27,12 +27,16 @@ export function chaveDoLogin(req: Request): string {
   return `${ipKeyGenerator(req.ip ?? "")}|${normalizado}`;
 }
 
-/** Falhas de login por IP e e-mail. Acertos não contam; ao estourar, responde 429 com Retry-After. */
+/**
+ * Falhas de login por IP e e-mail. Só a credencial recusada (401) conta: acertos, corpo inválido e erro do
+ * servidor não bloqueiam ninguém. Ao estourar, responde 429 com Retry-After.
+ */
 export const limitarLogin = rateLimit({
   windowMs: env.RATE_LIMIT_LOGIN_JANELA_MIN * MINUTO_MS,
   limit: env.RATE_LIMIT_LOGIN_MAX,
   keyGenerator: chaveDoLogin,
   skipSuccessfulRequests: true,
+  requestWasSuccessful: (_req, res) => res.statusCode !== 401,
   standardHeaders: "draft-8",
   legacyHeaders: false,
   handler: responderLimite(

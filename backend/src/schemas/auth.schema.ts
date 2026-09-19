@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { semCaracteresDeControle } from "./comum.schema";
 
 /** Limite folgado: o bcrypt só usa os primeiros 72 bytes, mas a API não deve aceitar corpos absurdos. */
 const TAMANHO_MAXIMO_SENHA = 1024;
@@ -17,7 +18,8 @@ export const loginSchema = z
       .trim()
       .toLowerCase()
       .min(1, "informe o e-mail")
-      .max(254, "e-mail longo demais"),
+      .max(254, "e-mail longo demais")
+      .refine(semCaracteresDeControle, "o e-mail tem caracteres inválidos"),
     senha: senha("a senha"),
   })
   .strict();

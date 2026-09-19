@@ -136,7 +136,7 @@ describe("primeiro acesso com troca obrigatória de senha", () => {
   });
 
   it.each([
-    ["curta", "abc123", "use pelo menos 10 caracteres"],
+    ["curta", "abc123", "use pelo menos 12 caracteres"],
     ["sem número", "SomenteLetrasAqui", "inclua pelo menos um número"],
     ["sem letra", "12345678901", "inclua pelo menos uma letra"],
     ["com o nome do e-mail", "fraca2026abc", "não use o seu e-mail na senha"],

@@ -2,17 +2,17 @@ import { describe, expect, it } from "vitest";
 import { problemasDaSenha } from "../../src/utils/senha";
 
 describe("problemasDaSenha", () => {
-  it("aceita senha com 10 caracteres ou mais, letra e número", () => {
+  it("aceita senha com 12 caracteres ou mais, letra e número", () => {
     expect(problemasDaSenha("Fresa2026retifica")).toEqual([]);
-    expect(problemasDaSenha("abcdefghi1")).toEqual([]);
+    expect(problemasDaSenha("abcdefghijk1")).toEqual([]);
   });
 
-  it("recusa senha com menos de 10 caracteres", () => {
-    expect(problemasDaSenha("abcdefgh1")).toEqual(["use pelo menos 10 caracteres"]);
+  it("recusa senha com menos de 12 caracteres", () => {
+    expect(problemasDaSenha("abcdefghij1")).toEqual(["use pelo menos 12 caracteres"]);
   });
 
   it("exige pelo menos uma letra e um número", () => {
-    expect(problemasDaSenha("12345678901")).toEqual(["inclua pelo menos uma letra"]);
+    expect(problemasDaSenha("123456789012")).toEqual(["inclua pelo menos uma letra"]);
     expect(problemasDaSenha("somenteletras")).toEqual(["inclua pelo menos um número"]);
   });
 
@@ -26,7 +26,7 @@ describe("problemasDaSenha", () => {
 
   it("acumula os problemas encontrados", () => {
     expect(problemasDaSenha("")).toEqual([
-      "use pelo menos 10 caracteres",
+      "use pelo menos 12 caracteres",
       "inclua pelo menos uma letra",
       "inclua pelo menos um número",
     ]);

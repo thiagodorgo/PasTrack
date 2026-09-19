@@ -2,7 +2,7 @@
  * Espelho das regras de formato da política de senha do backend (backend/src/services/politica-senha.ts),
  * para avisar antes do envio. As regras que dependem do servidor (e-mail e senhas comuns) ficam só lá.
  */
-export const TAMANHO_MINIMO_SENHA = 10;
+export const TAMANHO_MINIMO_SENHA = 12;
 /** O bcrypt considera no máximo 72 bytes; letras acentuadas ocupam 2 bytes em UTF-8. */
 export const BYTES_MAXIMOS_SENHA = 72;
 

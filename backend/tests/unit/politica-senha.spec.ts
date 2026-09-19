@@ -7,7 +7,7 @@ describe("validarPoliticaDeSenha", () => {
   });
 
   it.each([
-    ["curta", "Abc12345", "use pelo menos 10 caracteres"],
+    ["curta", "Abc1234567", "use pelo menos 12 caracteres"],
     ["sem número", "SomenteLetras", "inclua pelo menos um número"],
     ["sem letra", "12345678901", "inclua pelo menos uma letra"],
     ["comum", "Senha12345", "essa senha é comum demais"],

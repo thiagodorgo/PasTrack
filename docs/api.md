@@ -227,7 +227,7 @@ Erros:
   "erro": "Dados inválidos",
   "codigo": "DADOS_INVALIDOS",
   "campos": [
-    { "caminho": "novaSenha", "mensagem": "use pelo menos 10 caracteres" },
+    { "caminho": "novaSenha", "mensagem": "use pelo menos 12 caracteres" },
     { "caminho": "novaSenha", "mensagem": "inclua pelo menos um número" }
   ]
 }
@@ -237,12 +237,12 @@ Erros:
 
 Vale para a `novaSenha` de `PATCH /api/auth/senha`, para a `NOVA_SENHA` do script de recuperação e para as senhas temporárias geradas pela API. As regras ficam em `backend/src/services/politica-senha.ts`:
 
-- de 10 caracteres a 72 bytes em UTF-8 (letras acentuadas ocupam 2 bytes);
+- de 12 caracteres a 72 bytes em UTF-8 (letras acentuadas ocupam 2 bytes), o mínimo do ASVS 4.0.3 nível 1;
 - pelo menos uma letra e um número;
 - sem conter o e-mail: a parte antes do `@`, quando tem 3 caracteres ou mais, sem diferenciar maiúsculas;
 - fora da lista de senhas comuns, também sem diferenciar maiúsculas.
 
-As mensagens que saem em `campos` são `"use pelo menos 10 caracteres"`, `"use no máximo 72 bytes"`, `"inclua pelo menos uma letra"`, `"inclua pelo menos um número"`, `"não use o seu e-mail na senha"`, `"essa senha é comum demais"` e `"a nova senha precisa ser diferente da atual"`.
+As mensagens que saem em `campos` são `"use pelo menos 12 caracteres"`, `"use no máximo 72 bytes"`, `"inclua pelo menos uma letra"`, `"inclua pelo menos um número"`, `"não use o seu e-mail na senha"`, `"essa senha é comum demais"` e `"a nova senha precisa ser diferente da atual"`.
 
 As senhas temporárias da criação de usuário, da redefinição e do script de recuperação têm 22 caracteres aleatórios e sempre atendem à política.
 

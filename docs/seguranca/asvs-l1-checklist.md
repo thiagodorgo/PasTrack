@@ -24,31 +24,31 @@ O capítulo V1 não tem requisitos de nível 1. A documentação correspondente 
 
 ## V2 Autenticação
 
-| Req.   | Resumo                                      | Situação            | Evidência                                                                                                     |
-| ------ | ------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| 2.1.1  | Senha com 12 caracteres ou mais             | Atende              | `services/politica-senha.ts`; `unit/politica-senha.spec.ts`                                                   |
-| 2.1.2  | Aceitar senhas longas                       | Atende com ressalva | Aceita até 72 bytes, limite do bcrypt, e não 128; `unit/politica-senha.spec.ts` cobre o limite em bytes       |
-| 2.1.3  | Não truncar a senha                         | Atende              | Senha acima do limite é recusada, nunca cortada; `unit/politica-senha.spec.ts`                                |
-| 2.1.4  | Aceitar qualquer caractere imprimível       | Atende              | A política não restringe o conjunto de caracteres; `schemas/auth.schema.ts`                                   |
-| 2.1.5  | Usuário troca a própria senha               | Atende              | `PATCH /api/auth/senha`; `security/primeiro-acesso.spec.ts`                                                   |
-| 2.1.6  | Troca exige a senha atual                   | Atende              | `services/auth.service.ts`; `security/primeiro-acesso.spec.ts`                                                |
-| 2.1.7  | Conferir contra senhas vazadas              | Atende com ressalva | Lista local de senhas comuns, sem consulta a base de vazamentos: a instalação não acessa a internet           |
-| 2.1.8  | Indicador de força da senha                 | Atende com ressalva | A tela mostra as regras e o que falta, sem barra de força; `pages/AlterarSenha.tsx`                           |
-| 2.1.9  | Sem regras de composição                    | Desvio consciente   | Exige uma letra e um número, para compensar senhas curtas; registrado em [seguranca.md](../seguranca.md)      |
-| 2.1.10 | Sem troca periódica obrigatória             | Atende              | Só a primeira senha e a redefinida pelo administrador exigem troca                                            |
-| 2.1.11 | Permitir colar e usar gerenciador de senhas | Atende              | Campos de senha comuns, sem bloqueio de colagem; `pages/Login.tsx`, `pages/AlterarSenha.tsx`                  |
-| 2.1.12 | Poder revelar a senha digitada              | Pendente            | Não há botão para mostrar a senha; entra com o novo sistema visual                                            |
-| 2.2.1  | Antiautomação no login                      | Atende              | 5 falhas por IP e e-mail a cada 15 minutos, bem abaixo do teto de 100 por hora; `security/bruteforce.spec.ts` |
-| 2.2.2  | Autenticadores fracos só como segundo fator | Não se aplica       | Só existe senha                                                                                               |
-| 2.2.3  | Avisar o usuário ao mudar credenciais       | Desvio consciente   | A instalação não envia e-mail; a mudança fica na trilha de auditoria                                          |
-| 2.5.1  | Segredo inicial não trafega em claro        | Atende com ressalva | A senha temporária aparece uma vez na resposta da API; o transporte é HTTP na rede local, veja V9             |
-| 2.5.2  | Sem perguntas secretas nem dicas            | Atende              | A recuperação é administrativa; `scripts/redefinir-senha-admin.ts`                                            |
-| 2.5.3  | Recuperação não revela a senha atual        | Atende              | A redefinição gera uma senha nova; `integration/usuarios.spec.ts`                                             |
-| 2.5.4  | Sem contas compartilhadas ou padrão         | Atende              | O administrador inicial usa a senha do `.env`, com troca obrigatória; `security/primeiro-acesso.spec.ts`      |
-| 2.5.5  | Avisar quando o fator de acesso muda        | Desvio consciente   | Mesmo motivo do 2.2.3                                                                                         |
-| 2.5.6  | Recuperação por canal seguro                | Não se aplica       | Não há autoatendimento de recuperação: quem redefine é o administrador, ou o script no servidor               |
-| 2.7.x  | Verificador fora de banda                   | Não se aplica       | Não existe canal fora de banda                                                                                |
-| 2.8.1  | Código de uso único com validade            | Não se aplica       | Não existe autenticador de uso único                                                                          |
+| Req.   | Resumo                                      | Situação            | Evidência                                                                                                                                                           |
+| ------ | ------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2.1.1  | Senha com 12 caracteres ou mais             | Atende              | `services/politica-senha.ts`; `unit/politica-senha.spec.ts`                                                                                                         |
+| 2.1.2  | Aceitar senhas longas                       | Atende com ressalva | Aceita até 72 bytes, limite do bcrypt, e não 128; `unit/politica-senha.spec.ts` cobre o limite em bytes                                                             |
+| 2.1.3  | Não truncar a senha                         | Atende              | Senha acima do limite é recusada, nunca cortada; `unit/politica-senha.spec.ts`                                                                                      |
+| 2.1.4  | Aceitar qualquer caractere imprimível       | Atende              | A política não restringe o conjunto de caracteres; `schemas/auth.schema.ts`                                                                                         |
+| 2.1.5  | Usuário troca a própria senha               | Atende              | `PATCH /api/auth/senha`; `security/primeiro-acesso.spec.ts`                                                                                                         |
+| 2.1.6  | Troca exige a senha atual                   | Atende              | `services/auth.service.ts`; `security/primeiro-acesso.spec.ts`                                                                                                      |
+| 2.1.7  | Conferir contra senhas vazadas              | Atende com ressalva | Lista local de senhas comuns, sem consulta a base de vazamentos: a instalação não acessa a internet                                                                 |
+| 2.1.8  | Indicador de força da senha                 | Atende com ressalva | A tela mostra as regras e o que falta, sem barra de força; `pages/AlterarSenha.tsx`                                                                                 |
+| 2.1.9  | Sem regras de composição                    | Desvio consciente   | Exige uma letra e um número, para compensar senhas curtas; registrado em [seguranca.md](../seguranca.md)                                                            |
+| 2.1.10 | Sem troca periódica obrigatória             | Atende              | Só a primeira senha e a redefinida pelo administrador exigem troca                                                                                                  |
+| 2.1.11 | Permitir colar e usar gerenciador de senhas | Atende              | Campos de senha comuns, sem bloqueio de colagem; `pages/Login.tsx`, `pages/AlterarSenha.tsx`                                                                        |
+| 2.1.12 | Poder revelar a senha digitada              | Atende              | Botão que mostra e esconde a senha no login e na troca de senha; `components/MostrarSenha.tsx`, com teste em `pages/Login.spec.tsx` e `pages/AlterarSenha.spec.tsx` |
+| 2.2.1  | Antiautomação no login                      | Atende              | 5 falhas por IP e e-mail a cada 15 minutos, bem abaixo do teto de 100 por hora; `security/bruteforce.spec.ts`                                                       |
+| 2.2.2  | Autenticadores fracos só como segundo fator | Não se aplica       | Só existe senha                                                                                                                                                     |
+| 2.2.3  | Avisar o usuário ao mudar credenciais       | Desvio consciente   | A instalação não envia e-mail; a mudança fica na trilha de auditoria                                                                                                |
+| 2.5.1  | Segredo inicial não trafega em claro        | Atende com ressalva | A senha temporária aparece uma vez na resposta da API; o transporte é HTTP na rede local, veja V9                                                                   |
+| 2.5.2  | Sem perguntas secretas nem dicas            | Atende              | A recuperação é administrativa; `scripts/redefinir-senha-admin.ts`                                                                                                  |
+| 2.5.3  | Recuperação não revela a senha atual        | Atende              | A redefinição gera uma senha nova; `integration/usuarios.spec.ts`                                                                                                   |
+| 2.5.4  | Sem contas compartilhadas ou padrão         | Atende              | O administrador inicial usa a senha do `.env`, com troca obrigatória; `security/primeiro-acesso.spec.ts`                                                            |
+| 2.5.5  | Avisar quando o fator de acesso muda        | Desvio consciente   | Mesmo motivo do 2.2.3                                                                                                                                               |
+| 2.5.6  | Recuperação por canal seguro                | Não se aplica       | Não há autoatendimento de recuperação: quem redefine é o administrador, ou o script no servidor                                                                     |
+| 2.7.x  | Verificador fora de banda                   | Não se aplica       | Não existe canal fora de banda                                                                                                                                      |
+| 2.8.1  | Código de uso único com validade            | Não se aplica       | Não existe autenticador de uso único                                                                                                                                |
 
 ## V3 Sessão
 
@@ -191,12 +191,12 @@ O sistema não recebe nem serve arquivos enviados por usuários, então V12.1 a 
 
 | Situação            | Linhas |
 | ------------------- | -----: |
-| Atende              |     60 |
+| Atende              |     61 |
 | Atende com ressalva |      9 |
 | Desvio consciente   |     10 |
 | Não se aplica       |     24 |
-| Pendente            |      3 |
+| Pendente            |      2 |
 
 São 106 linhas. Duas delas, `2.7.x` e `3.4.x`, agrupam uma seção inteira que não se aplica. O capítulo V12 é tratado em texto, sem tabela.
 
-As pendências são o botão de revelar a senha (2.1.12) e os dois requisitos de LGPD sobre dados do usuário (8.3.2 e 8.3.3). Os desvios conscientes, com o motivo de cada um, estão reunidos em [seguranca.md](../seguranca.md).
+As pendências são os dois requisitos de LGPD sobre dados do usuário (8.3.2 e 8.3.3), que dependem de um aviso da empresa. Os desvios conscientes, com o motivo de cada um, estão reunidos em [seguranca.md](../seguranca.md).

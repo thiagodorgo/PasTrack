@@ -1,6 +1,7 @@
 import { type FormEvent, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mensagem } from "../components/Mensagem";
+import { MostrarSenha } from "../components/MostrarSenha";
 import { useAuth } from "../contexts/AuthContext";
 import { camposDoErro, codigoDoErro, mensagemDeErro } from "../services/api";
 import { alterarSenha } from "../services/auth";
@@ -49,6 +50,9 @@ export function AlterarSenha() {
   const [senhaAtual, setSenhaAtual] = useState("");
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmacao, setConfirmacao] = useState("");
+  const [atualVisivel, setAtualVisivel] = useState(false);
+  const [novaVisivel, setNovaVisivel] = useState(false);
+  const [confirmacaoVisivel, setConfirmacaoVisivel] = useState(false);
   const [erros, setErros] = useState<ErrosDosCampos>({});
   const [erroGeral, setErroGeral] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -111,7 +115,8 @@ export function AlterarSenha() {
               Senha atual
               <input
                 ref={campoSenhaAtual}
-                type="password"
+                id="campo-senha-atual"
+                type={atualVisivel ? "text" : "password"}
                 name="senhaAtual"
                 autoComplete="current-password"
                 value={senhaAtual}
@@ -121,6 +126,12 @@ export function AlterarSenha() {
                 aria-describedby={erros.senhaAtual ? "senha-atual-erro" : undefined}
               />
             </label>
+            <MostrarSenha
+              visivel={atualVisivel}
+              aoAlternar={() => setAtualVisivel((visivel) => !visivel)}
+              rotulo="a senha atual"
+              controla="campo-senha-atual"
+            />
             {erros.senhaAtual && (
               <p id="senha-atual-erro" className="erro-campo">
                 {erros.senhaAtual}
@@ -133,7 +144,8 @@ export function AlterarSenha() {
               Nova senha
               <input
                 ref={campoNovaSenha}
-                type="password"
+                id="campo-nova-senha"
+                type={novaVisivel ? "text" : "password"}
                 name="novaSenha"
                 autoComplete="new-password"
                 value={novaSenha}
@@ -143,6 +155,12 @@ export function AlterarSenha() {
                 aria-describedby={erros.novaSenha ? "nova-senha-dica nova-senha-erro" : "nova-senha-dica"}
               />
             </label>
+            <MostrarSenha
+              visivel={novaVisivel}
+              aoAlternar={() => setNovaVisivel((visivel) => !visivel)}
+              rotulo="a nova senha"
+              controla="campo-nova-senha"
+            />
             <p id="nova-senha-dica" className="dica-campo">
               De {TAMANHO_MINIMO_SENHA} caracteres a {BYTES_MAXIMOS_SENHA} bytes, com pelo menos uma letra e
               um número.
@@ -159,7 +177,8 @@ export function AlterarSenha() {
               Confirme a nova senha
               <input
                 ref={campoConfirmacao}
-                type="password"
+                id="campo-confirmacao"
+                type={confirmacaoVisivel ? "text" : "password"}
                 name="confirmacao"
                 autoComplete="new-password"
                 value={confirmacao}
@@ -169,6 +188,12 @@ export function AlterarSenha() {
                 aria-describedby={erros.confirmacao ? "confirmacao-erro" : undefined}
               />
             </label>
+            <MostrarSenha
+              visivel={confirmacaoVisivel}
+              aoAlternar={() => setConfirmacaoVisivel((visivel) => !visivel)}
+              rotulo="a confirmação"
+              controla="campo-confirmacao"
+            />
             {erros.confirmacao && (
               <p id="confirmacao-erro" className="erro-campo">
                 {erros.confirmacao}

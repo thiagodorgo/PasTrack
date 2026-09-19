@@ -1,3 +1,4 @@
+import { MostrarSenha } from "../components/MostrarSenha";
 import { type FormEvent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Mensagem } from "../components/Mensagem";
@@ -12,6 +13,7 @@ export function Login() {
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
 
@@ -54,17 +56,26 @@ export function Login() {
           />
         </label>
 
-        <label>
-          Senha
-          <input
-            type="password"
-            name="senha"
-            autoComplete="current-password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
+        <div className="campo">
+          <label>
+            Senha
+            <input
+              id="campo-senha-login"
+              type={senhaVisivel ? "text" : "password"}
+              name="senha"
+              autoComplete="current-password"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
+            />
+          </label>
+          <MostrarSenha
+            visivel={senhaVisivel}
+            aoAlternar={() => setSenhaVisivel((visivel) => !visivel)}
+            rotulo="a senha"
+            controla="campo-senha-login"
           />
-        </label>
+        </div>
 
         <button className="botao botao-bloco" disabled={carregando}>
           {carregando ? "Entrando..." : "Entrar"}

@@ -96,7 +96,7 @@ Duas obrigações dependem da empresa, não do software, e por isso aparecem com
 | Sessão revalidada e revogação de token    | `backend/tests/security/usuario-inativo.spec.ts`, `auth-tokens.spec.ts`                                         |
 | Troca obrigatória no primeiro acesso      | `backend/tests/security/primeiro-acesso.spec.ts`                                                                |
 | Política de senha                         | `backend/tests/unit/politica-senha.spec.ts`                                                                     |
-| Permissões por perfil                     | `backend/tests/integration/permissoes.spec.ts`, `unit/permissoes.spec.ts`                                       |
+| Permissões por perfil                     | `backend/tests/security/rbac.spec.ts`: as 26 rotas pelos 4 perfis e sem token                                   |
 | Travas dos administradores                | `backend/tests/security/travas-administradores.spec.ts`                                                         |
 | Campo desconhecido e atribuição em massa  | `backend/tests/integration/campos-nao-permitidos.spec.ts`                                                       |
 | Saldo sob concorrência                    | `backend/tests/security/concorrencia.spec.ts`                                                                   |
@@ -108,8 +108,6 @@ A execução mais recente das suítes fica em [tests/results/](../tests/results/
 
 ## O que ainda falta
 
-| Item                                                                 | Situação                                                                    |
-| -------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| Teste que percorre a matriz de permissões rota por rota              | Hoje a cobertura é por casos escolhidos; o teste completo está em andamento |
-| Botão para revelar a senha digitada                                  | Entra junto com o novo sistema visual                                       |
-| Aviso de privacidade ao funcionário e atendimento a pedidos de dados | Dependem da empresa; modelo sugerido acima                                  |
+| Item                                                                 | Situação                                   |
+| -------------------------------------------------------------------- | ------------------------------------------ |
+| Aviso de privacidade ao funcionário e atendimento a pedidos de dados | Dependem da empresa; modelo sugerido acima |

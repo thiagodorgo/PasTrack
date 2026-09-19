@@ -72,6 +72,10 @@ jobs:
         working-directory: .
         run: node --test scripts/
 
+      - name: Confere a documentação de perfis
+        working-directory: .
+        run: node scripts/gerar-doc-perfis.mjs --verificar
+
       - name: Build
         run: npm run build
 
@@ -175,4 +179,3 @@ jobs:
       - name: Derruba o ambiente
         if: always()
         run: docker compose down -v
-

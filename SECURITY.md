@@ -16,6 +16,8 @@ O escopo inclui a interface web, a API, o esquema de dados e a implantação des
 
 ## Controles em uso
 
+A descrição completa, com os riscos aceitos, a nota de LGPD e a prova de cada controle, está em [docs/seguranca.md](docs/seguranca.md). O resumo:
+
 - A API exige token nas rotas protegidas e confere permissões por ação; veja [autenticação](backend/src/middlewares/auth.ts), [rotas](backend/src/routes/index.ts) e [matriz de perfis](docs/perfis-e-permissoes.md).
 - Cada requisição revalida a sessão no banco. Trocar a senha, mudar o perfil ou desativar o usuário invalida os tokens emitidos antes. A senha inicial e a redefinida por um administrador [precisam ser trocadas](backend/src/middlewares/exigir-senha-atualizada.ts) no primeiro acesso.
 - Os [limites de requisição](backend/src/middlewares/rate-limit.ts) respondem 429 com `Retry-After`: falhas de login por IP e e-mail, senha atual errada na troca de senha, total por IP e total por usuário.

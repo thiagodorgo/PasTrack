@@ -4,16 +4,17 @@
 
 ## Por onde começar
 
-| Se você quer...                    | Leia                                                   |
-| ---------------------------------- | ------------------------------------------------------ |
-| instalar o sistema na empresa      | [Guia de implantação](deploy.md)                       |
-| cuidar do sistema no dia a dia     | [Manual de operação](operacao.md)                      |
-| entender por que o sistema é assim | [Decisões de arquitetura](decisoes/README.md)          |
-| integrar com a API                 | [Contrato da API](api.md)                              |
-| conferir a evidência dos testes    | [Resultados dos testes](../tests/results/README.md)    |
-| entender a segurança do sistema    | [Segurança](seguranca.md)                              |
-| conferir uma instalação nova       | [Guia de implantação](deploy.md#conferir-a-instalação) |
-| saber o que mudou em cada versão   | [CHANGELOG](../CHANGELOG.md)                           |
+| Se você quer...                     | Leia                                                   |
+| ----------------------------------- | ------------------------------------------------------ |
+| instalar o sistema na empresa       | [Guia de implantação](deploy.md)                       |
+| cuidar do sistema no dia a dia      | [Manual de operação](operacao.md)                      |
+| entender por que o sistema é assim  | [Decisões de arquitetura](decisoes/README.md)          |
+| integrar com a API                  | [Contrato da API](api.md)                              |
+| conferir a evidência dos testes     | [Resultados dos testes](../tests/results/README.md)    |
+| entender a segurança do sistema     | [Segurança](seguranca.md)                              |
+| saber o que o sistema precisa fazer | [Requisitos](requisitos.md)                            |
+| conferir uma instalação nova        | [Guia de implantação](deploy.md#conferir-a-instalação) |
+| saber o que mudou em cada versão    | [CHANGELOG](../CHANGELOG.md)                           |
 
 ## Disponível
 
@@ -28,6 +29,9 @@
 | [api.md](api.md)                                                 | Contrato da API REST: convenções, envelope de erro, códigos e as 26 rotas.                                  |
 | [deploy.md](deploy.md)                                           | Implantação com Docker Compose: pré-requisitos, `.env`, rede local, backup, atualização e problemas comuns. |
 | [operacao.md](operacao.md)                                       | Operação: saúde, logs, acesso do administrador, troca de segredos, restauração, atualização e migrations.   |
+| [requisitos.md](requisitos.md)                                   | Requisitos funcionais, regras de negócio e requisitos não funcionais, com código para rastreio.             |
+| [testes.md](testes.md)                                           | Estratégia de testes, como rodar cada suíte, variáveis de ambiente e onde ficam as evidências.              |
+| [testes/plano-de-testes.md](testes/plano-de-testes.md)           | Rastreabilidade: o que prova cada requisito, incluindo os casos manuais.                                    |
 | [seguranca.md](seguranca.md)                                     | Segurança: controles em uso, riscos aceitos, LGPD e onde está a prova de cada um.                           |
 | [seguranca/asvs-l1-checklist.md](seguranca/asvs-l1-checklist.md) | Autoavaliação contra o ASVS 4.0.3 nível 1, requisito por requisito.                                         |
 | [seguranca/modelo-de-ameacas.md](seguranca/modelo-de-ameacas.md) | Modelo de ameaças: o que o sistema guarda, quem pode atacar e a resposta de cada ameaça.                    |
@@ -43,7 +47,5 @@
 
 Estes documentos ainda não existem:
 
-- `testes.md`: testes automatizados;
 - `manual-do-usuario.md`: uso do sistema;
-- `requisitos.md`: requisitos do sistema;
 - `roteiro-demo.md`: roteiro da demonstração.

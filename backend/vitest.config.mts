@@ -1,11 +1,21 @@
 import { defineConfig } from "vitest/config";
 
+/**
+ * No Windows, "localhost" resolve primeiro para ::1, e o banco de teste só é publicado em 127.0.0.1. Nessa
+ * situação o Prisma leva cerca de 2 s para abrir cada conexão nova, e duas transações interativas
+ * simultâneas estouram o maxWait de 2 s (erro P2028). Com o endereço IPv4 direto, a conexão abre na hora.
+ */
+function urlDoBancoDeTeste(url: string) {
+  return url.replace("@localhost:", "@127.0.0.1:");
+}
+
 /** Variáveis de ambiente dos testes. Nenhum valor aqui é segredo de produção. */
 const ambienteDeTeste = {
   NODE_ENV: "test",
-  DATABASE_URL:
+  DATABASE_URL: urlDoBancoDeTeste(
     process.env.DATABASE_URL_TESTE ??
-    "postgresql://pastrack:pastrack@localhost:5433/pastrack_teste?schema=public",
+      "postgresql://pastrack:pastrack@127.0.0.1:5433/pastrack_teste?schema=public"
+  ),
   JWT_SECRET: "chave-local-dos-testes-automatizados-0123456789",
   JWT_EXPIRES_IN: "1h",
   CORS_ORIGINS: "http://localhost:5173",

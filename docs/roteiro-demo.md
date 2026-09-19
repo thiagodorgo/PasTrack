@@ -4,6 +4,8 @@ Demonstração de 10 minutos do PasTrack, para a banca e para a DDA Usinagem. O 
 
 Ensaie pelo menos duas vezes a partir de uma instalação zerada. Quem apresenta deve conseguir seguir o roteiro sem ler.
 
+Os fatos deste roteiro foram conferidos numa instalação real, passo a passo: veja o [ensaio de 19/09](testes/evidencias/2026-09-19-ensaio-demo.md).
+
 ## Preparo, antes de começar
 
 1. **Instalação limpa, com dados de demonstração.** No `.env`, use `SEED_DEMO=true` e preencha `SEED_DEMO_SENHA` e `SEED_ADMIN_SENHA` com senhas de 12 caracteres ou mais, com letra e número.

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { semCaracteresDeControle } from "./comum.schema";
+import { objetoEstrito, semCaracteresDeControle } from "./comum.schema";
 
 /** Limite folgado: o bcrypt só usa os primeiros 72 bytes, mas a API não deve aceitar corpos absurdos. */
 const TAMANHO_MAXIMO_SENHA = 1024;
@@ -11,26 +11,22 @@ function senha(nome: string) {
     .max(TAMANHO_MAXIMO_SENHA, "senha longa demais");
 }
 
-export const loginSchema = z
-  .object({
-    email: z
-      .string({ error: "informe o e-mail" })
-      .trim()
-      .toLowerCase()
-      .min(1, "informe o e-mail")
-      .max(254, "e-mail longo demais")
-      .refine(semCaracteresDeControle, "o e-mail tem caracteres inválidos"),
-    senha: senha("a senha"),
-  })
-  .strict();
+export const loginSchema = objetoEstrito({
+  email: z
+    .string({ error: "informe o e-mail" })
+    .trim()
+    .toLowerCase()
+    .min(1, "informe o e-mail")
+    .max(254, "e-mail longo demais")
+    .refine(semCaracteresDeControle, "o e-mail tem caracteres inválidos"),
+  senha: senha("a senha"),
+});
 
 /** A política de senha é aplicada no serviço, porque depende do e-mail do usuário. */
-export const trocarSenhaSchema = z
-  .object({
-    senhaAtual: senha("a senha atual"),
-    novaSenha: senha("a nova senha"),
-  })
-  .strict();
+export const trocarSenhaSchema = objetoEstrito({
+  senhaAtual: senha("a senha atual"),
+  novaSenha: senha("a nova senha"),
+});
 
 export type LoginEntrada = z.infer<typeof loginSchema>;
 export type TrocarSenhaEntrada = z.infer<typeof trocarSenhaSchema>;

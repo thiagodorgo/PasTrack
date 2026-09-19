@@ -8,14 +8,13 @@ import { logger } from "../config/logger";
 import { prisma } from "../config/prisma";
 import { AppError } from "../middlewares/erros";
 import { usuarioRepository } from "../repositories/usuario.repository";
+import { ID_MAXIMO } from "../schemas/comum.schema";
 import { registrarAuditoria } from "./auditoria.service";
 import { validarPoliticaDeSenha } from "./politica-senha";
 
 const ALGORITMO = "HS256";
 export const EMISSOR_TOKEN = "pastrack-api";
 export const PUBLICO_TOKEN = "pastrack-web";
-/** Maior valor da coluna inteira do Postgres: um sub acima disso nem chega ao banco. */
-const MAIOR_ID = 2_147_483_647;
 
 export interface DadosDoToken {
   id: number;
@@ -30,7 +29,7 @@ const esquemaPayload = z.object({
     .string()
     .regex(/^[1-9]\d{0,9}$/)
     .transform(Number)
-    .pipe(z.number().max(MAIOR_ID)),
+    .pipe(z.number().max(ID_MAXIMO)),
   nome: z.string(),
   perfil: z.enum(PerfilUsuario),
   v: z.number().int().min(0),

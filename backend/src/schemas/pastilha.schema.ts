@@ -1,18 +1,5 @@
 import { z } from "zod";
-import { idParam } from "./comum.schema";
-
-/** Maior id que cabe no INT4 do banco. Acima disso o Postgres recusa a consulta e a API responderia 500. */
-const MAIOR_ID = 2_147_483_647;
-
-/**
- * Texto sem os espaços das pontas e sem o caractere nulo (U+0000). O Postgres recusa esse caractere
- * em colunas de texto e em filtros, e sem esta regra a requisição cairia no 500.
- */
-const texto = () =>
-  z
-    .string()
-    .trim()
-    .refine((valor) => !valor.includes("\u0000"), "Não pode conter o caractere nulo (U+0000)");
+import { ID_MAXIMO, objetoEstrito, texto } from "./comum.schema";
 
 /** Texto opcional: vazio ou null grava null; ausente mantém o valor atual. */
 const textoOpcional = (maximo: number) =>
@@ -23,8 +10,6 @@ const textoOpcional = (maximo: number) =>
 
 const algumCampo = (dados: object) => Object.values(dados).some((valor) => valor !== undefined);
 
-export const pastilhaIdParam = idParam.extend({ id: idParam.shape.id.max(MAIOR_ID) });
-
 /** Campos que o cadastro pode alterar. Código e saldo ficam de fora: o saldo só muda por movimentação. */
 const camposEditaveis = {
   descricao: texto().min(1).max(200),
@@ -32,10 +17,10 @@ const camposEditaveis = {
   aplicacao: textoOpcional(200),
   unidade: texto().min(1).max(10),
   estoqueMinimo: z.int().min(0).max(1_000_000),
-  fabricanteId: z.int().positive().max(MAIOR_ID),
+  fabricanteId: z.int().positive().max(ID_MAXIMO),
 };
 
-export const criarPastilhaSchema = z.strictObject({
+export const criarPastilhaSchema = objetoEstrito({
   // gravado em maiúsculas: "cnmg 120408" e "CNMG 120408" são o mesmo código
   codigo: texto().toUpperCase().min(1).max(40),
   ...camposEditaveis,
@@ -43,12 +28,11 @@ export const criarPastilhaSchema = z.strictObject({
   estoqueMinimo: camposEditaveis.estoqueMinimo.default(0),
 });
 
-export const atualizarPastilhaSchema = z
-  .strictObject(camposEditaveis)
+export const atualizarPastilhaSchema = objetoEstrito(camposEditaveis)
   .partial()
   .refine(algumCampo, "Informe ao menos um campo para atualizar");
 
-export const consultaPastilhasSchema = z.strictObject({
+export const consultaPastilhasSchema = objetoEstrito({
   busca: texto().max(100).optional(),
   criticas: z
     .enum(["true", "false"])

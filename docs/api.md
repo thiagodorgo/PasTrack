@@ -34,7 +34,7 @@ Toda resposta de erro é um objeto JSON com a chave `erro`, que o frontend exibe
 | `campos`    | array  | opcional | Vem com `DADOS_INVALIDOS`: `[{ "caminho": string, "mensagem": string }]`, com `caminho` apontando o campo.    |
 | `requestId` | string | no `500` | Identificador da requisição, o mesmo do cabeçalho `X-Request-Id`, para localizar o erro nos logs do servidor. |
 
-Todas as rotas validam body, params e query com esquemas estritos. Campo desconhecido, tipo errado ou valor fora do limite responde `400` com `codigo: "DADOS_INVALIDOS"` e `campos`.
+Todas as rotas validam body, params e query com esquemas estritos. Campo desconhecido, tipo errado ou valor fora do limite responde `400` com `codigo: "DADOS_INVALIDOS"` e `campos`. Em qualquer rota, o campo desconhecido vem com a mensagem `"Campo não permitido: <nome>"`, e o `:id` do caminho aceita só inteiros de 1 a 2147483647.
 
 ```json
 {

@@ -1,7 +1,6 @@
 import { PerfilUsuario } from "@prisma/client";
 import { describe, expect, it } from "vitest";
 import { prisma } from "../../src/config/prisma";
-import { pastilhaRepository } from "../../src/repositories/pastilha.repository";
 import { api, autorizacao } from "../helpers/api";
 import { auditoriasDe, entrarComo } from "../helpers/cadastros";
 import { criarFabricante, criarFornecedor, criarPastilha, criarUsuario } from "../helpers/fabricas";
@@ -529,10 +528,17 @@ describe("GET /api/pastilhas", () => {
     expect(resposta.body.codigo).toBe("DADOS_INVALIDOS");
   });
 
-  it("listarCriticas(), usada pelo painel, devolve as mesmas pastilhas do filtro", async () => {
+  it("o painel e o filtro criticas=true trazem as mesmas pastilhas", async () => {
+    const { cabecalho } = await entrarComo("OPERADOR");
     const { abaixo, noMinimo } = await criarEstoque();
-    const criticas = await pastilhaRepository.listarCriticas();
-    expect(criticas.map((pastilha) => pastilha.id)).toEqual([abaixo.id, noMinimo.id]);
+    await criarPastilha({ codigo: "D-1", estoqueMinimo: 0, saldoAtual: 0 });
+    const ids = (lista: { id: number }[]) => lista.map((pastilha) => pastilha.id).sort((a, b) => a - b);
+
+    const filtro = await api().get("/api/pastilhas?criticas=true").set(cabecalho);
+    const painel = await api().get("/api/painel/resumo").set(cabecalho);
+
+    expect(ids(filtro.body)).toEqual(ids([abaixo, noMinimo]));
+    expect(ids(painel.body.itensCriticos)).toEqual(ids(filtro.body));
   });
 });
 

@@ -55,7 +55,7 @@ describe("página de alteração de senha", () => {
     expect(screen.getByLabelText("Nova senha")).toHaveAttribute("autocomplete", "new-password");
     expect(screen.getByLabelText("Confirme a nova senha")).toHaveAttribute("autocomplete", "new-password");
     expect(screen.getByLabelText("Nova senha")).toHaveAccessibleDescription(
-      "De 10 caracteres a 72 bytes, com pelo menos uma letra e um número."
+      "De 12 caracteres a 72 bytes, com pelo menos uma letra e um número."
     );
   });
 
@@ -69,7 +69,7 @@ describe("página de alteração de senha", () => {
     expect(senhaAtual).toHaveAttribute("aria-invalid", "true");
     expect(senhaAtual).toHaveAccessibleDescription("Informe a senha atual.");
     expect(senhaAtual).toHaveFocus();
-    expect(screen.getByLabelText("Nova senha")).toHaveAccessibleDescription(/use pelo menos 10 caracteres/);
+    expect(screen.getByLabelText("Nova senha")).toHaveAccessibleDescription(/use pelo menos 12 caracteres/);
     expect(screen.getByLabelText("Confirme a nova senha")).toHaveAccessibleDescription(
       "A confirmação não é igual à nova senha."
     );

@@ -141,7 +141,7 @@ Com `SEED_DEMO=true` e `SEED_DEMO_SENHA` vazia, a API gera uma senha a cada subi
 
 A senha precisa:
 
-- ter 10 caracteres ou mais, com pelo menos uma letra e um número;
+- ter 12 caracteres ou mais, com pelo menos uma letra e um número;
 - não conter a parte do e-mail antes do `@`;
 - não ser uma senha comum, como `admin12345`;
 - ter no máximo 72 bytes (letras acentuadas ocupam 2).

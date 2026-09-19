@@ -170,6 +170,7 @@ jobs:
           curl -sI http://localhost:8080/ | tee /tmp/cabecalhos.txt
           grep -qi '^content-security-policy:' /tmp/cabecalhos.txt
           grep -qi '^x-content-type-options: nosniff' /tmp/cabecalhos.txt
+          grep -qi '^content-type: text/html; charset=utf-8' /tmp/cabecalhos.txt
           test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/pastilhas)" = "200"
 
       - name: Logs em caso de falha

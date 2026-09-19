@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 
-/** Política mínima de senha do PasTrack. */
-export const TAMANHO_MINIMO_SENHA = 10;
+/** Política mínima de senha do PasTrack: 12 caracteres, o mínimo do ASVS 4.0.3 nível 1 (V2.1.1). */
+export const TAMANHO_MINIMO_SENHA = 12;
 /** O bcrypt considera no máximo 72 bytes; acentos ocupam 2 bytes em UTF-8. */
 export const BYTES_MAXIMOS_SENHA = 72;
 

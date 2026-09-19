@@ -396,3 +396,21 @@ describe("usuário criado pelo administrador", () => {
     expect((await acessarPastilhas(troca.body.token)).status).toBe(200);
   });
 });
+
+describe("redefinição da própria senha pela gestão de usuários", () => {
+  it("responde 409 e aponta para a troca de senha, sem mexer em nada", async () => {
+    const admin = await criarAdministrador();
+    const resposta = await api()
+      .post(rota(admin.usuario.id, "/redefinir-senha"))
+      .set(autorizacao(admin.token));
+    expect(resposta.status).toBe(409);
+    expect(resposta.body).toEqual({
+      erro: "Para trocar a sua própria senha, use a troca de senha (PATCH /api/auth/senha)",
+    });
+
+    const depois = await prisma.usuario.findUniqueOrThrow({ where: { id: admin.usuario.id } });
+    expect(depois).toMatchObject({ versaoToken: 0, deveTrocarSenha: false });
+    expect((await acessarPastilhas(admin.token)).status).toBe(200);
+    expect(await prisma.auditoria.count()).toBe(0);
+  });
+});

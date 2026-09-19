@@ -139,8 +139,14 @@ export const usuarioService = {
     });
   },
 
-  /** Gera outra senha temporária, devolvida uma única vez, liga a troca obrigatória e derruba as sessões. */
+  /**
+   * Gera outra senha temporária, devolvida uma única vez, liga a troca obrigatória e derruba as sessões.
+   * A própria senha se troca por PATCH /api/auth/senha, que exige a senha atual.
+   */
   async redefinirSenha(id: number, atorId: number) {
+    if (id === atorId) {
+      throw conflito("Para trocar a sua própria senha, use a troca de senha (PATCH /api/auth/senha)");
+    }
     const alvo = await usuarioRepository.buscarPorId(id);
     if (!alvo) {
       throw naoEncontrado();

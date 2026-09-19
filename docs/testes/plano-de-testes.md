@@ -59,7 +59,7 @@ Os caminhos são relativos a `backend/tests/` e `frontend/tests/`.
 | RNF-04 acesso por perfil no servidor  | `integration/permissoes.spec.ts`, `integration/cadastros-permissoes.spec.ts`, `unit/permissoes.spec.ts`; manual T14 |
 | RNF-05 ASVS nível 1                   | [autoavaliação](../seguranca/asvs-l1-checklist.md)                                                                  |
 | RNF-06 senha em hash, log sem segredo | `unit/politica-senha.spec.ts`, `unit/logger.spec.ts`, `unit/auditoria.spec.ts`                                      |
-| RNF-07 tempo de resposta              | **pendente**: a medição com volume realista ainda não foi feita                                                     |
+| RNF-07 tempo de resposta              | [medição com volume](evidencias/2026-09-19-desempenho.md): 400 pastilhas e 30.000 movimentações, pior p95 de 22 ms  |
 | RNF-08 navegadores                    | sessão manual gravada, no Chromium                                                                                  |
 | RNF-09 teclado e leitor de tela       | as buscas dos testes de tela usam papel e rótulo acessível                                                          |
 | RNF-10 português do Brasil            | testes que fixam as mensagens, como `unit/validar-e-erros.spec.ts` e `pages/AlterarSenha.spec.tsx`                  |
@@ -95,8 +95,8 @@ Uma sessão pelo navegador cobriu 20 casos do registro de movimentações, com c
 
 ## Lacunas conhecidas
 
-| Lacuna                             | Plano                                                                |
-| ---------------------------------- | -------------------------------------------------------------------- |
-| Fluxos ponta a ponta automatizados | Suíte Playwright contra o Compose, com os cinco fluxos principais    |
-| Matriz de permissões rota por rota | Teste que percorre a matriz inteira e falha se surgir rota fora dela |
-| Medição de desempenho (RNF-07)     | Carga com volume realista antes da entrega                           |
+| Lacuna                             | Plano                                                                  |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| Fluxos ponta a ponta automatizados | Suíte Playwright contra o Compose, com os cinco fluxos principais      |
+| Matriz de permissões rota por rota | Teste que percorre a matriz inteira e falha se surgir rota fora dela   |
+| Medição contínua de desempenho     | Hoje é uma medição pontual; repetir a cada mudança que toque consultas |

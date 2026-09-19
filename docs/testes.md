@@ -81,8 +81,8 @@ No Windows, use `127.0.0.1` em vez de `localhost`: o `localhost` tenta o IPv6 pr
 
 ## O que ainda não é testado automaticamente
 
-| Lacuna                              | Como está coberta hoje                                         |
-| ----------------------------------- | -------------------------------------------------------------- |
-| Fluxos ponta a ponta pelo navegador | Sessão manual gravada, com 20 casos, e o `compose-smoke` do CI |
-| Matriz de permissões rota por rota  | Casos escolhidos, em `integration/permissoes.spec.ts`          |
-| Desempenho com o volume real da DDA | Nada ainda; é o RNF-07 dos [requisitos](requisitos.md)         |
+| Lacuna                              | Como está coberta hoje                                                                         |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Fluxos ponta a ponta pelo navegador | Sessão manual gravada, com 20 casos, e o `compose-smoke` do CI                                 |
+| Matriz de permissões rota por rota  | Casos escolhidos, em `integration/permissoes.spec.ts`                                          |
+| Desempenho, a cada mudança          | Há uma [medição pontual](testes/evidencias/2026-09-19-desempenho.md), não uma medição contínua |

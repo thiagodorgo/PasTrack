@@ -94,20 +94,20 @@ A matriz completa, gerada a partir do código, está em [perfis-e-permissoes.md]
 
 ## Requisitos não funcionais
 
-| Código | Requisito                                                                                                                                  | Como é verificado                                                       |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| RNF-01 | Rodar numa máquina da empresa com Docker Compose, servindo os outros computadores pela rede local                                          | [evidência da implantação](testes/evidencias/2026-09-19-implantacao.md) |
-| RNF-02 | Subir numa máquina nova com um comando, depois de preencher o `.env`                                                                       | mesma evidência, e o `compose-smoke` do CI                              |
-| RNF-03 | Ter backup e restauração documentados e testados                                                                                           | mesma evidência                                                         |
-| RNF-04 | Acesso por perfil, aplicado no servidor                                                                                                    | [segurança](seguranca.md) e os testes de permissão                      |
-| RNF-05 | Atender o ASVS 4.0.3 nível 1 nos itens aplicáveis, com cada desvio registrado                                                              | [autoavaliação](seguranca/asvs-l1-checklist.md)                         |
-| RNF-06 | Guardar senha só em hash, e nunca registrar senha ou token em log                                                                          | testes de política de senha e do logger                                 |
-| RNF-07 | Responder em até 2 segundos nas telas de uso diário, na rede local, com o volume da DDA: centenas de pastilhas e milhares de movimentações | **ainda não medido**; a medição entra antes da entrega                  |
-| RNF-08 | Funcionar no Chrome, no Edge e no Firefox atuais, em tela de 1366 px ou mais                                                               | uso manual; o vídeo dos testes mostra a navegação                       |
-| RNF-09 | Ser operável pelo teclado, com rótulo em cada campo e aviso em região viva                                                                 | os testes de tela consultam por papel e por rótulo acessível            |
-| RNF-10 | Ter interface e mensagens em português do Brasil                                                                                           | revisão de código e testes que fixam as mensagens                       |
-| RNF-11 | Manter as suítes automatizadas verdes a cada mudança, com evidência versionada                                                             | CI obrigatório e [tests/results/](../tests/results/README.md)           |
-| RNF-12 | Registrar as decisões de arquitetura                                                                                                       | [ADRs](decisoes/README.md)                                              |
+| Código | Requisito                                                                                                                                  | Como é verificado                                                                 |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| RNF-01 | Rodar numa máquina da empresa com Docker Compose, servindo os outros computadores pela rede local                                          | [evidência da implantação](testes/evidencias/2026-09-19-implantacao.md)           |
+| RNF-02 | Subir numa máquina nova com um comando, depois de preencher o `.env`                                                                       | mesma evidência, e o `compose-smoke` do CI                                        |
+| RNF-03 | Ter backup e restauração documentados e testados                                                                                           | mesma evidência                                                                   |
+| RNF-04 | Acesso por perfil, aplicado no servidor                                                                                                    | [segurança](seguranca.md) e os testes de permissão                                |
+| RNF-05 | Atender o ASVS 4.0.3 nível 1 nos itens aplicáveis, com cada desvio registrado                                                              | [autoavaliação](seguranca/asvs-l1-checklist.md)                                   |
+| RNF-06 | Guardar senha só em hash, e nunca registrar senha ou token em log                                                                          | testes de política de senha e do logger                                           |
+| RNF-07 | Responder em até 2 segundos nas telas de uso diário, na rede local, com o volume da DDA: centenas de pastilhas e milhares de movimentações | [medição de 19/09](testes/evidencias/2026-09-19-desempenho.md): pior p95 de 22 ms |
+| RNF-08 | Funcionar no Chrome, no Edge e no Firefox atuais, em tela de 1366 px ou mais                                                               | uso manual; o vídeo dos testes mostra a navegação                                 |
+| RNF-09 | Ser operável pelo teclado, com rótulo em cada campo e aviso em região viva                                                                 | os testes de tela consultam por papel e por rótulo acessível                      |
+| RNF-10 | Ter interface e mensagens em português do Brasil                                                                                           | revisão de código e testes que fixam as mensagens                                 |
+| RNF-11 | Manter as suítes automatizadas verdes a cada mudança, com evidência versionada                                                             | CI obrigatório e [tests/results/](../tests/results/README.md)                     |
+| RNF-12 | Registrar as decisões de arquitetura                                                                                                       | [ADRs](decisoes/README.md)                                                        |
 
 ## O que fica para depois
 

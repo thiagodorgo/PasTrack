@@ -28,7 +28,7 @@ describe("rollback do registro de movimentação", () => {
       quantidade: 4,
     });
     expect(resposta.status).toBe(500);
-    expect(resposta.body).toEqual({ erro: "Erro interno no servidor" });
+    expect(resposta.body).toEqual({ erro: "Erro interno no servidor", requestId: expect.any(String) });
     // a falha veio depois do desconto e da gravação da movimentação
     expect(avaliarAlerta).toHaveBeenCalledTimes(1);
     expect(await saldoDe(pastilha.id)).toBe(10);

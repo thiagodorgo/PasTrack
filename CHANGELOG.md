@@ -56,6 +56,14 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - Documentação: decisões de arquitetura (ADR-0001 a ADR-0008), guia de implantação, manual de operação, índice da documentação e este registro de mudanças.
 - Documentação de arquitetura e de banco de dados, `CONTRIBUTING.md` e `SECURITY.md`. (#28)
 - Matriz de perfis em `docs/perfis-e-permissoes.md`, gerada de `backend/src/config/permissoes.ts` com `npm run docs:perfis` e conferida no CI. (#28)
+- Tela de Alertas: filtro por situação, quem resolveu ou a resolução automática, e resolução manual com confirmação para ADMINISTRADOR e GESTOR. (#25)
+- Telas de Fabricantes, Fornecedores e Usuários: cadastro e edição no mesmo formulário, erro por campo e visibilidade por perfil. Na de usuários, a senha temporária aparece uma única vez, e desativar e redefinir senha pedem confirmação. (#34)
+- Edição de pastilha na tela, com código e saldo somente para leitura. (#35)
+- `npm run verificar:implantacao`, um roteiro de 20 conferências que percorre uma instalação nova pelo mesmo caminho do navegador. Roda pelo container da API, sem exigir Node na máquina servidora. (#29)
+- Documentação de segurança: controles em uso, riscos aceitos com quando revisar, nota de LGPD, autoavaliação contra o ASVS 4.0.3 nível 1 e modelo de ameaças. (#31)
+- `docs/requisitos.md` com código em cada requisito, `docs/testes.md` com a estratégia e os comandos, e `docs/testes/plano-de-testes.md` ligando cada requisito ao que o prova. (#32)
+- Manual do usuário e roteiro da demonstração de 10 minutos. (#36)
+- Evidências de execução manual em `docs/testes/evidencias/`: implantação em clone limpo com backup e restauração, os 20 casos manuais de movimentação e a medição de desempenho. (#29, #32, #33)
 
 ### Modificado
 
@@ -73,10 +81,15 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - Movimentações no frontend: fornecedor obrigatório na entrada, saída escondida para quem não pode registrá-la e limites de tamanho iguais aos do backend. (#20)
 - A edição de pastilha no frontend nunca envia `codigo` nem `saldoAtual`. (#20)
 - Códigos e mensagens de erro alinhados ao contrato da API. (#21)
+- O painel usa a mesma regra de itens críticos do filtro `criticas=true`, em vez de uma cópia da condição. (#26)
+- Campo desconhecido responde `"Campo não permitido: <nome>"` em todas as rotas. Antes, pastilhas, fabricantes, fornecedores, usuários e autenticação devolviam a mensagem padrão da biblioteca, em inglês. (#26)
+- O `:id` de todas as rotas usa o mesmo esquema, com o teto do INT4. (#26)
+- `backend/.env.example` aponta o banco para `127.0.0.1`: no Windows, `localhost` tenta IPv6 primeiro e atrasa cada conexão nova. (#26)
 
 ### Removido
 
 - `backend/prisma/seed.ts`, que criava o administrador com senha fixa. O seed agora fica em `backend/src/scripts/`. (#9)
+- `listarCriticas` do repositório de pastilhas, que nenhuma rota usava. (#26)
 
 ### Corrigido
 
@@ -90,6 +103,9 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - Uma sessão expirada numa rota protegida mantém o aviso na tela de login, e um relógio adiantado não prende o usuário num ciclo de sessão expirada. (#20)
 - Pastilha com estoque mínimo zero não gera alerta nem aparece como crítica. Antes, toda pastilha nova abria um alerta, porque o saldo nasce zero. (#23)
 - Todo registro inexistente responde 404 com `NAO_ENCONTRADO`, inclusive a pastilha no registro de movimentação e o usuário na gestão de usuários. (#23)
+- A tela de pastilhas não marca mais como crítica uma pastilha com estoque mínimo zero, que a API não considera crítica. Ela mostra "Sem mínimo". (#35)
+- O limite de tentativas de login conta só a credencial recusada: corpo inválido e erro do servidor não bloqueiam mais ninguém. (#24)
+- A verificação de saúde que falha passa a gerar log, então a causa de um container sem saúde aparece nos logs da API. (#24)
 
 ### Segurança
 
@@ -104,6 +120,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - `PUT /api/pastilhas/:id` não aceita mais `saldoAtual`: o saldo só muda por movimentação. (#19)
 - Sessão revalidada no banco a cada requisição, com JWT endurecido: usuário desativado, com a senha trocada ou com o perfil alterado perde o acesso na hora. (#21)
 - Helmet na API e limites de requisição, com 429 `MUITAS_TENTATIVAS`: 5 falhas de login por IP e e-mail em 15 minutos, até 1000 requisições por minuto por IP antes da autenticação e até 300 por minuto por usuário depois dela. (#21)
+- A senha mínima passa de 10 para 12 caracteres, o mínimo do ASVS 4.0.3 nível 1. Senhas já cadastradas continuam valendo. (#30)
+- As páginas voltam com `Content-Type: text/html; charset=utf-8`; antes o navegador precisava adivinhar a codificação. O `compose-smoke` confere o cabeçalho. (#30)
+- O e-mail do login e o nome do usuário recusam caracteres de controle com 400, em vez de deixar o byte nulo chegar ao banco. (#24)
+- O login regrava o hash da senha quando o custo do bcrypt muda, sem derrubar a sessão. (#24)
 
 ## [0.1.0] — 09/08/2026
 

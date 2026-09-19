@@ -86,6 +86,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - O código da pastilha é único sem diferença de maiúsculas. (#19)
 - O frontend confere a expiração do token e protege a leitura do armazenamento local. Os dois defeitos registrados como `it.fails` no frontend viraram testes normais. (#20)
 - Uma sessão expirada numa rota protegida mantém o aviso na tela de login, e um relógio adiantado não prende o usuário num ciclo de sessão expirada. (#20)
+- Pastilha com estoque mínimo zero não gera alerta nem aparece como crítica. Antes, toda pastilha nova abria um alerta, porque o saldo nasce zero. (#23)
+- Todo registro inexistente responde 404 com `NAO_ENCONTRADO`, inclusive a pastilha no registro de movimentação e o usuário na gestão de usuários. (#23)
 
 ### Segurança
 

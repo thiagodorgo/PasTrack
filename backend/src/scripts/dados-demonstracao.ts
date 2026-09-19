@@ -85,7 +85,7 @@ export async function criarDadosDeDemonstracao(senhaUsuarios: string): Promise<v
       update: {},
       create: { ...dados, fabricanteId: fabricantes.get(fabricante)! },
     });
-    if (pastilha.saldoAtual <= pastilha.estoqueMinimo) {
+    if (pastilha.estoqueMinimo > 0 && pastilha.saldoAtual <= pastilha.estoqueMinimo) {
       const aberto = await prisma.alerta.findFirst({
         where: { pastilhaId: pastilha.id, situacao: "ABERTO" },
       });

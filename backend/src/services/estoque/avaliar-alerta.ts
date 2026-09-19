@@ -10,8 +10,8 @@ export type ResultadoAvaliacao = "aberto" | "resolvido" | "inalterado";
  * serializa transações concorrentes da mesma pastilha. O índice único parcial do banco
  * (um alerta ABERTO por pastilha) é a segunda barreira contra duplicidade.
  *
- * - saldo no mínimo ou abaixo e nenhum alerta aberto: abre um alerta;
- * - saldo acima do mínimo e alerta aberto: fecha automaticamente, sem responsável.
+ * - mínimo maior que zero, saldo no mínimo ou abaixo e nenhum alerta aberto: abre um alerta;
+ * - saldo acima do mínimo, ou mínimo zerado, com alerta aberto: fecha automaticamente, sem responsável.
  */
 export async function avaliarAlerta(
   tx: Prisma.TransactionClient,
@@ -26,7 +26,8 @@ export async function avaliarAlerta(
     where: { pastilhaId, situacao: "ABERTO" },
     select: { id: true },
   });
-  const noMinimoOuAbaixo = pastilha.saldoAtual <= pastilha.estoqueMinimo;
+  // Estoque mínimo 0 significa que a pastilha não tem reposição controlada: nunca gera alerta.
+  const noMinimoOuAbaixo = pastilha.estoqueMinimo > 0 && pastilha.saldoAtual <= pastilha.estoqueMinimo;
 
   if (noMinimoOuAbaixo && !aberto) {
     const { count } = await tx.alerta.createMany({ data: [{ pastilhaId }], skipDuplicates: true });

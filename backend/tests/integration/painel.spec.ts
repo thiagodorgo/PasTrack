@@ -98,6 +98,15 @@ describe("GET /api/painel/resumo", () => {
     );
   });
 
+  it("não conta como crítica a pastilha com estoque mínimo 0", async () => {
+    const { token } = await criarUsuario();
+    await criarPastilha({ saldoAtual: 0, estoqueMinimo: 0 });
+    const critica = await criarPastilha({ saldoAtual: 1, estoqueMinimo: 2 });
+    const resposta = await buscarResumo(token);
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.itensCriticos.map((p: { id: number }) => p.id)).toEqual([critica.id]);
+  });
+
   it("com o banco vazio devolve zeros e listas vazias", async () => {
     const { token } = await criarUsuario();
     const resposta = await buscarResumo(token);

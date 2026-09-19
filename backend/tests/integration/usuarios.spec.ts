@@ -216,7 +216,7 @@ describe("CRUD de usuários", () => {
     ];
     for (const resposta of inexistentes) {
       expect(resposta.status).toBe(404);
-      expect(resposta.body).toEqual({ erro: "Usuário não encontrado" });
+      expect(resposta.body).toEqual({ erro: "Usuário não encontrado", codigo: "NAO_ENCONTRADO" });
     }
     for (const id of ["abc", "0", "99999999999"]) {
       const resposta = await api().put(rota(id)).set(autorizacao(token)).send({ nome: "Fulano" });

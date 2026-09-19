@@ -472,6 +472,23 @@ select:focus {
   gap: 6px;
 }
 
+/* Ação secundária em forma de texto, como revelar a senha digitada. */
+.botao-texto {
+  align-self: flex-start;
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  color: #1d4ed8;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.botao-texto:hover {
+  color: #1e40af;
+}
+
 .dica-campo {
   color: var(--texto-suave);
   font-size: 12px;

@@ -154,3 +154,21 @@ describe("página de alteração de senha", () => {
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 });
+
+describe("revelar as senhas digitadas", () => {
+  it.each([
+    ["Senha atual", "a senha atual"],
+    ["Nova senha", "a nova senha"],
+    ["Confirme a nova senha", "a confirmação"],
+  ])("mostra e esconde %s", async (rotuloCampo, rotuloBotao) => {
+    const { usuario } = renderizarTroca();
+    const campo = await screen.findByLabelText(rotuloCampo);
+    expect(campo).toHaveAttribute("type", "password");
+
+    await usuario.click(screen.getByRole("button", { name: `Mostrar ${rotuloBotao}` }));
+    expect(campo).toHaveAttribute("type", "text");
+
+    await usuario.click(screen.getByRole("button", { name: `Ocultar ${rotuloBotao}` }));
+    expect(campo).toHaveAttribute("type", "password");
+  });
+});

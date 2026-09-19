@@ -111,3 +111,23 @@ describe("página de login", () => {
     expect(screen.queryByText(/Sua sessão expirou/)).not.toBeInTheDocument();
   });
 });
+
+describe("revelar a senha no login", () => {
+  it("mostra e esconde a senha digitada", async () => {
+    const { usuario } = renderizar(<Login />, { initialEntries: ["/login"] });
+    const campo = screen.getByLabelText("Senha");
+    await usuario.type(campo, "SenhaForte123");
+    expect(campo).toHaveAttribute("type", "password");
+
+    const botao = screen.getByRole("button", { name: "Mostrar a senha" });
+    expect(botao).toHaveAttribute("aria-pressed", "false");
+    await usuario.click(botao);
+
+    expect(campo).toHaveAttribute("type", "text");
+    const ocultar = screen.getByRole("button", { name: "Ocultar a senha" });
+    expect(ocultar).toHaveAttribute("aria-pressed", "true");
+
+    await usuario.click(ocultar);
+    expect(campo).toHaveAttribute("type", "password");
+  });
+});

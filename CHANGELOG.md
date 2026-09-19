@@ -4,8 +4,6 @@ Todas as mudanças relevantes do PasTrack ficam registradas neste arquivo.
 
 O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e as versões seguem o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-<!-- Marcador a trocar pelo número do PR antes do rebase final: #PR-IDENTIDADE. -->
-
 ## [Não lançado]
 
 ### Adicionado
@@ -51,10 +49,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - Componentes comuns, layout acessível e serviços do frontend por recurso, com erros tipados. (#20)
 - Sessão no frontend que reage aos eventos da API sem recarregar a página: um 401 leva ao login com o aviso de sessão expirada, o 403 de troca obrigatória leva à tela de troca de senha, e sair ou entrar numa aba atualiza as outras. (#20)
 - Validação de CNPJ no frontend pelos dígitos verificadores, nos formatos numérico e alfanumérico, com máscara que preserva as letras. (#20)
-- Logs estruturados em JSON, com request id, redação de senhas e credenciais e nível definido por `LOG_LEVEL`. (#PR-IDENTIDADE)
-- Gestão de usuários para administradores: cadastro, edição, ativação, desativação e redefinição de senha, sem deixar o sistema sem administrador ativo. (#PR-IDENTIDADE)
-- Troca obrigatória de senha no primeiro acesso e depois de uma redefinição. (#PR-IDENTIDADE)
-- Script `redefinir-senha-admin`, que recupera o acesso de um administrador pelo servidor. (#PR-IDENTIDADE)
+- Logs estruturados em JSON, com request id, redação de senhas e credenciais e nível definido por `LOG_LEVEL`. (#21)
+- Gestão de usuários para administradores: cadastro, edição, ativação, desativação e redefinição de senha, sem deixar o sistema sem administrador ativo. (#21)
+- Troca obrigatória de senha no primeiro acesso e depois de uma redefinição. (#21)
+- Script `redefinir-senha-admin`, que recupera o acesso de um administrador pelo servidor. (#21)
 - Documentação: decisões de arquitetura (ADR-0001 a ADR-0008), guia de implantação, manual de operação, índice da documentação e este registro de mudanças.
 
 ### Modificado
@@ -72,7 +70,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - A permissão é conferida antes da validação do corpo: a SAÍDA do COMPRADOR e as escritas dos cadastros sem permissão recebem 403, e não 400. (#18, #19)
 - Movimentações no frontend: fornecedor obrigatório na entrada, saída escondida para quem não pode registrá-la e limites de tamanho iguais aos do backend. (#20)
 - A edição de pastilha no frontend nunca envia `codigo` nem `saldoAtual`. (#20)
-- Códigos e mensagens de erro alinhados ao contrato da API. (#PR-IDENTIDADE)
+- Códigos e mensagens de erro alinhados ao contrato da API. (#21)
 
 ### Removido
 
@@ -100,8 +98,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - CSP, `nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` e `server_tokens off` no nginx. (#14)
 - A SAÍDA é atômica: saídas simultâneas nunca deixam o saldo negativo. (#18)
 - `PUT /api/pastilhas/:id` não aceita mais `saldoAtual`: o saldo só muda por movimentação. (#19)
-- Sessão revalidada no banco a cada requisição, com JWT endurecido: usuário desativado, com a senha trocada ou com o perfil alterado perde o acesso na hora. (#PR-IDENTIDADE)
-- Helmet na API e limites de requisição: 5 falhas de login por IP e e-mail em 15 minutos e 300 requisições por minuto por IP, com 429 `MUITAS_TENTATIVAS`. (#PR-IDENTIDADE)
+- Sessão revalidada no banco a cada requisição, com JWT endurecido: usuário desativado, com a senha trocada ou com o perfil alterado perde o acesso na hora. (#21)
+- Helmet na API e limites de requisição, com 429 `MUITAS_TENTATIVAS`: 5 falhas de login por IP e e-mail em 15 minutos, até 1000 requisições por minuto por IP antes da autenticação e até 300 por minuto por usuário depois dela. (#21)
 
 ## [0.1.0] — 09/08/2026
 

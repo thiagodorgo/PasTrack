@@ -112,7 +112,7 @@ describe("criarLogDeAcesso", () => {
     expect(linhas[0]).not.toContain("secreto");
   });
 
-  it("usa warn para 4xx, error para 5xx e ignora a verificação de saúde", async () => {
+  it("usa warn para 4xx, error para 5xx e ignora a verificação de saúde que deu certo", async () => {
     const { app, linhas, registros } = montarApp();
     await request(app).get("/api/health");
     await request(app).get("/api/nao-existe");
@@ -121,5 +121,19 @@ describe("criarLogDeAcesso", () => {
     await vi.waitFor(() => expect(linhas).toHaveLength(2));
     const niveis = registros<{ level: number }>().map((registro) => registro.level);
     expect(niveis).toEqual([40, 50]);
+  });
+
+  it("registra a verificação de saúde quando ela falha", async () => {
+    const memoria = destinoEmMemoria();
+    const app = express();
+    app.use(atribuirRequestId);
+    app.use(criarLogDeAcesso(criarLogger({ nivel: "info", destino: memoria.destino })));
+    app.get("/api/health", (_req, res) => {
+      res.status(503).json({ erro: "Banco de dados indisponível" });
+    });
+    await request(app).get("/api/health");
+
+    await vi.waitFor(() => expect(memoria.linhas).toHaveLength(1));
+    expect(memoria.registros<{ level: number }>()[0].level).toBe(50);
   });
 });

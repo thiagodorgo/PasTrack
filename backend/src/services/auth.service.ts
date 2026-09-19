@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { env } from "../config/env";
+import { logger } from "../config/logger";
 import { prisma } from "../config/prisma";
 import { AppError } from "../middlewares/erros";
 import { usuarioRepository } from "../repositories/usuario.repository";
@@ -85,6 +86,20 @@ function esquemaNovaSenha(senhaAtual: string, email: string) {
   });
 }
 
+/**
+ * Quando o BCRYPT_CUSTO muda, os hashes gravados continuam no custo antigo, e o tempo do login passa a diferir
+ * do hash falso, o que revela quais e-mails existem. Depois de um login certo, a senha é regravada no custo
+ * atual, sem mexer na sessão. Uma falha aqui não impede o login.
+ */
+async function regravarHashSeCustoMudou(id: number, senha: string, senhaHash: string) {
+  if (bcrypt.getRounds(senhaHash) === env.BCRYPT_CUSTO) return;
+  try {
+    await usuarioRepository.atualizar(id, { senhaHash: await bcrypt.hash(senha, env.BCRYPT_CUSTO) });
+  } catch (erro) {
+    logger.warn({ err: erro, usuarioId: id }, "não foi possível regravar o hash da senha no custo atual");
+  }
+}
+
 function credenciaisInvalidas() {
   return new AppError("E-mail ou senha inválidos", 401);
 }
@@ -97,6 +112,7 @@ export const authService = {
     if (!usuario || !senhaConfere || !usuario.ativo) {
       throw credenciaisInvalidas();
     }
+    await regravarHashSeCustoMudou(usuario.id, senha, usuario.senhaHash);
 
     return {
       token: gerarToken(usuario),

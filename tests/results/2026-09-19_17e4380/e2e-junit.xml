@@ -1,0 +1,56 @@
+<testsuites id="" name="" tests="22" failures="0" skipped="0" errors="0" time="22.189441">
+<testsuite name="cadastros.spec.ts" timestamp="2026-09-20T01:12:58.037Z" tests="4" failures="0" skipped="0" time="2.76" errors="0">
+<testcase name="cadastros › cadastra um fabricante e recusa o nome repetido no próprio campo" classname="cadastros.spec.ts" time="0.782">
+</testcase>
+<testcase name="cadastros › cadastra um fornecedor com CNPJ e mostra com máscara" classname="cadastros.spec.ts" time="0.544">
+</testcase>
+<testcase name="cadastros › recusa o CNPJ inválido antes de chamar a API" classname="cadastros.spec.ts" time="0.584">
+</testcase>
+<testcase name="cadastros › cria um usuário e mostra a senha temporária uma única vez" classname="cadastros.spec.ts" time="0.85">
+</testcase>
+</testsuite>
+<testsuite name="estoque.spec.ts" timestamp="2026-09-20T01:12:58.037Z" tests="3" failures="0" skipped="0" time="3.199" errors="0">
+<testcase name="ciclo do estoque › a entrada muda o saldo mostrado na tela" classname="estoque.spec.ts" time="1.064">
+</testcase>
+<testcase name="ciclo do estoque › a saída acima do saldo é recusada com a quantidade disponível" classname="estoque.spec.ts" time="0.883">
+</testcase>
+<testcase name="ciclo do estoque › a reposição acima do mínimo resolve o alerta sozinha" classname="estoque.spec.ts" time="1.252">
+</testcase>
+</testsuite>
+<testsuite name="login.spec.ts" timestamp="2026-09-20T01:12:58.037Z" tests="4" failures="0" skipped="0" time="2.894" errors="0">
+<testcase name="login › entra com credenciais válidas e chega ao painel" classname="login.spec.ts" time="1.271">
+</testcase>
+<testcase name="login › recusa a senha errada sem dizer se o e-mail existe" classname="login.spec.ts" time="0.773">
+</testcase>
+<testcase name="login › mostra e esconde a senha digitada" classname="login.spec.ts" time="0.483">
+</testcase>
+<testcase name="login › quem não entrou é levado ao login" classname="login.spec.ts" time="0.367">
+</testcase>
+</testsuite>
+<testsuite name="painel-e-permissoes.spec.ts" timestamp="2026-09-20T01:12:58.037Z" tests="8" failures="0" skipped="0" time="4.367" errors="0">
+<testcase name="painel do ADMINISTRADOR › carrega com os números do estoque" classname="painel-e-permissoes.spec.ts" time="0.6">
+</testcase>
+<testcase name="painel do GESTOR › carrega com os números do estoque" classname="painel-e-permissoes.spec.ts" time="0.614">
+</testcase>
+<testcase name="painel do OPERADOR › carrega com os números do estoque" classname="painel-e-permissoes.spec.ts" time="0.55">
+</testcase>
+<testcase name="painel do COMPRADOR › carrega com os números do estoque" classname="painel-e-permissoes.spec.ts" time="0.764">
+</testcase>
+<testcase name="limites do operador › não vê o item de usuários no menu" classname="painel-e-permissoes.spec.ts" time="0.598">
+</testcase>
+<testcase name="limites do operador › abrindo /usuarios direto, cai na tela de acesso negado" classname="painel-e-permissoes.spec.ts" time="0.344">
+</testcase>
+<testcase name="limites do operador › não vê o botão de cadastrar pastilha" classname="painel-e-permissoes.spec.ts" time="0.432">
+</testcase>
+<testcase name="limites do comprador › só tem entrada no campo Tipo" classname="painel-e-permissoes.spec.ts" time="0.465">
+</testcase>
+</testsuite>
+<testsuite name="primeiro-acesso.spec.ts" timestamp="2026-09-20T01:12:58.037Z" tests="3" failures="0" skipped="0" time="3.637" errors="0">
+<testcase name="primeiro acesso › a senha temporária leva à troca obrigatória antes de qualquer tela" classname="primeiro-acesso.spec.ts" time="2.283">
+</testcase>
+<testcase name="primeiro acesso › a senha nova precisa seguir a política" classname="primeiro-acesso.spec.ts" time="1.352">
+</testcase>
+<testcase name="primeiro acesso › a sessão gravada do administrador já passou pela troca" classname="primeiro-acesso.spec.ts" time="0.002">
+</testcase>
+</testsuite>
+</testsuites>

@@ -43,7 +43,16 @@ const SAIDA_INTERROMPIDA = 130;
 const CODIGOS_DE_INTERRUPCAO = new Set([130, 3221225786]);
 
 const COMPOSE_TESTE = ["docker", "compose", "-f", "docker-compose.test.yml"];
-const COMPOSE_E2E = ["docker", "compose", "-f", "docker-compose.yml", "-f", "docker-compose.e2e.yml"];
+const COMPOSE_E2E = [
+  "docker",
+  "compose",
+  "--env-file",
+  ".env.e2e",
+  "-f",
+  "docker-compose.yml",
+  "-f",
+  "docker-compose.e2e.yml",
+];
 
 const PLANOS = {
   backend: {

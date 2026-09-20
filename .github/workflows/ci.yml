@@ -180,3 +180,49 @@ jobs:
       - name: Derruba o ambiente
         if: always()
         run: docker compose down -v
+
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+
+      - name: Instala as dependências
+        working-directory: e2e
+        run: npm ci
+
+      - name: Instala o navegador
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Sobe o ambiente de testes
+        run: docker compose --env-file .env.e2e -f docker-compose.yml -f docker-compose.e2e.yml up -d --build --wait
+
+      - name: Roda os testes ponta a ponta
+        run: npm run e2e
+
+      - name: Relatório como artefato
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-e2e
+          path: |
+            e2e/playwright-report/
+            tests/results/latest/e2e-junit.xml
+          retention-days: 30
+
+      - name: Logs em caso de falha
+        if: failure()
+        run: docker compose --env-file .env.e2e -f docker-compose.yml -f docker-compose.e2e.yml logs --no-color
+
+      - name: Derruba o ambiente
+        if: always()
+        run: docker compose --env-file .env.e2e -f docker-compose.yml -f docker-compose.e2e.yml down -v

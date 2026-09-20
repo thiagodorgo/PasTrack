@@ -51,20 +51,20 @@ Os caminhos são relativos a `backend/tests/` e `frontend/tests/`.
 
 ## Requisitos não funcionais
 
-| Requisito                             | O que prova                                                                                                         |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| RNF-01 rodar com Docker Compose       | [evidência da implantação](evidencias/2026-09-19-implantacao.md)                                                    |
-| RNF-02 subir com um comando           | mesma evidência e o `compose-smoke` do CI                                                                           |
-| RNF-03 backup e restauração           | mesma evidência                                                                                                     |
-| RNF-04 acesso por perfil no servidor  | `integration/permissoes.spec.ts`, `integration/cadastros-permissoes.spec.ts`, `unit/permissoes.spec.ts`; manual T14 |
-| RNF-05 ASVS nível 1                   | [autoavaliação](../seguranca/asvs-l1-checklist.md)                                                                  |
-| RNF-06 senha em hash, log sem segredo | `unit/politica-senha.spec.ts`, `unit/logger.spec.ts`, `unit/auditoria.spec.ts`                                      |
-| RNF-07 tempo de resposta              | [medição com volume](evidencias/2026-09-19-desempenho.md): 400 pastilhas e 30.000 movimentações, pior p95 de 22 ms  |
-| RNF-08 navegadores                    | sessão manual gravada, no Chromium                                                                                  |
-| RNF-09 teclado e leitor de tela       | as buscas dos testes de tela usam papel e rótulo acessível                                                          |
-| RNF-10 português do Brasil            | testes que fixam as mensagens, como `unit/validar-e-erros.spec.ts` e `pages/AlterarSenha.spec.tsx`                  |
-| RNF-11 suítes verdes com evidência    | CI obrigatório e [tests/results/](../../tests/results/README.md)                                                    |
-| RNF-12 decisões registradas           | [ADRs](../decisoes/README.md)                                                                                       |
+| Requisito                             | O que prova                                                                                                        |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| RNF-01 rodar com Docker Compose       | [evidência da implantação](evidencias/2026-09-19-implantacao.md)                                                   |
+| RNF-02 subir com um comando           | mesma evidência e o `compose-smoke` do CI                                                                          |
+| RNF-03 backup e restauração           | mesma evidência                                                                                                    |
+| RNF-04 acesso por perfil no servidor  | `security/rbac.spec.ts` (26 rotas × 4 perfis), `unit/permissoes.spec.ts` e os casos ponta a ponta; manual T14      |
+| RNF-05 ASVS nível 1                   | [autoavaliação](../seguranca/asvs-l1-checklist.md)                                                                 |
+| RNF-06 senha em hash, log sem segredo | `unit/politica-senha.spec.ts`, `unit/logger.spec.ts`, `unit/auditoria.spec.ts`                                     |
+| RNF-07 tempo de resposta              | [medição com volume](evidencias/2026-09-19-desempenho.md): 400 pastilhas e 30.000 movimentações, pior p95 de 22 ms |
+| RNF-08 navegadores                    | sessão manual gravada, no Chromium                                                                                 |
+| RNF-09 teclado e leitor de tela       | as buscas dos testes de tela usam papel e rótulo acessível                                                         |
+| RNF-10 português do Brasil            | testes que fixam as mensagens, como `unit/validar-e-erros.spec.ts` e `pages/AlterarSenha.spec.tsx`                 |
+| RNF-11 suítes verdes com evidência    | CI obrigatório e [tests/results/](../../tests/results/README.md)                                                   |
+| RNF-12 decisões registradas           | [ADRs](../decisoes/README.md)                                                                                      |
 
 ## Casos manuais
 
@@ -93,10 +93,20 @@ Uma sessão pelo navegador cobriu 20 casos do registro de movimentações, com c
 | T19  | Quantidade negativa                 | O formulário bloqueia                                 |
 | T20  | Quantidade vazia                    | O formulário bloqueia                                 |
 
+## Casos ponta a ponta
+
+A suíte de `e2e/` roda contra o sistema inteiro no ar. São 22 casos, em cinco frentes:
+
+| Frente              | O que cobre                                                                                                                                                                                     |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Login               | Entrada válida, senha errada sem revelar se o e-mail existe, revelar a senha e redirecionamento de quem não entrou (RF-01)                                                                      |
+| Primeiro acesso     | A senha temporária leva à troca obrigatória antes de qualquer tela, e a senha nova segue a política (RF-03, RN-09)                                                                              |
+| Painel e permissões | O painel carrega nos quatro perfis; o operador não vê usuários no menu, cai em acesso negado pela URL direta e não vê o botão de cadastrar pastilha; o comprador só tem entrada (RF-22, RNF-04) |
+| Ciclo do estoque    | A entrada muda o saldo mostrado, a saída acima do saldo é recusada com a quantidade disponível, e a reposição resolve o alerta sozinha (RF-14, RF-15, RF-18, RF-19, RN-01)                      |
+| Cadastros           | Fabricante com nome repetido, fornecedor com CNPJ validado e usuário com senha temporária mostrada uma única vez (RF-04, RF-09, RF-10)                                                          |
+
 ## Lacunas conhecidas
 
-| Lacuna                             | Plano                                                                  |
-| ---------------------------------- | ---------------------------------------------------------------------- |
-| Fluxos ponta a ponta automatizados | Suíte Playwright contra o Compose, com os cinco fluxos principais      |
-| Matriz de permissões rota por rota | Teste que percorre a matriz inteira e falha se surgir rota fora dela   |
-| Medição contínua de desempenho     | Hoje é uma medição pontual; repetir a cada mudança que toque consultas |
+| Lacuna                         | Plano                                                                  |
+| ------------------------------ | ---------------------------------------------------------------------- |
+| Medição contínua de desempenho | Hoje é uma medição pontual; repetir a cada mudança que toque consultas |

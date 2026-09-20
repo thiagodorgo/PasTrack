@@ -67,6 +67,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - Teste que percorre as 26 rotas da API com os quatro perfis e sem token, com o esperado vindo da matriz de permissões. Duas travas quebram o CI se uma rota nova ficar fora da tabela ou se o contrato divergir da matriz. (#39)
 - Botão que mostra e esconde a senha digitada, no login e na troca de senha. (#40)
 - As tabelas largas viram região com nome acessível e recebem foco, para quem navega pelo teclado conseguir rolá-las na horizontal. (#43)
+- Testes ponta a ponta com Playwright contra o sistema no ar, em ambiente próprio (`docker-compose.e2e.yml`, site em 8093 e banco em 5438): 22 casos cobrindo login, primeiro acesso, painel nos quatro perfis, limites de perfil, ciclo do estoque e cadastros. Um job `e2e` no CI sobe o ambiente, roda a suíte e publica o relatório. (#44)
 
 ### Modificado
 

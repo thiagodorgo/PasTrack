@@ -64,6 +64,22 @@ node scripts/gerar-doc-perfis.mjs --verificar
 
 `npm run test:relatorio` executa as suítes de backend e frontend, coleta a auditoria das dependências e grava resultados em `tests/results/latest/`. `npm run test:relatorio -- --suites=backend,frontend,e2e` inclui os testes ponta a ponta quando o ambiente E2E estiver preparado. O script sobe e derruba a pilha de teste com `down -v`; rode esse comando apenas em um ambiente isolado, sem outros testes usando a mesma pilha. O [protocolo de resultados](tests/results/README.md) explica como registrar evidências.
 
+### Testes ponta a ponta
+
+Eles rodam contra o sistema inteiro no ar, num ambiente próprio: projeto `pastrack-e2e`, site em `127.0.0.1:8093` e banco em `127.0.0.1:5438`. Ele não encosta na instalação de desenvolvimento nem no banco de teste compartilhado.
+
+```bash
+npm ci --prefix e2e
+npm run instalar-navegador --prefix e2e   # só na primeira vez
+docker compose --env-file .env.e2e -f docker-compose.yml -f docker-compose.e2e.yml up -d --build --wait
+npm run e2e
+docker compose --env-file .env.e2e -f docker-compose.yml -f docker-compose.e2e.yml down -v
+```
+
+O `.env.e2e` guarda só valores descartáveis, e por isso é versionado. O preparo global resolve a troca obrigatória de senha do administrador e grava uma sessão por perfil em `e2e/sessoes/`, que fica fora do Git por conter tokens.
+
+Para ver a última execução, use `npx playwright show-report` dentro de `e2e/`. Os casos usam papel e rótulo acessível, nunca classe de CSS: assim eles continuam valendo quando o visual mudar.
+
 ## Fluxo de trabalho
 
 Crie uma branch a partir da `main` atualizada. Use `tipo/descricao-em-kebab-case`, com um dos tipos `feat`, `fix`, `docs`, `test`, `chore`, `ci`, `refactor`, `style`, `perf` ou `build`. Mantenha cada mudança focada e explique no PR como foi verificada.

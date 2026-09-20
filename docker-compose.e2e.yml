@@ -1,0 +1,26 @@
+# Ambiente dos testes ponta a ponta: sobe o sistema inteiro em portas próprias, com dados de
+# demonstração, sem encostar na instalação de desenvolvimento nem no banco de teste do backend.
+#
+# Uso: docker compose --env-file .env.e2e -f docker-compose.yml -f docker-compose.e2e.yml up -d --build --wait
+name: pastrack-e2e
+
+services:
+  banco:
+    # !override troca a lista do arquivo base; sem isso as duas entradas disputariam a mesma porta
+    ports: !override
+      - "127.0.0.1:${DB_PORTA:-5438}:5432"
+    restart: "no"
+
+  api:
+    environment:
+      # a suíte faz muitas requisições em sequência: os limites por IP e por usuário não podem
+      # interferir. O limite de login fica folgado porque os casos de senha errada se repetem.
+      RATE_LIMIT_GLOBAL_MAX: "100000"
+      RATE_LIMIT_USUARIO_MAX: "100000"
+      RATE_LIMIT_LOGIN_MAX: "50"
+    restart: "no"
+
+  web:
+    ports: !override
+      - "127.0.0.1:${WEB_PORTA:-8093}:8080"
+    restart: "no"

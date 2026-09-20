@@ -9,6 +9,8 @@ build/
 .env.*
 !.env.example
 !.env.*.example
+# exceção: só valores descartáveis do ambiente dos testes ponta a ponta
+!.env.e2e
 
 # testes e cobertura (resultados versionados ficam em tests/results/<data>_<sha>/)
 coverage/
@@ -16,6 +18,8 @@ tests/results/latest/
 playwright-report/
 test-results/
 blob-report/
+# sessões gravadas pelos testes ponta a ponta: contêm tokens de acesso
+e2e/sessoes/
 
 # logs
 *.log

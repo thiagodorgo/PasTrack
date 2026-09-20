@@ -1,6 +1,6 @@
 {
   "name": "pastrack-backend",
-  "version": "0.2.0",
+  "version": "1.0.0-rc.1",
   "private": true,
   "description": "API do PasTrack - controle de estoque de pastilhas industriais",
   "engines": {

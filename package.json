@@ -1,6 +1,6 @@
 {
   "name": "pastrack",
-  "version": "0.2.0",
+  "version": "1.0.0-rc.1",
   "private": true,
   "description": "PasTrack: controle de estoque de pastilhas industriais (backend, frontend e testes ponta a ponta)",
   "engines": {

@@ -6,6 +6,10 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 
 ## [Não lançado]
 
+Nada ainda.
+
+## [1.0.0-rc.1] — 19/09/2026
+
 ### Adicionado
 
 - Fundação do repositório: `.gitignore`, `.gitattributes` com LF, `.editorconfig`, `.nvmrc` com Node 20, `.prettierrc` e `.dockerignore` em lista de permissão. (#8)

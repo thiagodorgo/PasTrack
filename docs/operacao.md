@@ -152,7 +152,7 @@ docker compose exec -e NOVA_SENHA api node dist/scripts/redefinir-senha-admin.js
 unset NOVA_SENHA
 ```
 
-O script só vale para ADMINISTRADOR. A senha dos outros perfis é redefinida por um administrador, na gestão de usuários. Enquanto a tela de usuários é provisória, isso é feito pela API, com `POST /api/usuarios/:id/redefinir-senha` ([contrato da API](api.md)).
+O script só vale para ADMINISTRADOR. A senha dos outros perfis é redefinida por um administrador, na tela de **Usuários**, pelo botão "Redefinir senha": ele gera uma senha temporária, mostrada uma única vez, e derruba as sessões abertas daquela pessoa. Pela API, a rota é `POST /api/usuarios/:id/redefinir-senha` ([contrato da API](api.md)).
 
 Mudar a `SEED_ADMIN_SENHA` não adianta: o seed nunca altera a senha de um administrador que já existe.
 
@@ -168,7 +168,7 @@ Depois, deixe a `SEED_ADMIN_SENHA` vazia e confira a proteção da pasta ([guia 
 
 ### Desativar uma conta de administrador comprometida
 
-O caminho normal é a gestão de usuários, com outro administrador: `PATCH /api/usuarios/:id/ativo`, enquanto a tela de usuários é provisória. A API recusa desativar o último administrador ativo e registra a desativação na auditoria.
+O caminho normal é a tela de **Usuários**, com outro administrador: o botão "Desativar", com confirmação. Pela API, a rota é `PATCH /api/usuarios/:id/ativo`. Nos dois casos, a API recusa desativar o último administrador ativo e registra a desativação na auditoria.
 
 Sem acesso à tela, desative pelo `psql`. Confira antes se sobra outro administrador ativo, porque o banco não tem essa trava:
 

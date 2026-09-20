@@ -1,3 +1,4 @@
+import { TabelaRolavel } from "./TabelaRolavel";
 import type { Movimentacao } from "../types";
 import { formatarDataHora, formatarQuantidade } from "../utils/formato";
 
@@ -23,7 +24,7 @@ export function TabelaMovimentacoes({
   }
 
   return (
-    <div className="tabela-rolavel">
+    <TabelaRolavel nome={legenda}>
       <table>
         <caption className="sr-only">{legenda}</caption>
         <thead>
@@ -57,6 +58,6 @@ export function TabelaMovimentacoes({
           ))}
         </tbody>
       </table>
-    </div>
+    </TabelaRolavel>
   );
 }

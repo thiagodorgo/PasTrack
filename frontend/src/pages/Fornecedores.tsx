@@ -1,3 +1,4 @@
+import { TabelaRolavel } from "../components/TabelaRolavel";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { Carregando } from "../components/Carregando";
 import { Mensagem } from "../components/Mensagem";
@@ -195,7 +196,7 @@ export function Fornecedores() {
         ) : fornecedores.length === 0 ? (
           <p className="texto-suave">Nenhum fornecedor cadastrado.</p>
         ) : (
-          <div className="tabela-rolavel">
+          <TabelaRolavel nome="Fornecedores cadastrados">
             <table>
               <caption className="sr-only">Fornecedores cadastrados</caption>
               <thead>
@@ -232,7 +233,7 @@ export function Fornecedores() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </TabelaRolavel>
         )}
       </div>
     </>

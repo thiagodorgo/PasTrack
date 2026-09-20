@@ -66,6 +66,7 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 - Evidências de execução manual em `docs/testes/evidencias/`: implantação em clone limpo com backup e restauração, os 20 casos manuais de movimentação e a medição de desempenho. (#29, #32, #33)
 - Teste que percorre as 26 rotas da API com os quatro perfis e sem token, com o esperado vindo da matriz de permissões. Duas travas quebram o CI se uma rota nova ficar fora da tabela ou se o contrato divergir da matriz. (#39)
 - Botão que mostra e esconde a senha digitada, no login e na troca de senha. (#40)
+- As tabelas largas viram região com nome acessível e recebem foco, para quem navega pelo teclado conseguir rolá-las na horizontal. (#43)
 
 ### Modificado
 

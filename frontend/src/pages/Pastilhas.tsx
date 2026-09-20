@@ -1,3 +1,4 @@
+import { TabelaRolavel } from "../components/TabelaRolavel";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { Carregando } from "../components/Carregando";
 import { Mensagem } from "../components/Mensagem";
@@ -253,7 +254,7 @@ export function Pastilhas() {
         ) : pastilhas.length === 0 ? (
           <p className="texto-suave">Nenhuma pastilha encontrada.</p>
         ) : (
-          <div className="tabela-rolavel">
+          <TabelaRolavel nome="Pastilhas cadastradas">
             <table>
               <caption className="sr-only">Pastilhas cadastradas</caption>
               <thead>
@@ -301,7 +302,7 @@ export function Pastilhas() {
                 })}
               </tbody>
             </table>
-          </div>
+          </TabelaRolavel>
         )}
       </div>
     </>

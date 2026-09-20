@@ -1,3 +1,4 @@
+import { TabelaRolavel } from "../components/TabelaRolavel";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { Carregando } from "../components/Carregando";
 import { Mensagem } from "../components/Mensagem";
@@ -342,7 +343,7 @@ export function Usuarios() {
         ) : usuarios.length === 0 ? (
           <p className="texto-suave">Nenhum usuário cadastrado.</p>
         ) : (
-          <div className="tabela-rolavel">
+          <TabelaRolavel nome="Usuários cadastrados">
             <table>
               <caption className="sr-only">Usuários cadastrados</caption>
               <thead>
@@ -410,7 +411,7 @@ export function Usuarios() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </TabelaRolavel>
         )}
       </div>
     </>

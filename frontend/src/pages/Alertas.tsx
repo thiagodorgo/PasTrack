@@ -1,3 +1,4 @@
+import { TabelaRolavel } from "../components/TabelaRolavel";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Carregando } from "../components/Carregando";
 import { Mensagem } from "../components/Mensagem";
@@ -158,7 +159,7 @@ export function Alertas() {
         ) : alertas.length === 0 ? (
           <p className="texto-suave">{LISTA_VAZIA[filtro]}</p>
         ) : (
-          <div className="tabela-rolavel">
+          <TabelaRolavel nome="Alertas de reposição">
             <table>
               <caption className="sr-only">Alertas de reposição</caption>
               <thead>
@@ -211,7 +212,7 @@ export function Alertas() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </TabelaRolavel>
         )}
       </div>
     </>

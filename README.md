@@ -128,11 +128,6 @@ docs/           documentação e diagramas do projeto
 scripts/        geradores e o relatório de testes
 tests/results/  evidências versionadas das execuções de teste
 
-
-
-
-## Equipe
-
 - Thiago Araújo
 - Fabrício Alves
 - Joseph Correa

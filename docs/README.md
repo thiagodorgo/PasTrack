@@ -42,10 +42,6 @@
 | [tests/results/README.md](../tests/results/README.md)            | Estrutura e protocolo dos resultados de testes versionados.                                                 |
 | [testes/evidencias/](testes/evidencias/)                         | Evidências de execuções manuais, como a implantação em clone limpo com backup e restauração.                |
 | [tests/results/HISTORICO.md](../tests/results/HISTORICO.md)      | Histórico das execuções registradas. A primeira é a `2026-09-14_fb30118`.                                   |
-
-
-
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 | [CHANGELOG.md](../CHANGELOG.md)                                  | Registro de mudanças por versão.                                                                            |
 | [CONTRIBUTING.md](../CONTRIBUTING.md)                            | Como contribuir: ambiente, testes, fluxo de branches e commits, migrations e estilo.                        |
 | [SECURITY.md](../SECURITY.md)                                    | Como relatar uma vulnerabilidade, versões suportadas, controles em uso e riscos aceitos.                    |

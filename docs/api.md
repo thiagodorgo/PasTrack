@@ -126,7 +126,7 @@ Público. Existente. Usado pelo Docker, pelo CI e pelo monitoramento; não traz 
 Resposta `200`:
 
 ```json
-{ "status": "ok", "banco": "ok", "versao": "0.2.0", "uptimeSegundos": 3600 }
+{ "status": "ok", "banco": "ok", "versao": "1.0.0-rc.1", "uptimeSegundos": 3600 }
 ```
 
 Erro `503`, quando o banco não responde. Segue o envelope de erro e mantém os campos de diagnóstico:
@@ -136,7 +136,7 @@ Erro `503`, quando o banco não responde. Segue o envelope de erro e mantém os 
   "erro": "Banco de dados indisponível",
   "status": "erro",
   "banco": "indisponivel",
-  "versao": "0.2.0",
+  "versao": "1.0.0-rc.1",
   "uptimeSegundos": 3600
 }
 ```

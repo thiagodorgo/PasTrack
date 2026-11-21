@@ -18,8 +18,11 @@ Os testes de integração rodam **em série**, cada um começando com o banco li
 
 | Suíte    | Testes | Falhas | Cobertura de linhas |
 | -------- | -----: | -----: | ------------------: |
-| backend  |    574 |      0 |              98,56% |
-| frontend |    254 |      0 |              98,32% |
+| backend  |    725 |      0 |              98,56% |
+| frontend |    300 |      0 |              97,14% |
+| e2e      |     22 |      0 |                   — |
+
+Execução de referência: `2026-09-19_17e4380`.
 
 O histórico completo fica em [tests/results/HISTORICO.md](../tests/results/HISTORICO.md), e cada execução registrada tem a própria pasta com o JUnit e o resumo de cobertura.
 
@@ -73,7 +76,7 @@ O `backend/vitest.config.mts` define o ambiente das suítes do backend. Nenhum v
 | Variável                                          | Valor nos testes                   | Por quê                                                                                 |
 | ------------------------------------------------- | ---------------------------------- | --------------------------------------------------------------------------------------- |
 | `DATABASE_URL`                                    | banco de teste em `127.0.0.1:5433` | Separado do banco de desenvolvimento; o endereço IPv4 evita a espera do IPv6 no Windows |
-| `DATABASE_URL_TESTE`                              | opcional                           | Aponta para outro banco, quando várias frentes rodam ao mesmo tempo                     |
+| `DATABASE_URL_TESTE`                              | opcional                           | Aponta para outro banco, quando várias pessoas rodam os testes ao mesmo tempo           |
 | `BCRYPT_CUSTO`                                    | `4`                                | Mantém a suíte rápida; em produção o mínimo é 12                                        |
 | `JWT_SECRET`, `JWT_EXPIRES_IN`                    | valores fixos de teste             | Tornam o token previsível                                                               |
 | `RATE_LIMIT_GLOBAL_MAX`, `RATE_LIMIT_USUARIO_MAX` | altos                              | Os limites gerais não podem interferir; o limite de login fica no padrão                |

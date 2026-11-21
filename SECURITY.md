@@ -6,11 +6,11 @@ Abra a aba **Security** do repositório no GitHub e escolha **Report a vulnerabi
 
 ## Versão e escopo
 
-| Versão             | Situação                                                                     |
-| ------------------ | ---------------------------------------------------------------------------- |
-| `main` / `0.2.x`   | Código em desenvolvimento, com correções de segurança avaliadas nesta linha. |
-| `1.0.0`            | Entrega planejada; será a linha suportada após a publicação.                 |
-| Versões anteriores | Sem manutenção.                                                              |
+| Versão                | Situação                                                                     |
+| --------------------- | ---------------------------------------------------------------------------- |
+| `main` / `1.0.0-rc.1` | Versão candidata entregue, com correções de segurança avaliadas nesta linha. |
+| `1.0.0`               | Próxima versão estável; será a linha suportada após a publicação.            |
+| Versões anteriores    | Sem manutenção.                                                              |
 
 O escopo inclui a interface web, a API, o esquema de dados e a implantação descrita no [README](README.md). Ambientes locais e dados de demonstração não devem usar segredos de produção.
 

@@ -55,7 +55,7 @@ Após alterar o saldo, o service grava a movimentação e chama [avaliarAlerta](
 
 ## Decisões de arquitetura
 
-Os registros abaixo são entregues pela frente de decisões:
+As decisões que moldaram a arquitetura estão registradas nos ADRs abaixo:
 
 - [ADR-0001 — manter a stack e evoluir](decisoes/ADR-0001-manter-a-stack-e-evoluir.md)
 - [ADR-0002 — migrations versionadas e Docker Compose](decisoes/ADR-0002-migrations-versionadas-e-docker-compose.md)

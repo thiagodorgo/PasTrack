@@ -12,7 +12,7 @@ O sistema substitui o controle em planilhas por registros centralizados: cadastr
 - **Alerta automático de reposição:** abre quando o saldo chega ao estoque mínimo e fecha sozinho quando a reposição passa dele. Mínimo zero desliga o alerta.
 - **Rastreabilidade:** toda movimentação guarda quem registrou, quando e com qual documento; cadastros e senhas deixam trilha de auditoria.
 - **Acesso por perfil:** administrador, gestor, operador e comprador, com a permissão conferida no servidor.
-- **Dez telas:** login, primeiro acesso, painel, pastilhas, movimentações, alertas, fabricantes, fornecedores, usuários e a página de acesso negado.
+- **Dez telas:** login, primeiro acesso, painel, pastilhas, movimentações, alertas, fabricantes, fornecedores, usuários e a página de acesso negado, além da página de endereço não encontrado.
 
 ## Modelagem de dados
 
@@ -67,21 +67,21 @@ O banco fica acessível só nesta máquina, em `localhost:5432` (`DB_PORTA`), pa
 
 ```bash
 cd backend
-cp .env.example .env   # preencha JWT_SECRET e SEED_ADMIN_SENHA (instruções no próprio arquivo)
-npm install
+cp .env.example .env   # preencha JWT_SECRET; SEED_ADMIN_SENHA é opcional em desenvolvimento (instruções no próprio arquivo)
+npm ci
 npm run db:deploy      # aplica as migrations versionadas
 npm run db:seed        # cria o administrador inicial
 npm run dev
 ```
 
-A API sobe em http://localhost:3333. O banco pode ser um PostgreSQL local ou o do Docker Compose (`docker compose up -d banco`, com a senha de `POSTGRES_PASSWORD` na `DATABASE_URL`).
+A API sobe em http://localhost:3333. O banco pode ser um PostgreSQL local ou o do Docker Compose: na raiz, copie `.env.example` para `.env`, preencha `POSTGRES_PASSWORD` e `JWT_SECRET`, rode `docker compose up -d banco` e use a mesma senha de `POSTGRES_PASSWORD` na `DATABASE_URL` do `backend/.env`.
 
 ## Como rodar o front-end
 
 ```bash
 cd frontend
 cp .env.example .env
-npm install
+npm ci
 npm run dev
 ```
 
@@ -96,12 +96,15 @@ Para carregar dados de demonstração (fabricantes, fornecedores, pastilhas e um
 ## Testes
 
 ```bash
+npm run instalar                                         # dependências do backend e do frontend
 docker compose -f docker-compose.test.yml up -d --wait   # banco de teste, na porta 5433
 npm run test:tudo                                        # backend e frontend
 docker compose -f docker-compose.test.yml down -v
 ```
 
-A última execução registrada tem **574 testes no backend** e **295 no frontend**, com cobertura de linhas acima de 98% nos dois. As evidências ficam em [tests/results/](tests/results/README.md), e a estratégia em [docs/testes.md](docs/testes.md).
+Os testes ponta a ponta (Playwright) rodam num ambiente próprio, com os comandos descritos em [docs/testes.md](docs/testes.md#ponta-a-ponta).
+
+A última execução registrada (`2026-09-19_17e4380`) tem **725 testes no backend**, **300 no frontend** e **22 ponta a ponta**, todos aprovados, com cobertura de linhas de 98,56% no backend e 97,14% no frontend. As evidências ficam em [tests/results/](tests/results/README.md), e a estratégia em [docs/testes.md](docs/testes.md).
 
 Para conferir uma instalação recém-criada de ponta a ponta, use `npm run verificar:implantacao`, descrito no [guia de implantação](docs/deploy.md#conferir-a-instalação).
 
@@ -127,8 +130,15 @@ e2e/            testes ponta a ponta com Playwright
 docs/           documentação e diagramas do projeto
 scripts/        geradores e o relatório de testes
 tests/results/  evidências versionadas das execuções de teste
+```
 
-- Thiago Araújo
-- Fabrício Alves
-- Joseph Correa
-- Péttrin Miranda
+## Equipe
+
+| Integrante      | GitHub                                                                       |
+| --------------- | ---------------------------------------------------------------------------- |
+| Thiago Araújo   | [@thiagodorgo](https://github.com/thiagodorgo)                               |
+| Fabrício Alves  | [@Fabricio-P-Alves](https://github.com/Fabricio-P-Alves)                     |
+| Joseph Correa   | [@CorreaJoseph](https://github.com/CorreaJoseph)                             |
+| Péttrin Miranda | [@desenvolvimentoexpansetech](https://github.com/desenvolvimentoexpansetech) |
+
+O fluxo de trabalho (branches, mensagens de commit e pull requests) está descrito em [CONTRIBUTING.md](CONTRIBUTING.md).

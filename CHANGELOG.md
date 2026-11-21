@@ -6,7 +6,17 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 
 ## [Não lançado]
 
-Nada ainda.
+### Adicionado
+
+- Modelos de pull request e de issue, `CODEOWNERS`, configuração do Dependabot e `.mailmap` com o nome de cada integrante.
+- Seção Equipe do README com a conta do GitHub de cada integrante.
+
+### Corrigido
+
+- README e índice da documentação: seção Equipe, fechamento do bloco da estrutura do projeto e tabela do índice restaurados.
+- Números de testes do README, de `docs/testes.md` e do roteiro da demonstração alinhados à última execução registrada (`2026-09-19_17e4380`).
+- Instruções do README: `npm ci` no lugar de `npm install`, instalação antes dos testes e uso do banco do Docker Compose em desenvolvimento.
+- Dependências de produção com alerta de auditoria atualizadas dentro das faixas já declaradas: axios, follow-redirects e zod no frontend; qs, body-parser, proxy-addr, ip-address e zod no backend. O passo de auditoria do CI volta a passar.
 
 ## [1.0.0-rc.1] — 19/09/2026
 

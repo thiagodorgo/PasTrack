@@ -192,7 +192,7 @@ No PowerShell, use `curl.exe`: o `curl` sozinho é outro comando.
 A resposta esperada é parecida com:
 
 ```json
-{ "status": "ok", "banco": "ok", "versao": "0.2.0", "uptimeSegundos": 42 }
+{ "status": "ok", "banco": "ok", "versao": "1.0.0-rc.1", "uptimeSegundos": 42 }
 ```
 
 Com o banco fora do ar, a resposta é 503, com `"erro": "Banco de dados indisponível"` e `"banco": "indisponivel"`.

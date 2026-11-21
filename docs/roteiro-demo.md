@@ -104,7 +104,7 @@ Compare as duas janelas:
 
 Sem tela, ou mostrando o repositório:
 
-- **869 testes automatizados** rodam a cada alteração: 574 na API e 295 nas telas, com cobertura de linhas acima de 98% nos dois lados.
+- **1.047 testes automatizados** rodam a cada alteração: 725 na API, 300 nas telas e 22 ponta a ponta, com cobertura de linhas de 98,56% na API e 97,14% nas telas.
 - **A integração contínua é obrigatória**: nada entra sem os testes, a análise de código e a subida completa em container passarem.
 - **A segurança foi avaliada** contra o ASVS nível 1, com cada desvio registrado e justificado, e um modelo de ameaças escrito.
 - **A instalação foi testada em clone limpo**, com backup e restauração comprovados.

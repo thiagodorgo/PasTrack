@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Vulnerabilidade de segurança
+    url: https://github.com/thiagodorgo/PasTrack/blob/main/SECURITY.md
+    about: Não abra issue pública para falhas de segurança. Siga as instruções do SECURITY.md.

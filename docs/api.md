@@ -274,7 +274,7 @@ O campo tem padrão `true` no banco: o administrador inicial criado pelo seed ta
 
 ### Limites de requisição
 
-- Toda rota de `/api`, inclusive o login e o health check, tem um limite geral de `RATE_LIMIT_GLOBAL_MAX` requisições por minuto para cada IP (padrão 300), aplicado antes da autenticação. Ao estourar, responde `429` com `codigo: "MUITAS_TENTATIVAS"` e `Retry-After`.
+- Toda rota de `/api`, inclusive o login e o health check, tem um limite geral de `RATE_LIMIT_GLOBAL_MAX` requisições por minuto para cada IP (padrão 1000), aplicado antes da autenticação. Ao estourar, responde `429` com `codigo: "MUITAS_TENTATIVAS"` e `Retry-After`.
 - As respostas trazem os cabeçalhos `RateLimit` e `RateLimit-Policy` (rascunho 8 do IETF). O CORS expõe `Retry-After` e `X-Request-Id` ao frontend.
 
 ## 5. Usuários

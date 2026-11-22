@@ -10,12 +10,16 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 
 - Modelos de pull request e de issue, `CODEOWNERS`, configuração do Dependabot e `.mailmap` com o nome de cada integrante.
 - Seção Equipe do README com a conta do GitHub de cada integrante.
+- README principal reescrito como porta de entrada: contexto do projeto, telas, arquitetura, tecnologias com versões, passo a passo de execução, usuários de demonstração, testes, problemas comuns, estrutura e fluxo de contribuição.
+- READMEs próprios para `backend/`, `frontend/`, `e2e/` e `scripts/`, e capturas das telas em `docs/imagens/`.
+- Comentários de documentação nos arquivos de rotas, controllers, services e telas que ainda não tinham.
 
 ### Corrigido
 
 - README e índice da documentação: seção Equipe, fechamento do bloco da estrutura do projeto e tabela do índice restaurados.
 - Números de testes do README, de `docs/testes.md` e do roteiro da demonstração alinhados à última execução registrada (`2026-09-19_17e4380`).
 - Instruções do README: `npm ci` no lugar de `npm install`, instalação antes dos testes e uso do banco do Docker Compose em desenvolvimento.
+- Limite global de requisições por IP no contrato da API: o padrão é 1000 por minuto, e não 300.
 - Dependências de produção com alerta de auditoria atualizadas dentro das faixas já declaradas: axios, follow-redirects e zod no frontend; qs, body-parser, proxy-addr, ip-address e zod no backend. O passo de auditoria do CI volta a passar.
 
 ## [1.0.0-rc.1] — 19/09/2026

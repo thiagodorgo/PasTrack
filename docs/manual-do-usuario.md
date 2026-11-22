@@ -31,11 +31,11 @@ A senha precisa:
 - não conter a parte do seu e-mail antes do `@`;
 - não ser uma senha óbvia, como `admin123456`.
 
-A tela mostra o que ainda falta enquanto você digita. Guarde a senha num gerenciador de senhas; ninguém no sistema consegue vê-la depois.
+Abaixo do campo **Nova senha** fica um lembrete do tamanho e da exigência de letra e número; se faltar alguma coisa, a tela aponta o que corrigir quando você clica em **Salvar nova senha**. Guarde a senha num gerenciador de senhas; ninguém no sistema consegue vê-la depois.
 
 ### Sair
 
-O botão **Sair**, no alto da tela, encerra a sessão. A sessão também cai sozinha depois de 8 horas, e na hora em que um administrador desativa a sua conta ou muda o seu perfil.
+Para encerrar a sessão, clique no seu nome, no pé do menu lateral, e escolha **Sair**. O mesmo menu tem **Alterar senha**. A sessão também cai sozinha depois de 8 horas, e na hora em que um administrador desativa a sua conta ou muda o seu perfil.
 
 ## O que cada perfil pode
 
@@ -49,7 +49,7 @@ O botão **Sair**, no alto da tela, encerra a sessão. A sessão também cai soz
 | Resolver alerta à mão           |      sim      |  sim   |   não    |    não    |
 | Gerenciar usuários              |      sim      |  não   |   não    |    não    |
 
-O menu esconde o que o seu perfil não pode fazer. Se você abrir um endereço direto sem ter permissão, o sistema mostra a tela "Sem permissão".
+O menu esconde o que o seu perfil não pode fazer. Se você abrir um endereço direto sem ter permissão, o sistema mostra a tela "Acesso não permitido".
 
 ## Painel
 
@@ -57,7 +57,7 @@ O menu esconde o que o seu perfil não pode fazer. Se você abrir um endereço d
 
 - o total de pastilhas cadastradas;
 - quantos alertas estão abertos;
-- os **itens críticos**, isto é, as pastilhas que estão no estoque mínimo ou abaixo dele;
+- os **itens críticos**, isto é, as pastilhas que estão no estoque mínimo ou abaixo dele, do mais urgente ao menos, cada um com uma barra que compara o saldo ao mínimo;
 - as últimas movimentações registradas.
 
 Use o painel no começo do turno: ele responde em um olhar o que está faltando.
@@ -91,7 +91,7 @@ O saldo começa em zero. Para ter estoque, registre uma entrada.
 
 ### Editar
 
-O botão **Editar** abre a mesma ficha preenchida. Dá para mudar a descrição, o modelo, a aplicação, a unidade, o estoque mínimo e o fabricante.
+O botão de lápis, no fim da linha da pastilha, abre a mesma ficha preenchida. Dá para mudar a descrição, o modelo, a aplicação, a unidade, o estoque mínimo e o fabricante.
 
 O **código não muda** depois do cadastro, e o **saldo não é editável**: ele só muda por movimentação. Os dois aparecem na ficha como texto, para conferência.
 
@@ -105,12 +105,13 @@ Mudar o estoque mínimo vale na hora: se o saldo já estiver no novo mínimo, o 
 
 Use quando chega pastilha nova.
 
-1. Escolha o tipo **Entrada**.
-2. Escolha a **pastilha**.
-3. Informe a **quantidade**, de 1 a 1.000.000.
-4. Escolha o **fornecedor**. Na entrada ele é obrigatório: é o que permite saber de quem veio cada lote.
-5. Preencha, se quiser, o **documento** (nota fiscal, ordem de compra) e a **observação**.
-6. Clique em **Registrar**.
+1. Clique em **Nova movimentação** e escolha **Entrada**. Abre o cartão "Nova entrada".
+2. Escolha a **Pastilha**. O saldo atual aparece ao lado de cada item.
+3. Informe a **Quantidade**, de 1 a 1.000.000.
+4. Preencha, se quiser, o **Nº da nota fiscal (NF)**.
+5. Escolha o **Fornecedor**. Na entrada ele é obrigatório: é o que permite saber de quem veio cada lote.
+6. Escreva, se ajudar, a **Observação**.
+7. Clique em **Registrar entrada**. **Cancelar** fecha o cartão sem registrar.
 
 O saldo sobe na hora, e a movimentação aparece no histórico logo abaixo.
 
@@ -118,16 +119,16 @@ O saldo sobe na hora, e a movimentação aparece no histórico logo abaixo.
 
 Use quando a pastilha vai para a máquina.
 
-1. Escolha o tipo **Saída**. O perfil Comprador não tem essa opção.
+1. Clique em **Nova movimentação** e escolha **Saída**. Abre o cartão "Nova saída". O perfil Comprador não tem essa opção.
 2. Escolha a pastilha e a quantidade.
-3. Informe o documento, normalmente a ordem de serviço, e a observação, se ajudar.
-4. Clique em **Registrar**.
+3. Informe o **Nº da ordem de serviço (OS)** e a observação, se ajudar.
+4. Clique em **Registrar saída**.
 
 A saída não tem fornecedor. Se a quantidade for maior que o saldo, o sistema recusa e diz quanto há em estoque: **o saldo nunca fica negativo**.
 
 ### Consultar o histórico
 
-O histórico mostra data, tipo, pastilha, quantidade, fornecedor, responsável, documento e observação. Dá para filtrar por pastilha, por tipo e por período, e a lista é paginada.
+O histórico mostra as 100 movimentações mais recentes, da mais nova para a mais antiga, com data, tipo, pastilha, quantidade, documento e fornecedor (na mesma coluna) e responsável. A observação aparece ao parar o mouse sobre o documento.
 
 ### Corrigir um lançamento errado
 
@@ -143,7 +144,7 @@ O mesmo vale para ajuste de inventário: se a contagem física não bate, regist
 
 Um alerta abre **sozinho** quando o saldo de uma pastilha chega ao estoque mínimo ou fica abaixo dele. E fecha **sozinho** quando uma entrada leva o saldo acima do mínimo.
 
-Na tela, os botões **Abertos**, **Resolvidos** e **Todos** filtram a lista. Cada linha mostra a pastilha, o saldo, o mínimo, quando o alerta abriu e como foi resolvido: a data com o nome de quem resolveu, ou "automaticamente pela reposição".
+Na tela, os botões **Abertos**, **Resolvidos** e **Todos** filtram a lista. Cada linha mostra a pastilha, o saldo, o mínimo e quando o alerta abriu. No alerta aberto aparece quanto falta para chegar ao mínimo; no resolvido, como foi resolvido: a data com o nome de quem resolveu, ou "automaticamente pela reposição".
 
 Administrador e Gestor podem **resolver um alerta à mão**, com confirmação. Use isso quando a reposição já está encaminhada, por exemplo a compra já foi feita, e o alerta não deve mais aparecer como pendente. Resolver o alerta **não muda o saldo**.
 
@@ -169,9 +170,11 @@ Entregue a senha à pessoa. Ela vai trocá-la no primeiro acesso. Se a senha se 
 
 ### Editar, desativar e reativar
 
+Na linha de cada usuário fica o botão **Editar**; as outras ações ficam no menu de três pontos ao lado dele.
+
 - **Editar** muda o nome e o perfil. O e-mail não muda depois do cadastro.
-- **Desativar** tira o acesso na hora, inclusive de quem já está logado. O histórico da pessoa continua no sistema.
-- **Reativar** devolve o acesso com a mesma senha de antes.
+- **Desativar usuário** tira o acesso na hora, inclusive de quem já está logado. O histórico da pessoa continua no sistema.
+- **Reativar usuário** devolve o acesso com a mesma senha de antes.
 - **Redefinir senha** gera uma senha temporária nova e derruba as sessões abertas daquela pessoa.
 
 O usuário de quem sai da empresa deve ser **desativado, não apagado**: o nome dele aparece nas movimentações que registrou, e apagar quebraria o histórico.
@@ -180,16 +183,16 @@ O sistema não deixa você desativar a si mesmo, rebaixar o próprio perfil nem 
 
 ## Quando alguma coisa dá errado
 
-| O que aparece                                   | O que aconteceu e o que fazer                                                                                  |
-| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| "Saldo insuficiente: há 3 un em estoque"        | A saída é maior que o saldo. Confira a contagem física: se houver diferença, registre o ajuste com observação. |
-| "Selecione um item da lista"                    | Falta escolher a pastilha ou o fornecedor.                                                                     |
-| "Já existe um fabricante com este nome"         | O cadastro já existe. Procure na lista antes de criar outro.                                                   |
-| "CNPJ inválido"                                 | Os dígitos verificadores não batem. Confira o número na nota fiscal.                                           |
-| "Acesso negado para este perfil"                | A ação não é do seu perfil. Peça a um gestor ou administrador.                                                 |
-| "Sessão expirada. Entre novamente."             | Passaram-se mais de 8 horas, ou a sua conta mudou. Entre de novo.                                              |
-| "Muitas tentativas de login"                    | Cinco senhas erradas em 15 minutos. Espere alguns minutos.                                                     |
-| A tela não carrega, ou aparece erro do servidor | Avise quem cuida do servidor: o [manual de operação](operacao.md) tem o passo a passo de diagnóstico.          |
+| O que aparece                                       | O que aconteceu e o que fazer                                                                                  |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| "Saldo insuficiente: há 3 un em estoque"            | A saída é maior que o saldo. Confira a contagem física: se houver diferença, registre o ajuste com observação. |
+| "Selecione um item da lista"                        | Falta escolher a pastilha ou o fornecedor.                                                                     |
+| "Já existe um fabricante com este nome"             | O cadastro já existe. Procure na lista antes de criar outro.                                                   |
+| "CNPJ inválido"                                     | Os dígitos verificadores não batem. Confira o número na nota fiscal.                                           |
+| "Acesso negado para este perfil"                    | A ação não é do seu perfil. Peça a um gestor ou administrador.                                                 |
+| "Sua sessão expirou. Entre de novo para continuar." | Passaram-se mais de 8 horas, ou a sua conta mudou. Entre de novo.                                              |
+| "Muitas tentativas de login"                        | Cinco senhas erradas em 15 minutos. Espere alguns minutos.                                                     |
+| A tela não carrega, ou aparece erro do servidor     | Avise quem cuida do servidor: o [manual de operação](operacao.md) tem o passo a passo de diagnóstico.          |
 
 ## Boas práticas
 

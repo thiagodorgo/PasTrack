@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 
+/** Destino do Protegido quando o perfil não tem a permissão exigida pela rota, como /usuarios. */
 export function SemPermissao() {
   return (
     <>

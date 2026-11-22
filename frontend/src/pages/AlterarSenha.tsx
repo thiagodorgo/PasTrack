@@ -40,7 +40,7 @@ function errosDoServidor(erro: unknown): ErrosDosCampos {
 }
 
 /**
- * Troca de senha, voluntária (pelo cabeçalho) ou obrigatória (senha temporária).
+ * Troca de senha, voluntária (pelo menu do usuário, no rodapé do menu lateral) ou obrigatória (senha temporária).
  * No sucesso, grava o token novo devolvido pela API e vai ao painel.
  */
 export function AlterarSenha() {

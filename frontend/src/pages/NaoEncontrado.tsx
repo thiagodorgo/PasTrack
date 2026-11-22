@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 
+/** Página de endereço inexistente, aberta pela rota curinga do App, com link de volta ao painel. */
 export function NaoEncontrado() {
   return (
     <>

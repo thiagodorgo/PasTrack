@@ -126,7 +126,7 @@ Público. Existente. Usado pelo Docker, pelo CI e pelo monitoramento; não traz 
 Resposta `200`:
 
 ```json
-{ "status": "ok", "banco": "ok", "versao": "0.2.0", "uptimeSegundos": 3600 }
+{ "status": "ok", "banco": "ok", "versao": "1.0.0-rc.1", "uptimeSegundos": 3600 }
 ```
 
 Erro `503`, quando o banco não responde. Segue o envelope de erro e mantém os campos de diagnóstico:
@@ -136,7 +136,7 @@ Erro `503`, quando o banco não responde. Segue o envelope de erro e mantém os 
   "erro": "Banco de dados indisponível",
   "status": "erro",
   "banco": "indisponivel",
-  "versao": "0.2.0",
+  "versao": "1.0.0-rc.1",
   "uptimeSegundos": 3600
 }
 ```
@@ -274,7 +274,7 @@ O campo tem padrão `true` no banco: o administrador inicial criado pelo seed ta
 
 ### Limites de requisição
 
-- Toda rota de `/api`, inclusive o login e o health check, tem um limite geral de `RATE_LIMIT_GLOBAL_MAX` requisições por minuto para cada IP (padrão 300), aplicado antes da autenticação. Ao estourar, responde `429` com `codigo: "MUITAS_TENTATIVAS"` e `Retry-After`.
+- Toda rota de `/api`, inclusive o login e o health check, tem um limite geral de `RATE_LIMIT_GLOBAL_MAX` requisições por minuto para cada IP (padrão 1000), aplicado antes da autenticação. Ao estourar, responde `429` com `codigo: "MUITAS_TENTATIVAS"` e `Retry-After`.
 - As respostas trazem os cabeçalhos `RateLimit` e `RateLimit-Policy` (rascunho 8 do IETF). O CORS expõe `Retry-After` e `X-Request-Id` ao frontend.
 
 ## 5. Usuários

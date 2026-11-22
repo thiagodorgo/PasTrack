@@ -95,7 +95,7 @@ Uma sessão pelo navegador cobriu 20 casos do registro de movimentações, com c
 
 ## Casos ponta a ponta
 
-A suíte de `e2e/` roda contra o sistema inteiro no ar. São 22 casos, em cinco frentes:
+A suíte de `e2e/` roda contra o sistema inteiro no ar. São 22 casos, em cinco arquivos:
 
 | Frente              | O que cobre                                                                                                                                                                                     |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

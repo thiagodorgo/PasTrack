@@ -10,6 +10,12 @@ import {
   criarPastilhaSchema,
 } from "../schemas/pastilha.schema";
 
+/**
+ * Rotas de /api/pastilhas, montadas depois do autenticar e do exigirSenhaAtualizada.
+ * - GET / e GET /:id: qualquer perfil autenticado. A listagem aceita busca e o filtro de críticas.
+ * - POST / e PUT /:id: permissão gerenciarPastilhas (ADMINISTRADOR e GESTOR).
+ * O saldo não muda por aqui, só por movimentação.
+ */
 export const pastilhaRotas = Router();
 
 // a permissão vem antes da validação: quem não pode alterar recebe 403 sem ver as regras do corpo

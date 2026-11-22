@@ -6,7 +6,7 @@ Aceita, 14/09/2026.
 
 ## Contexto
 
-No MVP, os controllers liam o `req.body` e repassavam o conteúdo aos services. Dois defeitos vieram disso. Os dois estão registrados como `it.fails` em `backend/tests/security/pendencias.spec.ts`:
+No MVP, os controllers liam o `req.body` e repassavam o conteúdo aos services. Dois defeitos vieram disso. Os dois foram registrados como `it.fails` em `backend/tests/security/pendencias.spec.ts`, arquivo removido quando os defeitos foram corrigidos (ver o [CHANGELOG](../../CHANGELOG.md)):
 
 - `PUT /api/pastilhas/:id` aceita `saldoAtual` no corpo. Um GESTOR consegue mudar o saldo sem movimentação (mass assignment).
 - Uma quantidade não numérica em `POST /api/movimentacoes` gera erro 500 em vez de 400.

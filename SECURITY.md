@@ -6,11 +6,11 @@ Abra a aba **Security** do repositório no GitHub e escolha **Report a vulnerabi
 
 ## Versão e escopo
 
-| Versão             | Situação                                                                     |
-| ------------------ | ---------------------------------------------------------------------------- |
-| `main` / `0.2.x`   | Código em desenvolvimento, com correções de segurança avaliadas nesta linha. |
-| `1.0.0`            | Entrega planejada; será a linha suportada após a publicação.                 |
-| Versões anteriores | Sem manutenção.                                                              |
+| Versão                | Situação                                                                     |
+| --------------------- | ---------------------------------------------------------------------------- |
+| `main` / `1.0.0-rc.1` | Versão candidata entregue, com correções de segurança avaliadas nesta linha. |
+| `1.0.0`               | Próxima versão estável; será a linha suportada após a publicação.            |
+| Versões anteriores    | Sem manutenção.                                                              |
 
 O escopo inclui a interface web, a API, o esquema de dados e a implantação descrita no [README](README.md). Ambientes locais e dados de demonstração não devem usar segredos de produção.
 
@@ -30,7 +30,7 @@ A descrição completa, com os riscos aceitos, a nota de LGPD e a prova de cada 
 
 O token da sessão fica no `localStorage` do navegador. Isso exige atenção especial a injeção de script e ao acesso físico ao computador. A decisão está no [ADR-0005](docs/decisoes/ADR-0005-token-jwt-no-localstorage-como-risco-aceito.md).
 
-A implantação padrão usa HTTP sem TLS na rede local. Quem controla a rede pode observar o tráfego, inclusive credenciais e tokens. Restrinja o acesso à rede confiável ou configure um proxy com TLS quando o ambiente exigir confidencialidade no transporte. O [README](README.md#como-rodar-com-docker) descreve a instalação.
+A implantação padrão usa HTTP sem TLS na rede local. Quem controla a rede pode observar o tráfego, inclusive credenciais e tokens. Restrinja o acesso à rede confiável ou configure um proxy com TLS quando o ambiente exigir confidencialidade no transporte. O [README](README.md#com-docker-início-rápido) descreve a instalação.
 
 ## Dependências
 

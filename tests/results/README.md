@@ -54,7 +54,7 @@ O que o script executa em cada suíte:
 - backend: `docker compose -f docker-compose.test.yml up -d --wait`, `npm run test:cov --prefix backend` e, sempre
   no fim, `docker compose -f docker-compose.test.yml down -v`;
 - frontend: `npm run test:cov --prefix frontend`;
-- e2e: `docker compose -f docker-compose.yml -f docker-compose.e2e.yml up -d --build --wait`, `npm run e2e` e,
+- e2e: `docker compose --env-file .env.e2e -f docker-compose.yml -f docker-compose.e2e.yml up -d --build --wait`, `npm run e2e` e,
   sempre no fim, o `down -v` correspondente.
 
 A falha de uma suíte não interrompe as outras. Depois dos testes, o script coleta `npm audit --omit=dev --json`

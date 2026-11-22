@@ -16,36 +16,43 @@
 | saber o que o sistema precisa fazer | [Requisitos](requisitos.md)                            |
 | conferir uma instalação nova        | [Guia de implantação](deploy.md#conferir-a-instalação) |
 | saber o que mudou em cada versão    | [CHANGELOG](../CHANGELOG.md)                           |
+| trabalhar no código da API          | [README do backend](../backend/README.md)              |
+| trabalhar no código das telas       | [README do frontend](../frontend/README.md)            |
+| rodar os testes ponta a ponta       | [README dos testes ponta a ponta](../e2e/README.md)    |
+| usar os scripts do repositório      | [README dos scripts](../scripts/README.md)             |
+| ver as telas do sistema             | [Capturas das telas](imagens/)                         |
 
 ## Disponível
 
-| Documento                                                        | Conteúdo                                                                                                    |
-| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| [arquitetura.md](arquitetura.md)                                 | Arquitetura: camadas da API, caminho de uma requisição, registro de movimentação e organização das pastas.  |
-| [arquitetura.png](arquitetura.png)                               | Arquitetura da aplicação em três camadas.                                                                   |
-| [banco-de-dados.md](banco-de-dados.md)                           | Banco de dados: relações, dicionário de dados, restrições, índices e política de migrations.                |
-| [perfis-e-permissoes.md](perfis-e-permissoes.md)                 | Matriz de perfis por ação, gerada a partir de `backend/src/config/permissoes.ts` com `npm run docs:perfis`. |
-| [mer_conceitual.png](mer_conceitual.png)                         | Modelo conceitual do banco, na notação de Peter Chen.                                                       |
-| [mer_logico.png](mer_logico.png)                                 | Modelo lógico do banco, com as chaves primárias e estrangeiras.                                             |
-| [api.md](api.md)                                                 | Contrato da API REST: convenções, envelope de erro, códigos e as 26 rotas.                                  |
-| [deploy.md](deploy.md)                                           | Implantação com Docker Compose: pré-requisitos, `.env`, rede local, backup, atualização e problemas comuns. |
-| [operacao.md](operacao.md)                                       | Operação: saúde, logs, acesso do administrador, troca de segredos, restauração, atualização e migrations.   |
-| [requisitos.md](requisitos.md)                                   | Requisitos funcionais, regras de negócio e requisitos não funcionais, com código para rastreio.             |
-| [testes.md](testes.md)                                           | Estratégia de testes, como rodar cada suíte, variáveis de ambiente e onde ficam as evidências.              |
-| [testes/plano-de-testes.md](testes/plano-de-testes.md)           | Rastreabilidade: o que prova cada requisito, incluindo os casos manuais.                                    |
-| [seguranca.md](seguranca.md)                                     | Segurança: controles em uso, riscos aceitos, LGPD e onde está a prova de cada um.                           |
-| [seguranca/asvs-l1-checklist.md](seguranca/asvs-l1-checklist.md) | Autoavaliação contra o ASVS 4.0.3 nível 1, requisito por requisito.                                         |
-| [seguranca/modelo-de-ameacas.md](seguranca/modelo-de-ameacas.md) | Modelo de ameaças: o que o sistema guarda, quem pode atacar e a resposta de cada ameaça.                    |
-| [manual-do-usuario.md](manual-do-usuario.md)                     | Manual do usuário: entrar, cadastrar, movimentar, alertas, usuários e o que fazer quando dá erro.           |
-| [roteiro-demo.md](roteiro-demo.md)                               | Roteiro da demonstração de 10 minutos, com preparo, tempos e perguntas prováveis.                           |
-| [decisoes/](decisoes/README.md)                                  | Decisões de arquitetura, do ADR-0001 ao ADR-0008.                                                           |
-| [tests/results/README.md](../tests/results/README.md)            | Estrutura e protocolo dos resultados de testes versionados.                                                 |
-| [testes/evidencias/](testes/evidencias/)                         | Evidências de execuções manuais, como a implantação em clone limpo com backup e restauração.                |
-| [tests/results/HISTORICO.md](../tests/results/HISTORICO.md)      | Histórico das execuções registradas. A primeira é a `2026-09-14_fb30118`.                                   |
-
-
-
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-| [CHANGELOG.md](../CHANGELOG.md)                                  | Registro de mudanças por versão.                                                                            |
-| [CONTRIBUTING.md](../CONTRIBUTING.md)                            | Como contribuir: ambiente, testes, fluxo de branches e commits, migrations e estilo.                        |
-| [SECURITY.md](../SECURITY.md)                                    | Como relatar uma vulnerabilidade, versões suportadas, controles em uso e riscos aceitos.                    |
+| Documento                                                        | Conteúdo                                                                                                            |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| [arquitetura.md](arquitetura.md)                                 | Arquitetura: camadas da API, caminho de uma requisição, registro de movimentação e organização das pastas.          |
+| [arquitetura.png](arquitetura.png)                               | Arquitetura da aplicação em três camadas.                                                                           |
+| [banco-de-dados.md](banco-de-dados.md)                           | Banco de dados: relações, dicionário de dados, restrições, índices e política de migrations.                        |
+| [perfis-e-permissoes.md](perfis-e-permissoes.md)                 | Matriz de perfis por ação, gerada a partir de `backend/src/config/permissoes.ts` com `npm run docs:perfis`.         |
+| [mer_conceitual.png](mer_conceitual.png)                         | Modelo conceitual do banco, na notação de Peter Chen.                                                               |
+| [mer_logico.png](mer_logico.png)                                 | Modelo lógico do banco, com as chaves primárias e estrangeiras.                                                     |
+| [api.md](api.md)                                                 | Contrato da API REST: convenções, envelope de erro, códigos e as 26 rotas.                                          |
+| [deploy.md](deploy.md)                                           | Implantação com Docker Compose: pré-requisitos, `.env`, rede local, backup, atualização e problemas comuns.         |
+| [operacao.md](operacao.md)                                       | Operação: saúde, logs, acesso do administrador, troca de segredos, restauração, atualização e migrations.           |
+| [requisitos.md](requisitos.md)                                   | Requisitos funcionais, regras de negócio e requisitos não funcionais, com código para rastreio.                     |
+| [testes.md](testes.md)                                           | Estratégia de testes, como rodar cada suíte, variáveis de ambiente e onde ficam as evidências.                      |
+| [testes/plano-de-testes.md](testes/plano-de-testes.md)           | Rastreabilidade: o que prova cada requisito, incluindo os casos manuais.                                            |
+| [seguranca.md](seguranca.md)                                     | Segurança: controles em uso, riscos aceitos, LGPD e onde está a prova de cada um.                                   |
+| [seguranca/asvs-l1-checklist.md](seguranca/asvs-l1-checklist.md) | Autoavaliação contra o ASVS 4.0.3 nível 1, requisito por requisito.                                                 |
+| [seguranca/modelo-de-ameacas.md](seguranca/modelo-de-ameacas.md) | Modelo de ameaças: o que o sistema guarda, quem pode atacar e a resposta de cada ameaça.                            |
+| [manual-do-usuario.md](manual-do-usuario.md)                     | Manual do usuário: entrar, cadastrar, movimentar, alertas, usuários e o que fazer quando dá erro.                   |
+| [roteiro-demo.md](roteiro-demo.md)                               | Roteiro da demonstração de 10 minutos, com preparo, tempos e perguntas prováveis.                                   |
+| [decisoes/](decisoes/README.md)                                  | Decisões de arquitetura, do ADR-0001 ao ADR-0008.                                                                   |
+| [imagens/](imagens/)                                             | Capturas das telas: login, painel, pastilhas, movimentações, saldo insuficiente, alertas, usuários e acesso negado. |
+| [marca/](marca/)                                                 | Logo, símbolo e ícone do PasTrack em SVG e PNG, com cores, tipografia e cuidados de uso.                            |
+| [tests/results/README.md](../tests/results/README.md)            | Estrutura e protocolo dos resultados de testes versionados.                                                         |
+| [testes/evidencias/](testes/evidencias/)                         | Evidências de execuções manuais, como a implantação em clone limpo com backup e restauração.                        |
+| [tests/results/HISTORICO.md](../tests/results/HISTORICO.md)      | Histórico das execuções registradas. A primeira é a `2026-09-14_fb30118`.                                           |
+| [CHANGELOG.md](../CHANGELOG.md)                                  | Registro de mudanças por versão.                                                                                    |
+| [CONTRIBUTING.md](../CONTRIBUTING.md)                            | Como contribuir: ambiente, testes, fluxo de branches e commits, migrations e estilo.                                |
+| [SECURITY.md](../SECURITY.md)                                    | Como relatar uma vulnerabilidade, versões suportadas, controles em uso e riscos aceitos.                            |
+| [backend/README.md](../backend/README.md)                        | API: stack, pastas, caminho de uma requisição, erros, scripts, variáveis, testes, migrations e como criar uma rota. |
+| [frontend/README.md](../frontend/README.md)                      | Front-end: stack, pastas, rotas, sessão, permissões, acesso à API, build, testes e como criar uma tela.             |
+| [e2e/README.md](../e2e/README.md)                                | Testes ponta a ponta: o que cobrem, ambiente isolado, passo a passo, sessões, relatório e job do CI.                |
+| [scripts/README.md](../scripts/README.md)                        | Scripts do repositório: relatório de testes, matriz de perfis, conferência da implantação e os testes deles.        |

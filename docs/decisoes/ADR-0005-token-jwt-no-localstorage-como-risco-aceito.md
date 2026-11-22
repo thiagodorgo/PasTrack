@@ -10,7 +10,7 @@ O login devolve um token JWT. O frontend guarda o token no `localStorage`, na ch
 
 Qualquer script que rode na página consegue ler o `localStorage`. Se houver uma falha de XSS, o token pode ser roubado e usado até expirar.
 
-No MVP, a API confiava no conteúdo do token até ele expirar. Um usuário desativado continuava com acesso. Esse defeito está registrado como `it.fails` em `backend/tests/security/pendencias.spec.ts`.
+No MVP, a API confiava no conteúdo do token até ele expirar. Um usuário desativado continuava com acesso. Esse defeito foi registrado como `it.fails` em `backend/tests/security/pendencias.spec.ts`, arquivo removido quando a correção entrou (ver o [CHANGELOG](../../CHANGELOG.md)).
 
 O sistema roda por HTTP numa rede local, e o prazo de 18/09/2026 não comporta trocar o modelo de sessão.
 

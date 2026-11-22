@@ -1437,7 +1437,9 @@ tbody tr:hover {
   }
 }
 
-.campo > label {
+/* Rótulo separado do campo (ligado por htmlFor). O rótulo que envolve o próprio campo, como a senha do
+   login, continua em coluna para o campo ocupar a largura toda. */
+.campo > label:not(:has(input, select, textarea)) {
   display: block;
 }
 

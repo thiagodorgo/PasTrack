@@ -6,7 +6,34 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/), e
 
 ## [Não lançado]
 
-Nada ainda.
+### Adicionado
+
+- Modelos de pull request e de issue, `CODEOWNERS`, configuração do Dependabot e `.mailmap` com o nome de cada integrante.
+- Seção Equipe do README com a conta do GitHub de cada integrante.
+- README principal reescrito como porta de entrada: contexto do projeto, telas, arquitetura, tecnologias com versões, passo a passo de execução, usuários de demonstração, testes, problemas comuns, estrutura e fluxo de contribuição.
+- READMEs próprios para `backend/`, `frontend/`, `e2e/` e `scripts/`, e capturas das telas em `docs/imagens/`.
+- Comentários de documentação nos arquivos de rotas, controllers, services e telas que ainda não tinham.
+- Arquivos da marca em `docs/marca/`: logo, símbolo e ícone em SVG e PNG, com guia de cores, tipografia e uso. O logo abre o README.
+- Ícone da aba do navegador (`favicon.svg`), atalho de celular (`apple-touch-icon.png`), cor do tema e descrição no `index.html` do front-end.
+
+### Alterado
+
+- Redesenho visual de todas as telas, com a nova marca no menu lateral e no login. (#52)
+- Capturas de `docs/imagens/` refeitas com o visual novo.
+- Manual do usuário, roteiro da demonstração, README do frontend, arquitetura, requisitos e README principal alinhados às telas redesenhadas: menu "Nova movimentação", campos de NF e OS, menu do usuário no rodapé, barras de nível no painel.
+
+### Removido
+
+- Dependência `recharts` e o simulador de `ResizeObserver` dos testes: o painel desenha as barras de nível sem biblioteca de gráficos desde o redesenho.
+
+### Corrigido
+
+- README e índice da documentação: seção Equipe, fechamento do bloco da estrutura do projeto e tabela do índice restaurados.
+- Números de testes do README, de `docs/testes.md` e do roteiro da demonstração alinhados à última execução registrada (`2026-09-19_17e4380`).
+- Instruções do README: `npm ci` no lugar de `npm install`, instalação antes dos testes e uso do banco do Docker Compose em desenvolvimento.
+- Limite global de requisições por IP no contrato da API: o padrão é 1000 por minuto, e não 300.
+- Campo de senha do login e da troca de senha com a mesma largura dos demais campos.
+- Dependências de produção com alerta de auditoria atualizadas dentro das faixas já declaradas: axios, follow-redirects e zod no frontend; qs, body-parser, proxy-addr, ip-address e zod no backend. O passo de auditoria do CI volta a passar.
 
 ## [1.0.0-rc.1] — 19/09/2026
 

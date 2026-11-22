@@ -5,8 +5,8 @@ import { Layout } from "./components/Layout";
 import { Protegido } from "./components/Protegido";
 import { AuthProvider } from "./contexts/AuthContext";
 
-// Cada página vira um pacote próprio, baixado só quando a rota abre:
-// o recharts, por exemplo, fica fora do pacote do login.
+// Cada página vira um pacote próprio, baixado só quando a rota abre: quem está no login
+// não baixa o código das telas internas.
 const Login = lazy(() => import("./pages/Login").then((m) => ({ default: m.Login })));
 const AlterarSenha = lazy(() => import("./pages/AlterarSenha").then((m) => ({ default: m.AlterarSenha })));
 const Painel = lazy(() => import("./pages/Painel").then((m) => ({ default: m.Painel })));
@@ -19,6 +19,11 @@ const Usuarios = lazy(() => import("./pages/Usuarios").then((m) => ({ default: m
 const SemPermissao = lazy(() => import("./pages/SemPermissao").then((m) => ({ default: m.SemPermissao })));
 const NaoEncontrado = lazy(() => import("./pages/NaoEncontrado").then((m) => ({ default: m.NaoEncontrado })));
 
+/**
+ * Rotas da aplicação. /login é pública. /alterar-senha e as telas dentro do Layout passam pelo
+ * Protegido, que leva ao login sem sessão e à troca de senha quando ela está pendente. /usuarios exige
+ * gerenciarUsuarios. Qualquer outro endereço cai em NaoEncontrado, dentro do Layout.
+ */
 export function App() {
   return (
     // o AuthProvider fica dentro do roteador: ao expirar a sessão, ele navega até o login

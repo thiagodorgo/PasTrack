@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/marca/pastrack-logo-claro.svg">
+    <img src="docs/marca/pastrack-logo.svg" alt="PasTrack" width="340">
+  </picture>
+</p>
+
 # PasTrack
 
 [![CI](https://github.com/thiagodorgo/PasTrack/actions/workflows/ci.yml/badge.svg)](https://github.com/thiagodorgo/PasTrack/actions/workflows/ci.yml)
@@ -51,7 +58,7 @@ O escopo, os atores e o que ficou para depois estão em [docs/requisitos.md](doc
 | Cadastros       | Pastilhas com código único e estoque mínimo, fabricantes com nome único e fornecedores com CNPJ validado                                     |
 | Movimentação    | Entradas com fornecedor e saídas com validação de saldo, numa operação atômica que nunca deixa o estoque negativo                            |
 | Alertas         | Abertura automática no estoque mínimo, fechamento automático na reposição e resolução manual com confirmação. Mínimo zero desliga o alerta   |
-| Painel          | Total de pastilhas, itens críticos, alertas abertos, gráfico de saldo contra estoque mínimo e últimas movimentações                          |
+| Painel          | Total de pastilhas, itens críticos, alertas abertos, barras de saldo contra estoque mínimo dos itens críticos e últimas movimentações        |
 | Rastreabilidade | Histórico de movimentações com filtros e paginação, e trilha de auditoria de cadastros, senhas e alertas                                     |
 
 São 24 requisitos funcionais, 11 regras de negócio e 12 requisitos não funcionais, cada um com código para rastreio no [plano de testes](docs/testes/plano-de-testes.md). A lista completa está em [docs/requisitos.md](docs/requisitos.md).
@@ -63,7 +70,7 @@ O front-end tem dez telas: login, troca de senha, painel, pastilhas, movimentaç
 <table>
   <tr>
     <td width="50%"><img src="docs/imagens/tela-login.png" alt="Tela de login" width="100%"><br><b>Login.</b> Entrada com e-mail e senha.</td>
-    <td width="50%"><img src="docs/imagens/tela-painel.png" alt="Painel" width="100%"><br><b>Painel.</b> Indicadores, gráfico dos itens críticos e últimas movimentações.</td>
+    <td width="50%"><img src="docs/imagens/tela-painel.png" alt="Painel" width="100%"><br><b>Painel.</b> Indicadores, nível dos itens críticos contra o estoque mínimo e últimas movimentações.</td>
   </tr>
   <tr>
     <td width="50%"><img src="docs/imagens/tela-pastilhas.png" alt="Tela de pastilhas" width="100%"><br><b>Pastilhas.</b> Busca por código ou descrição e situação de cada item.</td>
@@ -113,7 +120,8 @@ O dicionário de dados, as restrições, os índices e a política de migrations
 
 | Camada              | Tecnologia                                          | Versão                     |
 | ------------------- | --------------------------------------------------- | -------------------------- |
-| Front-end           | React, React Router, Recharts, Axios                | 18.3, 7.18, 2.15, 1.21     |
+| Front-end           | React, React Router, Axios                          | 18.3, 7.18, 1.21           |
+| Ícones e fontes     | Lucide React, Fontsource (Inter e JetBrains Mono)   | 0.460, 5.1                 |
 | Build do front-end  | Vite                                                | 6.4                        |
 | Back-end            | Node.js, Express                                    | 20, 4.22                   |
 | Linguagem           | TypeScript                                          | 5.9                        |
@@ -406,10 +414,12 @@ PasTrack/
 │   │   ├── components/      componentes compartilhados
 │   │   ├── contexts/        sessão do usuário
 │   │   └── services/        cliente da API
+│   ├── public/              ícone da aba do navegador e atalho do celular
 │   ├── tests/               testes de tela e de componente
 │   └── nginx.conf           servidor do site e proxy de /api
 ├── e2e/                     testes ponta a ponta com Playwright (ver e2e/README.md)
 ├── docs/                    documentação, diagramas, ADRs e capturas de tela
+│   └── marca/               logo, símbolo e ícone do PasTrack (ver docs/marca/README.md)
 ├── scripts/                 relatório de testes, gerador da matriz de perfis e conferência da instalação (ver scripts/README.md)
 ├── tests/results/           evidências versionadas das execuções de teste
 ├── docker-compose.yml       banco, API e site

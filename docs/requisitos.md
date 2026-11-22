@@ -70,11 +70,11 @@ A matriz completa, gerada a partir do código, está em [perfis-e-permissoes.md]
 
 ### Painel e rastreabilidade
 
-| Código | Requisito                                                                                            | Perfis |
-| ------ | ---------------------------------------------------------------------------------------------------- | ------ |
-| RF-22  | Ver no painel o total de pastilhas, os alertas abertos, os itens críticos e as últimas movimentações | todos  |
-| RF-23  | Saber, em cada movimentação, quem registrou, quando, de qual pastilha e com qual documento           | todos  |
-| RF-24  | Ter registro de quem criou ou alterou cadastros, senhas e alertas, guardado no banco                 | —      |
+| Código | Requisito                                                                                            | Perfis     |
+| ------ | ---------------------------------------------------------------------------------------------------- | ---------- |
+| RF-22  | Ver no painel o total de pastilhas, os alertas abertos, os itens críticos e as últimas movimentações | todos      |
+| RF-23  | Saber, em cada movimentação, quem registrou, quando, de qual pastilha e com qual documento           | todos      |
+| RF-24  | Ter registro de quem criou ou alterou cadastros, senhas e alertas, guardado no banco                 | automático |
 
 ## Regras de negócio
 

@@ -35,10 +35,10 @@ Sem tela. Conte o que a DDA vive hoje:
 
 Diga o que o PasTrack faz em uma frase: **o saldo deixa de ser digitado e passa a ser consequência das entradas e saídas, com alerta automático de reposição.**
 
-### 2. Primeiro acesso, 1 minuto — janela A
+### 2. Primeiro acesso, 1 minuto (janela A)
 
 1. Entre com o e-mail e a senha do administrador, a mesma que está no arquivo de configuração.
-2. O sistema **exige a troca da senha** antes de liberar qualquer coisa. Mostre a lista de regras marcando o que falta enquanto você digita.
+2. O sistema **exige a troca da senha** antes de liberar qualquer coisa. Mostre a dica com as regras da senha e, tentando salvar uma senha fraca, a mensagem que aponta o que falta.
 3. Troque a senha e entre.
 
 Diga por quê:
@@ -47,34 +47,34 @@ Diga por quê:
 
 ### 3. Painel, 45 segundos
 
-Mostre os quatro blocos: total de pastilhas, alertas abertos, itens críticos e últimas movimentações.
+Mostre os três indicadores (pastilhas cadastradas, itens em nível crítico e alertas de reposição abertos), a lista de itens críticos, do mais urgente ao menos, com a barra do saldo contra o mínimo, e as últimas movimentações.
 
 > O encarregado abre isto no começo do turno e já sabe o que está faltando.
 
 Aponte a **WNMG 080408-TF** entre os itens críticos.
 
-### 4. Cadastro de pastilha, 1 minuto — janela A
+### 4. Cadastro de pastilha, 1 minuto (janela A)
 
 1. Vá em **Pastilhas**. Mostre a busca: digite `wnmg`.
 2. Mostre os selos: **Normal**, **Crítico** e, se houver, **Sem mínimo**.
-3. Clique em **Editar** na WNMG. Mostre que **código e saldo aparecem como texto, não como campo**.
+3. Clique no lápis de editar, na linha da WNMG. Mostre que **código e saldo aparecem como texto, não como campo**.
 
 > O saldo não é editável em lugar nenhum do sistema. Ele só muda por movimentação, e é isso que faz o número valer alguma coisa numa auditoria.
 
-### 5. O ciclo do estoque, 2 minutos — janela B, como operador
+### 5. O ciclo do estoque, 2 minutos (janela B, como operador)
 
 Esta é a parte central. Faça tudo na WNMG, que está com saldo 6 e mínimo 8.
 
-1. **Entrada de 5 unidades**, com fornecedor e uma nota fiscal no campo documento. O saldo vai para 11.
+1. **Entrada de 5 unidades**: em **Nova movimentação**, escolha **Entrada**, preencha o fornecedor e o **Nº da nota fiscal (NF)** e clique em **Registrar entrada**. O saldo vai para 11.
    - Chame a atenção: o fornecedor é obrigatório na entrada, para saber de quem veio o lote.
    - **O alerta se resolve sozinho**, porque o saldo passou do mínimo.
-2. **Saída de 3 unidades**, com a ordem de serviço no documento. O saldo volta para 8.
+2. **Saída de 3 unidades**: em **Nova movimentação**, escolha **Saída**, preencha o **Nº da ordem de serviço (OS)** e clique em **Registrar saída**. O saldo volta para 8.
    - **O alerta abre de novo sozinho**, porque 8 é o mínimo.
 3. **Tente uma saída de 100 unidades.** O sistema recusa e diz quanto há em estoque.
 
 > O saldo nunca fica negativo, nem quando duas pessoas dão baixa ao mesmo tempo: quem decide é o banco de dados, numa operação só.
 
-### 6. Alertas, 1 minuto — janela A
+### 6. Alertas, 1 minuto (janela A)
 
 1. Vá em **Alertas**. Mostre o filtro **Abertos**, **Resolvidos** e **Todos**.
 2. No filtro Resolvidos, mostre a linha da entrada que você acabou de fazer: ela diz **"automaticamente pela reposição"**.
@@ -87,16 +87,16 @@ Esta é a parte central. Faça tudo na WNMG, que está com saldo 6 e mínimo 8.
 Compare as duas janelas:
 
 - Na **janela B**, como operador: não existe o botão **Nova pastilha**, e o menu não tem **Usuários**.
-- Diga que o comprador, por sua vez, **não tem a opção de saída** no formulário: ele repõe, não dá baixa.
+- Diga que o comprador, por sua vez, **não tem a opção de saída**: no menu **Nova movimentação** dele só aparece **Entrada**. Ele repõe, não dá baixa.
 
 > Esconder o botão é só conforto. Quem chamar a API direto recebe recusa do mesmo jeito, porque a permissão é conferida no servidor.
 
-### 8. Usuários e sessão, 1 minuto 30 — janela A
+### 8. Usuários e sessão, 1 minuto 30 (janela A)
 
 1. Vá em **Usuários**. Clique em **Novo usuário**, crie alguém como Operador.
 2. Mostre a **senha temporária**, que aparece uma única vez, com o botão de copiar.
-3. Agora **desative o usuário operador** que está logado na janela B, com a confirmação.
-4. Volte para a **janela B** e tente qualquer ação: a sessão cai na hora, com o aviso de sessão encerrada.
+3. Agora **desative o usuário operador** que está logado na janela B: no botão de mais ações (**...**) da linha dele, escolha **Desativar usuário** e confirme.
+4. Volte para a **janela B** e tente qualquer ação: a sessão cai na hora e a tela de entrada avisa que a sessão expirou.
 
 > Desligar alguém não espera o token expirar. O acesso morre na hora, inclusive nas sessões já abertas.
 

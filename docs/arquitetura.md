@@ -57,11 +57,11 @@ Após alterar o saldo, o service grava a movimentação e chama [avaliarAlerta](
 
 As decisões que moldaram a arquitetura estão registradas nos ADRs abaixo:
 
-- [ADR-0001 — manter a stack e evoluir](decisoes/ADR-0001-manter-a-stack-e-evoluir.md)
-- [ADR-0002 — migrations versionadas e Docker Compose](decisoes/ADR-0002-migrations-versionadas-e-docker-compose.md)
-- [ADR-0003 — matriz de perfis e papel do comprador](decisoes/ADR-0003-matriz-de-perfis-e-papel-do-comprador.md)
-- [ADR-0004 — validação com Zod como lista de permissão](decisoes/ADR-0004-validacao-com-zod-como-lista-de-permissao.md)
-- [ADR-0005 — token no armazenamento local](decisoes/ADR-0005-token-jwt-no-localstorage-como-risco-aceito.md)
-- [ADR-0006 — saldo atômico e regras no banco](decisoes/ADR-0006-saldo-atomico-e-regras-no-banco.md)
-- [ADR-0007 — resultados de testes versionados](decisoes/ADR-0007-resultados-de-testes-versionados.md)
-- [ADR-0008 — ciclo de vida do alerta](decisoes/ADR-0008-ciclo-de-vida-do-alerta.md)
+- [ADR-0001: manter a stack e evoluir](decisoes/ADR-0001-manter-a-stack-e-evoluir.md)
+- [ADR-0002: migrations versionadas e Docker Compose](decisoes/ADR-0002-migrations-versionadas-e-docker-compose.md)
+- [ADR-0003: matriz de perfis e papel do comprador](decisoes/ADR-0003-matriz-de-perfis-e-papel-do-comprador.md)
+- [ADR-0004: validação com Zod como lista de permissão](decisoes/ADR-0004-validacao-com-zod-como-lista-de-permissao.md)
+- [ADR-0005: token no armazenamento local](decisoes/ADR-0005-token-jwt-no-localstorage-como-risco-aceito.md)
+- [ADR-0006: saldo atômico e regras no banco](decisoes/ADR-0006-saldo-atomico-e-regras-no-banco.md)
+- [ADR-0007: resultados de testes versionados](decisoes/ADR-0007-resultados-de-testes-versionados.md)
+- [ADR-0008: ciclo de vida do alerta](decisoes/ADR-0008-ciclo-de-vida-do-alerta.md)

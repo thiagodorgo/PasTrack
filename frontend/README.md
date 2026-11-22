@@ -13,7 +13,8 @@ Versões declaradas em [package.json](package.json). O pacote exige Node 20 ou m
 | Interface           | `react`, `react-dom`                                                                 | ^18.3.0                           |
 | Rotas               | `react-router-dom`                                                                   | ^7.18.3                           |
 | Chamadas à API      | `axios`                                                                              | ^1.12.2                           |
-| Gráfico do painel   | `recharts`                                                                           | ^2.12.0                           |
+| Ícones              | `lucide-react`                                                                       | ^0.460.0                          |
+| Fontes              | `@fontsource-variable/inter`, `@fontsource-variable/jetbrains-mono`                  | ^5.1.1, ^5.1.2                    |
 | Linguagem           | `typescript`                                                                         | ~5.9.3                            |
 | Servidor e build    | `vite`, `@vitejs/plugin-react`                                                       | ^6.4.3, ^4.7.0                    |
 | Testes              | `vitest`, `@vitest/coverage-v8`, `jsdom`                                             | ^4.1.11, ^4.1.11, ^27.4.0         |
@@ -21,6 +22,8 @@ Versões declaradas em [package.json](package.json). O pacote exige Node 20 ou m
 | API simulada        | `msw`                                                                                | ^2.15.0                           |
 | Lint                | `eslint`, `typescript-eslint`, `eslint-plugin-jsx-a11y`, `eslint-plugin-react-hooks` | ^9.39.5, ^8.70.0, ^6.10.2, ^7.1.1 |
 | Formatação          | `prettier`                                                                           | ^3.9.6                            |
+
+As fontes Inter e JetBrains Mono são importadas em `main.tsx` e entram no próprio build, sem serviço externo.
 
 Em produção, os arquivos gerados pelo Vite são servidos por nginx 1.27 (imagem `nginxinc/nginx-unprivileged:1.27-alpine`).
 
@@ -38,6 +41,7 @@ frontend/
     contexts/          AuthContext: sessão do usuário
     services/          uma camada por recurso da API, sobre a instância do axios
     utils/             permissões, formatação e regras de senha
+  public/              favicon.svg e apple-touch-icon.png, copiados sem mudança para a raiz do build
   tests/               testes com Vitest, Testing Library e MSW
   nginx.conf           servidor da imagem de produção
   Dockerfile           build com Node e imagem final com nginx
@@ -48,33 +52,34 @@ frontend/
 
 ### Páginas (`src/pages`)
 
-| Arquivo             | Rota             | O que faz                                                                                                                                               |
-| ------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Login.tsx`         | `/login`         | Formulário de e-mail e senha. Avisa quando a sessão expirou. Com senha temporária, leva direto à troca de senha.                                        |
-| `AlterarSenha.tsx`  | `/alterar-senha` | Troca voluntária (pelo cabeçalho) ou obrigatória (senha temporária). Valida o formato antes do envio e grava o token novo devolvido pela API.           |
-| `Painel.tsx`        | `/`              | Totais de pastilhas, itens críticos e alertas abertos, gráfico de saldo x mínimo dos itens críticos (recharts) e as últimas movimentações.              |
-| `Pastilhas.tsx`     | `/pastilhas`     | Lista com busca por código ou descrição e situação de cada item (Normal, Crítico ou Sem mínimo). Cadastro e edição para quem pode `gerenciarPastilhas`. |
-| `Movimentacoes.tsx` | `/movimentacoes` | Registro de entrada (com fornecedor) e de saída, e o histórico das movimentações. O COMPRADOR só vê a opção de entrada.                                 |
-| `Alertas.tsx`       | `/alertas`       | Alertas de reposição filtrados por situação (abertos, resolvidos, todos). Quem pode `resolverAlerta` resolve um alerta depois de confirmar.             |
-| `Fabricantes.tsx`   | `/fabricantes`   | Lista de fabricantes. Cadastro e edição para quem pode `gerenciarFabricantes`.                                                                          |
-| `Fornecedores.tsx`  | `/fornecedores`  | Lista de fornecedores. Cadastro e edição, com validação do CNPJ no cliente, para quem pode `gerenciarFornecedores`.                                     |
-| `Usuarios.tsx`      | `/usuarios`      | Só para o ADMINISTRADOR: criar, editar, desativar, reativar e redefinir a senha. A senha temporária aparece uma única vez, com botão para copiar.       |
-| `SemPermissao.tsx`  | `/sem-permissao` | Destino de quem abre uma rota que o perfil não pode ver.                                                                                                |
-| `NaoEncontrado.tsx` | qualquer outra   | Página não encontrada, dentro do layout.                                                                                                                |
+| Arquivo             | Rota             | O que faz                                                                                                                                                                                                                                                     |
+| ------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Login.tsx`         | `/login`         | Formulário de e-mail e senha. Avisa quando a sessão expirou. Com senha temporária, leva direto à troca de senha.                                                                                                                                              |
+| `AlterarSenha.tsx`  | `/alterar-senha` | Troca voluntária (pelo menu do usuário, no rodapé do menu lateral) ou obrigatória (senha temporária). Valida o formato antes do envio e grava o token novo devolvido pela API.                                                                                |
+| `Painel.tsx`        | `/`              | Cartões com o total de pastilhas, os itens críticos e os alertas abertos; os itens críticos do mais urgente ao menos, cada um com uma barra de nível em CSS (saldo x mínimo) e o botão "Repor" para quem pode `registrarEntrada`; e as últimas movimentações. |
+| `Pastilhas.tsx`     | `/pastilhas`     | Lista com busca por código ou descrição e situação de cada item (Normal, Crítico ou Sem mínimo). Cadastro e edição para quem pode `gerenciarPastilhas`.                                                                                                       |
+| `Movimentacoes.tsx` | `/movimentacoes` | Registro de entrada (com fornecedor) e de saída, e o histórico das movimentações. O COMPRADOR só vê a opção de entrada.                                                                                                                                       |
+| `Alertas.tsx`       | `/alertas`       | Alertas de reposição filtrados por situação (abertos, resolvidos, todos). Quem pode `resolverAlerta` resolve um alerta depois de confirmar.                                                                                                                   |
+| `Fabricantes.tsx`   | `/fabricantes`   | Lista de fabricantes. Cadastro e edição para quem pode `gerenciarFabricantes`.                                                                                                                                                                                |
+| `Fornecedores.tsx`  | `/fornecedores`  | Lista de fornecedores. Cadastro e edição, com validação do CNPJ no cliente, para quem pode `gerenciarFornecedores`.                                                                                                                                           |
+| `Usuarios.tsx`      | `/usuarios`      | Só para o ADMINISTRADOR: criar, editar, desativar, reativar e redefinir a senha. A senha temporária aparece uma única vez, com botão para copiar.                                                                                                             |
+| `SemPermissao.tsx`  | `/sem-permissao` | Destino de quem abre uma rota que o perfil não pode ver.                                                                                                                                                                                                      |
+| `NaoEncontrado.tsx` | qualquer outra   | Página não encontrada, dentro do layout.                                                                                                                                                                                                                      |
 
 ### Componentes (`src/components`)
 
-| Arquivo                   | Para que serve                                                                                                                                                                      |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Layout.tsx`              | Estrutura das telas logadas: link para pular ao conteúdo, menu filtrado por perfil (recolhido atrás de um botão em telas estreitas), cabeçalho com o usuário, alterar senha e sair. |
-| `Protegido.tsx`           | Guarda de rota. Sem sessão válida vai ao login, com senha temporária vai a `/alterar-senha`, sem permissão para a ação vai a `/sem-permissao`.                                      |
-| `SePerfil.tsx`            | Mostra o conteúdo só a quem pode executar uma ação. As páginas atuais usam `pode()` do contexto, que faz a mesma conferência.                                                       |
-| `LimiteDeErro.tsx`        | Limite de erro do React: troca a tela em branco por uma mensagem com o botão "Tentar de novo".                                                                                      |
-| `Mensagem.tsx`            | Mensagem de erro, sucesso ou informação, anunciada aos leitores de tela.                                                                                                            |
-| `Carregando.tsx`          | Aviso de carregamento com `role="status"`.                                                                                                                                          |
-| `MostrarSenha.tsx`        | Botão que mostra e esconde a senha digitada (ASVS V2.1.12).                                                                                                                         |
-| `TabelaRolavel.tsx`       | Moldura das tabelas largas: rola na horizontal e recebe foco pelo teclado.                                                                                                          |
-| `TabelaMovimentacoes.tsx` | Tabela de movimentações usada no painel e na tela de movimentações, com colunas extras no modo detalhado.                                                                           |
+| Arquivo                   | Para que serve                                                                                                                                                                                                                              |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Layout.tsx`              | Estrutura das telas logadas: link para pular ao conteúdo, menu lateral com a marca, filtrado por perfil (recolhido atrás de um botão em telas estreitas), contador de alertas abertos e, no rodapé, o usuário com "Alterar senha" e "Sair". |
+| `Logo.tsx`                | Marca do PasTrack: `SimboloPastilha` (a pastilha isométrica em SVG) e `Logo` (símbolo e nome, com o subtítulo opcional). Tema `claro` no menu lateral, `escuro` no login. O guia está em [docs/marca](../docs/marca/README.md).             |
+| `Protegido.tsx`           | Guarda de rota. Sem sessão válida vai ao login, com senha temporária vai a `/alterar-senha`, sem permissão para a ação vai a `/sem-permissao`.                                                                                              |
+| `SePerfil.tsx`            | Mostra o conteúdo só a quem pode executar uma ação. As páginas atuais usam `pode()` do contexto, que faz a mesma conferência.                                                                                                               |
+| `LimiteDeErro.tsx`        | Limite de erro do React: troca a tela em branco por uma mensagem com o botão "Tentar de novo".                                                                                                                                              |
+| `Mensagem.tsx`            | Mensagem de erro, sucesso ou informação, anunciada aos leitores de tela.                                                                                                                                                                    |
+| `Carregando.tsx`          | Aviso de carregamento com `role="status"`.                                                                                                                                                                                                  |
+| `MostrarSenha.tsx`        | Botão que mostra e esconde a senha digitada (ASVS V2.1.12).                                                                                                                                                                                 |
+| `TabelaRolavel.tsx`       | Moldura das tabelas largas: rola na horizontal e recebe foco pelo teclado.                                                                                                                                                                  |
+| `TabelaMovimentacoes.tsx` | Tabela do histórico na tela de movimentações, com a coluna de documento e fornecedor no modo detalhado.                                                                                                                                     |
 
 ### Contexto, serviços, utilitários e tipos
 
@@ -90,9 +95,9 @@ frontend/
 
 ## Rotas e carregamento sob demanda
 
-As rotas ficam em [src/App.tsx](src/App.tsx). Cada página é importada com `lazy()` e vira um pacote próprio, baixado só quando a rota abre. Assim o `recharts`, usado só no painel, fica fora do pacote do login.
+As rotas ficam em [src/App.tsx](src/App.tsx). Cada página é importada com `lazy()` e vira um pacote próprio, baixado só quando a rota abre. Assim o login não baixa o código das telas internas.
 
-Há dois `Suspense`. O de `App.tsx` cobre o login, a troca de senha e o próprio layout. O de `Layout.tsx` cobre as páginas internas, de modo que o menu e o cabeçalho continuam na tela enquanto a página carrega. Nesse ponto, o `LimiteDeErro` recebe a rota como `key`: um erro em uma página some quando o usuário navega para outra.
+Há dois `Suspense`. O de `App.tsx` cobre o login, a troca de senha e o próprio layout. O de `Layout.tsx` cobre as páginas internas, de modo que o menu lateral continua na tela enquanto a página carrega. Nesse ponto, o `LimiteDeErro` recebe a rota como `key`: um erro em uma página some quando o usuário navega para outra.
 
 `/login` é a única rota pública. `/alterar-senha` e o layout ficam dentro de `<Protegido>`. A rota `/usuarios` usa `<Protegido acao="gerenciarUsuarios">`. As demais páginas internas são abertas a todos os perfis, porque todos podem `consultar`; os botões de alteração aparecem conforme o perfil.
 
@@ -223,19 +228,19 @@ O `vitest.config.ts` grava o relatório JUnit em `tests/results/latest/frontend-
 
 ### Organização de `tests/`
 
-| Caminho                                           | Conteúdo                                                                                                                                                                      |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `setup.ts`                                        | Liga o servidor do MSW (requisição sem handler falha o teste), limpa handlers, dados simulados e `localStorage` após cada teste, e simula o `ResizeObserver` para o recharts. |
-| `App.spec.tsx`                                    | Rotas: redirecionamentos sem sessão, sessão expirada, perfil sem permissão, página não encontrada.                                                                            |
-| `fluxos.spec.tsx`                                 | Fluxos que passam por mais de uma tela, como senha temporária até o painel e sessão que expira durante o uso.                                                                 |
-| `pages/`, `components/`, `contexts/`, `services/` | Testes das páginas, dos componentes, do `AuthContext` e dos serviços, com o mesmo nome do arquivo testado.                                                                    |
-| `utils/*.spec.ts`                                 | Testes de `permissoes`, `formato` e `senha`.                                                                                                                                  |
-| `utils/renderizar.tsx`                            | `renderizar(ui, { initialEntries })`: renderiza dentro de `MemoryRouter` e `AuthProvider` e devolve o `userEvent`.                                                            |
-| `utils/sessao.ts`, `jwt.ts`                       | `iniciarSessao(usuario)` grava no `localStorage` a mesma sessão do login; `criarTokenValido` e `criarTokenExpirado` montam os tokens.                                         |
-| `utils/requisicoes.ts`                            | `capturarErro`, `capturarUrls` e `capturarCorpos`, para conferir o que a tela enviou à API.                                                                                   |
-| `utils/console.ts`                                | `silenciarErrosDeRenderizacao`, para os testes do limite de erro.                                                                                                             |
-| `mocks/handlers/`                                 | Um arquivo de handlers por recurso da API, reunidos em `index.ts`. Os usuários de exemplo de cada perfil ficam em `auth.ts`.                                                  |
-| `mocks/acesso.ts`                                 | Envelope de erro da API e `recusarAcesso`, que responde 401 ou 403 usando a mesma matriz de `utils/permissoes.ts`.                                                            |
+| Caminho                                           | Conteúdo                                                                                                                                                                           |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `setup.ts`                                        | Liga o servidor do MSW (requisição sem handler falha o teste), limpa handlers, dados simulados e `localStorage` após cada teste, e simula o `ResizeObserver`, que o jsdom não tem. |
+| `App.spec.tsx`                                    | Rotas: redirecionamentos sem sessão, sessão expirada, perfil sem permissão, página não encontrada.                                                                                 |
+| `fluxos.spec.tsx`                                 | Fluxos que passam por mais de uma tela, como senha temporária até o painel e sessão que expira durante o uso.                                                                      |
+| `pages/`, `components/`, `contexts/`, `services/` | Testes das páginas, dos componentes, do `AuthContext` e dos serviços, com o mesmo nome do arquivo testado.                                                                         |
+| `utils/*.spec.ts`                                 | Testes de `permissoes`, `formato` e `senha`.                                                                                                                                       |
+| `utils/renderizar.tsx`                            | `renderizar(ui, { initialEntries })`: renderiza dentro de `MemoryRouter` e `AuthProvider` e devolve o `userEvent`.                                                                 |
+| `utils/sessao.ts`, `jwt.ts`                       | `iniciarSessao(usuario)` grava no `localStorage` a mesma sessão do login; `criarTokenValido` e `criarTokenExpirado` montam os tokens.                                              |
+| `utils/requisicoes.ts`                            | `capturarErro`, `capturarUrls` e `capturarCorpos`, para conferir o que a tela enviou à API.                                                                                        |
+| `utils/console.ts`                                | `silenciarErrosDeRenderizacao`, para os testes do limite de erro.                                                                                                                  |
+| `mocks/handlers/`                                 | Um arquivo de handlers por recurso da API, reunidos em `index.ts`. Os usuários de exemplo de cada perfil ficam em `auth.ts`.                                                       |
+| `mocks/acesso.ts`                                 | Envelope de erro da API e `recusarAcesso`, que responde 401 ou 403 usando a mesma matriz de `utils/permissoes.ts`.                                                                 |
 
 ### Convenções
 
@@ -261,7 +266,7 @@ O `vitest.config.ts` grava o relatório JUnit em `tests/results/latest/frontend-
 1. Crie `src/pages/NovaTela.tsx` exportando uma função com o mesmo nome (`export function NovaTela()`), com um `<h1>` no topo.
 2. Se a tela chama a API, crie as funções em `src/services/` usando a instância `api`, e os tipos da resposta em `src/types.ts`. A página não importa o axios.
 3. Em `src/App.tsx`, importe a página com `lazy()`, no mesmo formato das outras, e adicione a `<Route>` dentro da rota do `Layout`. Se só alguns perfis podem abrir a tela, envolva o elemento em `<Protegido acao="...">`.
-4. Em `src/components/Layout.tsx`, adicione o item em `ITENS_DO_MENU` com a ação que libera a tela.
+4. Em `src/components/Layout.tsx`, adicione o item em `ITENS_DO_MENU` com a ação que libera a tela e um ícone do `lucide-react`.
 5. Se a tela precisa de uma ação nova, ela nasce no backend (`backend/src/config/permissoes.ts`). Depois, copie para `PERMISSOES` em `src/utils/permissoes.ts`, atualize a cópia em `tests/utils/permissoes.spec.ts` e rode `npm run docs:perfis` na raiz para regenerar [docs/perfis-e-permissoes.md](../docs/perfis-e-permissoes.md).
 6. Esconda os botões de alteração com `pode("acao")` do `useAuth` (ou `<SePerfil>`).
 7. Use os componentes existentes: `Carregando` enquanto busca, `Mensagem` para o retorno, `TabelaRolavel` com `<caption>` para tabelas, `mensagemDeErro` e `camposDoErro` para os erros da API.

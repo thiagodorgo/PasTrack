@@ -5,8 +5,8 @@ import { Layout } from "./components/Layout";
 import { Protegido } from "./components/Protegido";
 import { AuthProvider } from "./contexts/AuthContext";
 
-// Cada página vira um pacote próprio, baixado só quando a rota abre:
-// o recharts, por exemplo, fica fora do pacote do login.
+// Cada página vira um pacote próprio, baixado só quando a rota abre: quem está no login
+// não baixa o código das telas internas.
 const Login = lazy(() => import("./pages/Login").then((m) => ({ default: m.Login })));
 const AlterarSenha = lazy(() => import("./pages/AlterarSenha").then((m) => ({ default: m.AlterarSenha })));
 const Painel = lazy(() => import("./pages/Painel").then((m) => ({ default: m.Painel })));

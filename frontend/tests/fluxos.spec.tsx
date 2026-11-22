@@ -16,8 +16,9 @@ import { iniciarSessao } from "./utils/sessao";
 // as páginas chegam por import dinâmico; na primeira vez, a transformação do módulo pode demorar
 const ESPERA = { timeout: 10_000 };
 
-// O painel traz o recharts, pesado de transformar na primeira importação. Carregado antes dos testes,
-// o React.lazy da aplicação encontra o módulo pronto e a espera não conta no tempo de cada teste.
+// O painel é a primeira página depois do login e a mais pesada de transformar na primeira importação.
+// Carregado antes dos testes, o React.lazy da aplicação encontra o módulo pronto e a espera não conta
+// no tempo de cada teste.
 beforeAll(async () => {
   await import("../src/pages/Painel");
 }, 60_000);

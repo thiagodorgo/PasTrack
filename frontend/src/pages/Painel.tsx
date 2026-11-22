@@ -11,8 +11,8 @@ import type { ResumoPainel } from "../types";
 import { formatarDataRelativa, formatarQuantidade } from "../utils/formato";
 
 /**
- * Tela inicial: cartões com o total de pastilhas, os itens críticos e os alertas abertos, gráfico de
- * saldo x estoque mínimo dos itens críticos e as últimas movimentações. Tudo vem de uma única chamada a
+ * Tela inicial: cartões com o total de pastilhas, os itens críticos e os alertas abertos, a lista
+ * dos itens críticos com uma barra de saldo x estoque mínimo e as últimas movimentações. Tudo vem de uma única chamada a
  * GET /api/painel/resumo. O cartão de itens críticos conta a lista recebida, que a API limita a 20.
  */
 export function Painel() {

@@ -3,6 +3,7 @@ import { type FormEvent, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Mensagem } from "../components/Mensagem";
 import { useAuth } from "../contexts/AuthContext";
+import { Logo } from "../components/Logo";
 import { mensagemDeErro } from "../services/api";
 
 export function Login() {
@@ -35,7 +36,7 @@ export function Login() {
     <main className="tela-login">
       <form className="cartao-login" onSubmit={aoEnviar} aria-labelledby="titulo-login">
         <h1 id="titulo-login" className="logo logo-login">
-          PasTrack
+          <Logo tema="escuro" />
         </h1>
         <p className="texto-suave subtitulo-login">Controle de estoque de pastilhas industriais</p>
 

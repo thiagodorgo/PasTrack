@@ -29,16 +29,18 @@ describe("página de movimentações", () => {
       "row"
     );
     expect(linhas).toHaveLength(movimentacoes.length + 1);
-    expect(within(linhas[1]).getByText("OS-1042")).toBeInTheDocument();
-    expect(within(linhas[2]).getByText("Ferramentaria Sul Ltda")).toBeInTheDocument();
+    expect(within(linhas[1]).getByText(/OS-1042/)).toBeInTheDocument();
+    expect(within(linhas[2]).getByText(/Ferramentaria Sul Ltda/)).toBeInTheDocument();
 
+    // o formulário fica fechado até escolher o tipo
+    expect(screen.queryByLabelText("Pastilha")).not.toBeInTheDocument();
+    await usuario.click(screen.getByRole("button", { name: "Nova movimentação" }));
+    await usuario.click(screen.getByRole("button", { name: "Entrada" }));
     const seletorDePastilha = screen.getByLabelText("Pastilha");
     for (const pastilha of pastilhas) {
-      const rotulo = `${pastilha.codigo} (${pastilha.saldoAtual} ${pastilha.unidade})`;
+      const rotulo = `${pastilha.codigo} · saldo ${pastilha.saldoAtual} ${pastilha.unidade}`;
       expect(within(seletorDePastilha).getByRole("option", { name: rotulo })).toBeInTheDocument();
     }
-
-    await usuario.selectOptions(screen.getByLabelText("Tipo"), "ENTRADA");
 
     const seletorDeFornecedor = screen.getByLabelText("Fornecedor");
     for (const fornecedor of fornecedores) {
@@ -50,49 +52,52 @@ describe("página de movimentações", () => {
     const enviadas = capturarCorpos("post", "*/api/movimentacoes");
     const { usuario } = await renderizarMovimentacoes();
 
-    await usuario.selectOptions(screen.getByLabelText("Tipo"), "SAIDA");
+    await usuario.click(screen.getByRole("button", { name: "Nova movimentação" }));
+    await usuario.click(screen.getByRole("button", { name: "Saída" }));
     await usuario.selectOptions(screen.getByLabelText("Pastilha"), "1");
     await usuario.clear(screen.getByLabelText("Quantidade"));
     await usuario.type(screen.getByLabelText("Quantidade"), "3");
-    await usuario.type(screen.getByLabelText("Documento (NF, OS...)"), "OS-2001");
-    await usuario.click(screen.getByRole("button", { name: "Registrar" }));
+    await usuario.type(screen.getByLabelText("Nº da ordem de serviço (OS)"), "OS-2001");
+    await usuario.click(screen.getByRole("button", { name: "Registrar saída" }));
 
     expect(await screen.findByRole("status")).toHaveTextContent(
       "Movimentação registrada. Saldo atual do item: 7."
     );
     expect(enviadas).toEqual([{ tipo: "SAIDA", pastilhaId: 1, quantidade: 3, documento: "OS-2001" }]);
     expect(screen.getByLabelText("Quantidade")).toHaveValue(1);
-    expect(screen.getByLabelText("Documento (NF, OS...)")).toHaveValue("");
+    expect(screen.getByLabelText("Nº da ordem de serviço (OS)")).toHaveValue("");
   });
 
   it("registra uma ENTRADA com fornecedor e observação", async () => {
     const enviadas = capturarCorpos("post", "*/api/movimentacoes");
     const { usuario } = await renderizarMovimentacoes();
 
-    await usuario.selectOptions(screen.getByLabelText("Tipo"), "ENTRADA");
+    await usuario.click(screen.getByRole("button", { name: "Nova movimentação" }));
+    await usuario.click(screen.getByRole("button", { name: "Entrada" }));
     await usuario.selectOptions(screen.getByLabelText("Pastilha"), "2");
     await usuario.clear(screen.getByLabelText("Quantidade"));
     await usuario.type(screen.getByLabelText("Quantidade"), "10");
     await usuario.selectOptions(screen.getByLabelText("Fornecedor"), "1");
-    await usuario.type(screen.getByLabelText("Observação"), "Reposição do mês");
-    await usuario.click(screen.getByRole("button", { name: "Registrar" }));
+    await usuario.type(screen.getByLabelText(/Observação/), "Reposição do mês");
+    await usuario.click(screen.getByRole("button", { name: "Registrar entrada" }));
 
     expect(await screen.findByText("Movimentação registrada. Saldo atual do item: 14.")).toBeInTheDocument();
     expect(enviadas).toEqual([
       { tipo: "ENTRADA", pastilhaId: 2, quantidade: 10, fornecedorId: 1, observacao: "Reposição do mês" },
     ]);
-    expect(screen.getByLabelText("Observação")).toHaveValue("");
+    expect(screen.getByLabelText(/Observação/)).toHaveValue("");
   });
 
   it("na ENTRADA, o fornecedor é obrigatório: sem ele, nada é enviado", async () => {
     const enviadas = capturarCorpos("post", "*/api/movimentacoes");
     const { usuario } = await renderizarMovimentacoes();
 
-    await usuario.selectOptions(screen.getByLabelText("Tipo"), "ENTRADA");
+    await usuario.click(screen.getByRole("button", { name: "Nova movimentação" }));
+    await usuario.click(screen.getByRole("button", { name: "Entrada" }));
     const fornecedor = screen.getByLabelText("Fornecedor");
     expect(fornecedor).toBeRequired();
     await usuario.selectOptions(screen.getByLabelText("Pastilha"), "2");
-    await usuario.click(screen.getByRole("button", { name: "Registrar" }));
+    await usuario.click(screen.getByRole("button", { name: "Registrar entrada" }));
 
     expect(fornecedor).toBeInvalid();
     expect(enviadas).toEqual([]);
@@ -101,29 +106,48 @@ describe("página de movimentações", () => {
   it("o COMPRADOR não vê a opção de SAÍDA e registra só ENTRADA", async () => {
     iniciarSessao(usuarioComprador);
 
-    await renderizarMovimentacoes();
+    const { usuario } = await renderizarMovimentacoes();
+    await usuario.click(screen.getByRole("button", { name: "Nova movimentação" }));
 
-    const tipo = screen.getByLabelText("Tipo");
-    expect(within(tipo).queryByRole("option", { name: "Saída" })).not.toBeInTheDocument();
+    const tipo = screen.getByRole("group", { name: "Tipo de movimentação" });
+    expect(within(tipo).queryByRole("button", { name: "Saída" })).not.toBeInTheDocument();
     expect(
       within(tipo)
-        .getAllByRole("option")
-        .map((opcao) => opcao.textContent)
+        .getAllByRole("button")
+        .map((botao) => botao.textContent)
     ).toEqual(["Entrada"]);
-    expect(tipo).toHaveValue("ENTRADA");
+    await usuario.click(within(tipo).getByRole("button", { name: "Entrada" }));
     expect(screen.getByLabelText("Fornecedor")).toBeRequired();
   });
 
   it("mostra a mensagem de saldo insuficiente devolvida pelo servidor", async () => {
     const { usuario } = await renderizarMovimentacoes();
 
+    await usuario.click(screen.getByRole("button", { name: "Nova movimentação" }));
+    await usuario.click(screen.getByRole("button", { name: "Saída" }));
     await usuario.selectOptions(screen.getByLabelText("Pastilha"), "2");
     await usuario.clear(screen.getByLabelText("Quantidade"));
     await usuario.type(screen.getByLabelText("Quantidade"), "50");
-    await usuario.click(screen.getByRole("button", { name: "Registrar" }));
+    await usuario.click(screen.getByRole("button", { name: "Registrar saída" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Saldo insuficiente: há 4 un em estoque");
     expect(screen.queryByText(/Movimentação registrada/)).not.toBeInTheDocument();
     expect(screen.getByLabelText("Quantidade")).toHaveValue(50);
+  });
+});
+
+describe("botão Repor do painel", () => {
+  beforeEach(() => {
+    iniciarSessao();
+  });
+
+  it("chega com a entrada aberta e a pastilha escolhida", async () => {
+    renderizar(<Movimentacoes />, {
+      initialEntries: [{ pathname: "/movimentacoes", state: { tipo: "ENTRADA", pastilhaId: 2 } }],
+    });
+    await screen.findByRole("table");
+
+    expect(screen.getByRole("heading", { name: "Nova entrada" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Pastilha")).toHaveValue("2");
   });
 });

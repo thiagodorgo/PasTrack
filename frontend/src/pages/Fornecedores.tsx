@@ -1,5 +1,6 @@
-import { TabelaRolavel } from "../components/TabelaRolavel";
+import { Info } from "lucide-react";
 import { type FormEvent, useEffect, useRef, useState } from "react";
+import { TabelaRolavel } from "../components/TabelaRolavel";
 import { Carregando } from "../components/Carregando";
 import { Mensagem } from "../components/Mensagem";
 import { useAuth } from "../contexts/AuthContext";
@@ -105,8 +106,16 @@ export function Fornecedores() {
 
   return (
     <>
-      <div className="cabecalho-pagina">
-        <h1>Fornecedores</h1>
+      <header className="cabecalho-pagina">
+        <div>
+          <h1>Fornecedores</h1>
+          {!carregando && (
+            <p className="subtitulo">
+              {fornecedores.length} {fornecedores.length === 1 ? "fornecedor" : "fornecedores"} ·{" "}
+              {fornecedores.filter((f) => f.cnpj).length} com CNPJ
+            </p>
+          )}
+        </div>
         {podeGerenciar && (
           <button
             ref={botaoNovo}
@@ -115,12 +124,19 @@ export function Fornecedores() {
             aria-expanded={formulario !== null}
             onClick={() => (formulario ? fechar() : abrir("novo"))}
           >
-            {formulario ? "Fechar" : "Novo fornecedor"}
+            {formulario ? (
+              "Fechar"
+            ) : (
+              <>
+                <span aria-hidden="true">+</span> Novo fornecedor
+              </>
+            )}
           </button>
         )}
-      </div>
-      <p className="texto-suave">
-        Quem fornece as pastilhas. O fornecedor é obrigatório no registro de entrada.
+      </header>
+      <p className="aviso-info">
+        <Info size={16} strokeWidth={2} aria-hidden="true" />
+        <span>Quem fornece as pastilhas. O fornecedor é obrigatório no registro de entrada.</span>
       </p>
 
       {erro && <Mensagem tipo="erro">{erro}</Mensagem>}
@@ -190,20 +206,19 @@ export function Fornecedores() {
         </form>
       )}
 
-      <div className="cartao">
+      <div className="cartao cartao-tabela">
         {carregando ? (
           <Carregando texto="Carregando fornecedores..." />
         ) : fornecedores.length === 0 ? (
-          <p className="texto-suave">Nenhum fornecedor cadastrado.</p>
+          <p className="texto-suave vazio">Nenhum fornecedor cadastrado.</p>
         ) : (
           <TabelaRolavel nome="Fornecedores cadastrados">
-            <table>
+            <table className="tabela-fornecedores">
               <caption className="sr-only">Fornecedores cadastrados</caption>
               <thead>
                 <tr>
-                  <th scope="col">Nome</th>
+                  <th scope="col">Fornecedor</th>
                   <th scope="col">CNPJ</th>
-                  <th scope="col">Contato</th>
                   {podeGerenciar && (
                     <th scope="col">
                       <span className="sr-only">Ações</span>
@@ -214,19 +229,38 @@ export function Fornecedores() {
               <tbody>
                 {fornecedores.map((fornecedor) => (
                   <tr key={fornecedor.id}>
-                    <td>{fornecedor.nome}</td>
-                    <td>{fornecedor.cnpj ?? "—"}</td>
-                    <td>{fornecedor.contato ?? "—"}</td>
+                    <td>
+                      <div className="usuario-celula">
+                        <span className="avatar-claro" aria-hidden="true">
+                          {fornecedor.nome.trim().charAt(0).toLocaleUpperCase("pt-BR")}
+                        </span>
+                        <div className="item-identidade">
+                          <span className="usuario-nome">{fornecedor.nome}</span>
+                          <span className="texto-medio usuario-email">
+                            {fornecedor.contato ?? "Sem contato"}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      {fornecedor.cnpj ? (
+                        <span className="cnpj">{fornecedor.cnpj}</span>
+                      ) : (
+                        <span className="texto-suave">—</span>
+                      )}
+                    </td>
                     {podeGerenciar && (
                       <td>
-                        <button
-                          type="button"
-                          className="botao botao-secundario"
-                          aria-label={`Editar ${fornecedor.nome}`}
-                          onClick={() => abrir(fornecedor)}
-                        >
-                          Editar
-                        </button>
+                        <div className="acoes-linha">
+                          <button
+                            type="button"
+                            className="botao-contorno botao-pequeno"
+                            aria-label={`Editar ${fornecedor.nome}`}
+                            onClick={() => abrir(fornecedor)}
+                          >
+                            Editar
+                          </button>
+                        </div>
                       </td>
                     )}
                   </tr>

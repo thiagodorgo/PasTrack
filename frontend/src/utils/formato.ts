@@ -83,3 +83,20 @@ export function formatarQuantidade(quantidade: number, unidade?: string): string
   const numero = FORMATO_NUMERO.format(quantidade);
   return unidade ? `${numero} ${unidade}` : numero;
 }
+
+/**
+ * Data relativa curta para listas: "hoje 08:32", "ontem 17:10" ou a data e hora completas.
+ * `agora` existe para os testes fixarem o dia de referência.
+ */
+export function formatarDataRelativa(valor: string | null | undefined, agora: Date = new Date()): string {
+  const completa = formatarDataHora(valor);
+  if (completa === "-") return completa;
+  const [dia, hora] = completa.split(" ");
+  const hoje = formatarDataHora(agora.toISOString()).split(" ")[0];
+  const ontemData = new Date(agora);
+  ontemData.setDate(ontemData.getDate() - 1);
+  const ontem = formatarDataHora(ontemData.toISOString()).split(" ")[0];
+  if (dia === hoje) return `hoje ${hora}`;
+  if (dia === ontem) return `ontem ${hora}`;
+  return completa;
+}

@@ -96,10 +96,11 @@ describe("fluxos de sessão na aplicação inteira", { timeout: 30_000 }, () => 
     expect(usuarioSalvo()?.deveTrocarSenha).toBe(true);
   });
 
-  it("sair pelo cabeçalho encerra a sessão e volta ao login", async () => {
+  it("sair pelo menu do usuário encerra a sessão e volta ao login", async () => {
     iniciarSessao(usuarioGestor);
     const { usuario } = abrirEm("/pastilhas");
 
+    await usuario.click(await screen.findByRole("button", { name: /Perfil:/ }, ESPERA));
     await usuario.click(await screen.findByRole("button", { name: "Sair" }, ESPERA));
 
     expect(await screen.findByRole("button", { name: "Entrar" }, ESPERA)).toBeInTheDocument();

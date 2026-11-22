@@ -21,7 +21,7 @@ describe("TabelaMovimentacoes", () => {
     expect(tabela.parentElement).toHaveClass("tabela-rolavel");
   });
 
-  it("a versão detalhada inclui fornecedor, documento e observação", () => {
+  it("a versão detalhada junta documento e fornecedor numa coluna e mostra a observação no título", () => {
     render(<TabelaMovimentacoes movimentacoes={movimentacoes} legenda="Histórico" detalhada />);
 
     const tabela = screen.getByRole("table", { name: "Histórico" });
@@ -30,14 +30,18 @@ describe("TabelaMovimentacoes", () => {
       "Tipo",
       "Pastilha",
       "Qtde",
-      "Fornecedor",
+      "Documento / Fornecedor",
       "Responsável",
-      "Documento",
-      "Observação",
     ]);
     const linhas = within(tabela).getAllByRole("row");
-    expect(within(linhas[1]).getByText("OS-1042")).toBeInTheDocument();
-    expect(within(linhas[2]).getByText("Ferramentaria Sul Ltda")).toBeInTheDocument();
+    expect(within(linhas[1]).getByText(/OS-1042/)).toBeInTheDocument();
+    expect(within(linhas[2]).getByText(/Ferramentaria Sul Ltda/)).toBeInTheDocument();
+    const comObservacao = movimentacoes.findIndex((m) => m.observacao);
+    if (comObservacao >= 0) {
+      expect(
+        within(linhas[comObservacao + 1]).getByTitle(movimentacoes[comObservacao].observacao!)
+      ).toBeInTheDocument();
+    }
   });
 
   it("mostra o tipo por extenso e a quantidade com a unidade", () => {

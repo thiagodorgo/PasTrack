@@ -46,11 +46,12 @@ test.describe("limites do operador", () => {
 test.describe("limites do comprador", () => {
   test.use({ perfil: "COMPRADOR" });
 
-  test("só tem entrada no campo Tipo", async ({ page }) => {
+  test("só tem entrada no tipo de movimentação", async ({ page }) => {
     await page.goto("/movimentacoes");
+    await page.getByRole("button", { name: "Nova movimentação" }).click();
 
-    const tipo = page.getByLabel("Tipo");
+    const tipo = page.getByRole("group", { name: "Tipo de movimentação" });
     await expect(tipo).toBeVisible();
-    await expect(tipo.locator("option")).toHaveText(["Entrada"]);
+    await expect(tipo.getByRole("button")).toHaveText(["Entrada"]);
   });
 });

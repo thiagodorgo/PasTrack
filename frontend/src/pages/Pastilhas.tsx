@@ -1,5 +1,6 @@
-import { TabelaRolavel } from "../components/TabelaRolavel";
+import { Check, CircleAlert, Minus, Pencil, Search } from "lucide-react";
 import { type FormEvent, useEffect, useRef, useState } from "react";
+import { TabelaRolavel } from "../components/TabelaRolavel";
 import { Carregando } from "../components/Carregando";
 import { Mensagem } from "../components/Mensagem";
 import { useAuth } from "../contexts/AuthContext";
@@ -14,11 +15,14 @@ type Formulario = Pastilha | "nova" | null;
 
 /** Mínimo zero desliga o controle de reposição: a pastilha não é crítica nem gera alerta. */
 function situacao(pastilha: Pastilha) {
-  if (pastilha.estoqueMinimo === 0) return { rotulo: "Sem mínimo", classe: "selo selo-neutro" };
+  if (pastilha.estoqueMinimo === 0)
+    return { rotulo: "Sem mínimo", classe: "selo selo-neutro", critica: false, Icone: Minus };
   if (pastilha.saldoAtual <= pastilha.estoqueMinimo)
-    return { rotulo: "Crítico", classe: "selo selo-critico" };
-  return { rotulo: "Normal", classe: "selo selo-ok" };
+    return { rotulo: "Crítico", classe: "selo selo-critico", critica: true, Icone: CircleAlert };
+  return { rotulo: "Normal", classe: "selo selo-ok", critica: false, Icone: Check };
 }
+
+type FiltroSituacao = "todas" | "criticas" | "normais";
 
 export function Pastilhas() {
   const { pode } = useAuth();
@@ -27,6 +31,8 @@ export function Pastilhas() {
   const [pastilhas, setPastilhas] = useState<Pastilha[]>([]);
   const [fabricantes, setFabricantes] = useState<Fabricante[]>([]);
   const [busca, setBusca] = useState("");
+  const [filtroFabricante, setFiltroFabricante] = useState("");
+  const [filtroSituacao, setFiltroSituacao] = useState<FiltroSituacao>("todas");
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState("");
   const [carregando, setCarregando] = useState(true);
@@ -45,8 +51,8 @@ export function Pastilhas() {
   const primeiroCampo = useRef<HTMLInputElement>(null);
   const botaoNova = useRef<HTMLButtonElement>(null);
 
-  function carregar(filtro?: string) {
-    return listarPastilhas({ busca: filtro })
+  function carregar() {
+    return listarPastilhas()
       .then(setPastilhas)
       .catch((e) => setErro(mensagemDeErro(e)))
       .finally(() => setCarregando(false));
@@ -83,13 +89,6 @@ export function Pastilhas() {
     botaoNova.current?.focus();
   }
 
-  async function aoBuscar(evento: FormEvent) {
-    evento.preventDefault();
-    setErro("");
-    setCarregando(true);
-    await carregar(busca || undefined);
-  }
-
   async function aoSalvar(evento: FormEvent) {
     evento.preventDefault();
     if (!formulario) return;
@@ -119,7 +118,7 @@ export function Pastilhas() {
       }
       setFormulario(null);
       botaoNova.current?.focus();
-      await carregar(busca || undefined);
+      await carregar();
     } catch (e) {
       const campos = camposDoErro(e);
       if (Object.keys(campos).length > 0) setErros(campos);
@@ -132,10 +131,36 @@ export function Pastilhas() {
 
   const editando = formulario && formulario !== "nova" ? formulario : null;
 
+  // os filtros rodam sobre a lista já carregada: a busca responde enquanto se digita
+  const termo = busca.trim().toLocaleLowerCase("pt-BR");
+  const totalCriticas = pastilhas.filter((p) => situacao(p).critica).length;
+  const daBuscaEFabricante = pastilhas.filter(
+    (p) =>
+      (!termo ||
+        p.codigo.toLocaleLowerCase("pt-BR").includes(termo) ||
+        p.descricao.toLocaleLowerCase("pt-BR").includes(termo)) &&
+      (!filtroFabricante || String(p.fabricante.id) === filtroFabricante)
+  );
+  const visiveis = daBuscaEFabricante.filter((p) =>
+    filtroSituacao === "todas" ? true : situacao(p).critica === (filtroSituacao === "criticas")
+  );
+  const contagemCriticas = daBuscaEFabricante.filter((p) => situacao(p).critica).length;
+  const abas: { valor: FiltroSituacao; rotulo: string; total: number }[] = [
+    { valor: "todas", rotulo: "Todas", total: daBuscaEFabricante.length },
+    { valor: "criticas", rotulo: "Críticas", total: contagemCriticas },
+    { valor: "normais", rotulo: "Normais", total: daBuscaEFabricante.length - contagemCriticas },
+  ];
+
   return (
     <>
-      <div className="cabecalho-pagina">
-        <h1>Pastilhas</h1>
+      <header className="cabecalho-pagina">
+        <div>
+          <h1>Pastilhas</h1>
+          <p className="subtitulo">
+            {pastilhas.length} {pastilhas.length === 1 ? "item cadastrado" : "itens cadastrados"} ·{" "}
+            {totalCriticas} em nível crítico
+          </p>
+        </div>
         {podeGerenciar && (
           <button
             ref={botaoNova}
@@ -144,10 +169,16 @@ export function Pastilhas() {
             aria-expanded={formulario !== null}
             onClick={() => (formulario ? fechar() : abrir("nova"))}
           >
-            {formulario ? "Fechar" : "Nova pastilha"}
+            {formulario ? (
+              "Fechar"
+            ) : (
+              <>
+                <span aria-hidden="true">+</span> Nova pastilha
+              </>
+            )}
           </button>
         )}
-      </div>
+      </header>
 
       {erro && <Mensagem tipo="erro">{erro}</Mensagem>}
       {sucesso && <Mensagem tipo="sucesso">{sucesso}</Mensagem>}
@@ -240,22 +271,51 @@ export function Pastilhas() {
         </form>
       )}
 
-      <form className="cartao formulario" onSubmit={aoBuscar} role="search">
-        <label>
-          Buscar por código ou descrição
-          <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Ex.: CNMG" />
-        </label>
-        <button className="botao botao-secundario">Buscar</button>
-      </form>
+      <section className="filtros" aria-label="Filtros">
+        <div className="campo-busca" role="search">
+          <Search size={18} strokeWidth={2} aria-hidden="true" />
+          <input
+            type="search"
+            aria-label="Buscar por código ou descrição"
+            placeholder="Buscar por código ou descrição (ex.: CNMG)"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+        </div>
+        <select
+          aria-label="Filtrar por fabricante"
+          value={filtroFabricante}
+          onChange={(e) => setFiltroFabricante(e.target.value)}
+        >
+          <option value="">Todos os fabricantes</option>
+          {fabricantes.map((f) => (
+            <option key={f.id} value={f.id}>
+              {f.nome}
+            </option>
+          ))}
+        </select>
+        <div className="segmentado" role="group" aria-label="Filtrar por situação">
+          {abas.map((aba) => (
+            <button
+              key={aba.valor}
+              type="button"
+              aria-pressed={filtroSituacao === aba.valor}
+              onClick={() => setFiltroSituacao(aba.valor)}
+            >
+              {aba.rotulo} · {aba.total}
+            </button>
+          ))}
+        </div>
+      </section>
 
-      <div className="cartao">
+      <div className="cartao cartao-tabela">
         {carregando ? (
           <Carregando texto="Carregando pastilhas..." />
-        ) : pastilhas.length === 0 ? (
-          <p className="texto-suave">Nenhuma pastilha encontrada.</p>
+        ) : visiveis.length === 0 ? (
+          <p className="texto-suave vazio">Nenhuma pastilha encontrada.</p>
         ) : (
           <TabelaRolavel nome="Pastilhas cadastradas">
-            <table>
+            <table className="tabela-pastilhas">
               <caption className="sr-only">Pastilhas cadastradas</caption>
               <thead>
                 <tr>
@@ -263,7 +323,9 @@ export function Pastilhas() {
                   <th scope="col">Descrição</th>
                   <th scope="col">Fabricante</th>
                   <th scope="col">Saldo</th>
-                  <th scope="col">Mínimo</th>
+                  <th scope="col" className="numero">
+                    Mínimo
+                  </th>
                   <th scope="col">Situação</th>
                   {podeGerenciar && (
                     <th scope="col">
@@ -273,27 +335,47 @@ export function Pastilhas() {
                 </tr>
               </thead>
               <tbody>
-                {pastilhas.map((p) => {
+                {visiveis.map((p) => {
                   const estado = situacao(p);
+                  // a barra vai até o dobro do mínimo, então a marca do mínimo fica no meio
+                  const nivel = p.estoqueMinimo > 0 ? Math.min(p.saldoAtual / (p.estoqueMinimo * 2), 1) : 0;
                   return (
-                    <tr key={p.id}>
-                      <td>{p.codigo}</td>
+                    <tr key={p.id} className={estado.critica ? "linha-critica" : undefined}>
+                      <td className="celula-codigo">{p.codigo}</td>
                       <td>{p.descricao}</td>
-                      <td>{p.fabricante.nome}</td>
-                      <td>{formatarQuantidade(p.saldoAtual, p.unidade)}</td>
-                      <td>{formatarQuantidade(p.estoqueMinimo, p.unidade)}</td>
+                      <td className="texto-medio">{p.fabricante.nome}</td>
                       <td>
-                        <span className={estado.classe}>{estado.rotulo}</span>
+                        <div className="saldo-com-barra">
+                          <span className={estado.critica ? "saldo-critico" : "saldo"}>
+                            {formatarQuantidade(p.saldoAtual, p.unidade)}
+                          </span>
+                          {p.estoqueMinimo > 0 && (
+                            <span className="barra-saldo" aria-hidden="true">
+                              <span
+                                className={estado.critica ? "preenchimento critico" : "preenchimento"}
+                                style={{ width: `${nivel * 100}%` }}
+                              />
+                              <span className="marca-minimo" title="Estoque mínimo" />
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="numero texto-medio">{formatarQuantidade(p.estoqueMinimo, p.unidade)}</td>
+                      <td>
+                        <span className={estado.classe}>
+                          <estado.Icone size={12} strokeWidth={3} aria-hidden="true" />
+                          {estado.rotulo}
+                        </span>
                       </td>
                       {podeGerenciar && (
                         <td>
                           <button
                             type="button"
-                            className="botao botao-secundario"
+                            className="botao-icone"
                             aria-label={`Editar ${p.codigo}`}
                             onClick={() => abrir(p)}
                           >
-                            Editar
+                            <Pencil size={18} strokeWidth={2} aria-hidden="true" />
                           </button>
                         </td>
                       )}
@@ -305,6 +387,7 @@ export function Pastilhas() {
           </TabelaRolavel>
         )}
       </div>
+      <p className="nota">A marca vertical em cada barra indica o estoque mínimo.</p>
     </>
   );
 }

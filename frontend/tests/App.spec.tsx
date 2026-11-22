@@ -71,7 +71,9 @@ describe("rotas da aplicação", { timeout: 20_000 }, () => {
     expect(titulo).not.toHaveTextContent("Página não encontrada");
     expect(window.location.pathname).toBe(caminho);
     const menu = screen.getByRole("navigation", { name: "Menu principal" });
-    expect(within(menu).getByRole("link", { name: itemDoMenu })).toHaveAttribute("aria-current", "page");
+    // o item Alertas leva junto a contagem de alertas abertos ("Alertas 2 abertos")
+    const link = within(menu).getByRole("link", { name: new RegExp(`^${itemDoMenu}`) });
+    expect(link).toHaveAttribute("aria-current", "page");
   });
 
   it("o GESTOR que abre /usuarios vai para a página de sem permissão", async () => {

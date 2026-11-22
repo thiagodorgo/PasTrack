@@ -111,6 +111,7 @@ describe("página de usuários", () => {
     iniciarSessao(usuarioAdmin);
     const { usuario } = await renderizarUsuarios();
 
+    await usuario.click(screen.getByRole("button", { name: `Mais ações para ${outroAtivo.nome}` }));
     await usuario.click(screen.getByRole("button", { name: `Desativar ${outroAtivo.nome}` }));
     const confirmar = screen.getByRole("button", { name: "Confirmar" });
     expect(confirmar).toHaveFocus();
@@ -121,6 +122,7 @@ describe("página de usuários", () => {
       expect(screen.getByRole("row", { name: new RegExp(outroAtivo.nome) })).toHaveTextContent("Inativo")
     );
 
+    await usuario.click(screen.getByRole("button", { name: `Mais ações para ${outroAtivo.nome}` }));
     await usuario.click(screen.getByRole("button", { name: `Reativar ${outroAtivo.nome}` }));
     expect(await screen.findByRole("status")).toHaveTextContent(`Usuário ${outroAtivo.nome} reativado.`);
   });
@@ -129,6 +131,7 @@ describe("página de usuários", () => {
     iniciarSessao(usuarioAdmin);
     const { usuario } = await renderizarUsuarios();
 
+    await usuario.click(screen.getByRole("button", { name: `Mais ações para ${outroAtivo.nome}` }));
     await usuario.click(screen.getByRole("button", { name: `Desativar ${outroAtivo.nome}` }));
     await usuario.click(screen.getByRole("button", { name: "Cancelar" }));
 
@@ -136,20 +139,23 @@ describe("página de usuários", () => {
     expect(screen.getByRole("row", { name: new RegExp(outroAtivo.nome) })).toHaveTextContent("Ativo");
   });
 
-  it("mostra a mensagem da API ao tentar desativar a si mesmo", async () => {
+  it("não oferece desativar o próprio usuário", async () => {
     iniciarSessao(usuarioAdmin);
     const { usuario } = await renderizarUsuarios();
 
-    await usuario.click(screen.getByRole("button", { name: `Desativar ${usuarioAdmin.nome}` }));
-    await usuario.click(screen.getByRole("button", { name: "Confirmar" }));
+    await usuario.click(screen.getByRole("button", { name: `Mais ações para ${usuarioAdmin.nome}` }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Você não pode desativar a si mesmo");
+    expect(screen.queryByRole("button", { name: `Desativar ${usuarioAdmin.nome}` })).not.toBeInTheDocument();
+    expect(screen.getByText("Você não pode desativar o próprio usuário.")).toBeInTheDocument();
+    await usuario.keyboard("{Escape}");
+    expect(screen.queryByText("Você não pode desativar o próprio usuário.")).not.toBeInTheDocument();
   });
 
   it("redefine a senha com confirmação e mostra a senha nova", async () => {
     iniciarSessao(usuarioAdmin);
     const { usuario } = await renderizarUsuarios();
 
+    await usuario.click(screen.getByRole("button", { name: `Mais ações para ${outroAtivo.nome}` }));
     await usuario.click(screen.getByRole("button", { name: `Redefinir a senha de ${outroAtivo.nome}` }));
     await usuario.click(screen.getByRole("button", { name: "Confirmar" }));
 

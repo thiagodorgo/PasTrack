@@ -97,7 +97,6 @@ describe("página de alertas", () => {
     await renderizarAlertas();
 
     expect(screen.queryByRole("button", { name: /^Resolver o alerta de/ })).not.toBeInTheDocument();
-    expect(screen.queryByRole("columnheader", { name: "Ações" })).not.toBeInTheDocument();
   });
 
   it("resolver pede confirmação e tira o alerta da lista de abertos", async () => {

@@ -1,5 +1,6 @@
-import { TabelaRolavel } from "../components/TabelaRolavel";
+import { Ban, Check, Info, KeyRound, MoreHorizontal, RotateCcw } from "lucide-react";
 import { type FormEvent, useEffect, useRef, useState } from "react";
+import { TabelaRolavel } from "../components/TabelaRolavel";
 import { Carregando } from "../components/Carregando";
 import { Mensagem } from "../components/Mensagem";
 import { useAuth } from "../contexts/AuthContext";
@@ -40,11 +41,31 @@ export function Usuarios() {
   const [confirmacao, setConfirmacao] = useState<Confirmacao>(null);
   const [processando, setProcessando] = useState(false);
   const [copiada, setCopiada] = useState(false);
+  // linha com o menu "mais ações" aberto
+  const [menuAberto, setMenuAberto] = useState<number | null>(null);
 
   const campoNome = useRef<HTMLInputElement>(null);
   const botaoNovo = useRef<HTMLButtonElement>(null);
   const botaoConfirmar = useRef<HTMLButtonElement>(null);
   const avisoSenha = useRef<HTMLDivElement>(null);
+  const areaMenu = useRef<HTMLDivElement>(null);
+
+  // fecha o menu de ações ao clicar fora dele ou apertar Esc
+  useEffect(() => {
+    if (menuAberto === null) return;
+    function cliqueFora(evento: MouseEvent) {
+      if (!areaMenu.current?.contains(evento.target as Node)) setMenuAberto(null);
+    }
+    function tecla(evento: KeyboardEvent) {
+      if (evento.key === "Escape") setMenuAberto(null);
+    }
+    document.addEventListener("mousedown", cliqueFora);
+    document.addEventListener("keydown", tecla);
+    return () => {
+      document.removeEventListener("mousedown", cliqueFora);
+      document.removeEventListener("keydown", tecla);
+    };
+  }, [menuAberto]);
 
   function carregar() {
     return listarUsuarios()
@@ -171,11 +192,20 @@ export function Usuarios() {
   }
 
   const editando = formulario && formulario !== "novo" ? formulario : null;
+  const ativos = usuarios.filter((u) => u.ativo).length;
 
   return (
     <>
-      <div className="cabecalho-pagina">
-        <h1>Usuários</h1>
+      <header className="cabecalho-pagina">
+        <div>
+          <h1>Usuários</h1>
+          {!carregando && (
+            <p className="subtitulo">
+              {usuarios.length} {usuarios.length === 1 ? "usuário" : "usuários"} · {ativos}{" "}
+              {ativos === 1 ? "ativo" : "ativos"}
+            </p>
+          )}
+        </div>
         <button
           ref={botaoNovo}
           type="button"
@@ -183,12 +213,21 @@ export function Usuarios() {
           aria-expanded={formulario !== null}
           onClick={() => (formulario ? fechar() : abrir("novo"))}
         >
-          {formulario ? "Fechar" : "Novo usuário"}
+          {formulario ? (
+            "Fechar"
+          ) : (
+            <>
+              <span aria-hidden="true">+</span> Novo usuário
+            </>
+          )}
         </button>
-      </div>
-      <p className="texto-suave">
-        Quem entra no sistema e o que cada um pode fazer. O usuário que sai da empresa é desativado, não
-        apagado, porque o nome dele aparece no histórico.
+      </header>
+      <p className="aviso-info">
+        <Info size={16} strokeWidth={2} aria-hidden="true" />
+        <span>
+          Usuario que for demitido ou que não tiver mais acesso ao sistema deve ser desativado, para que não
+          consiga entrar. O histórico dele continua no sistema.
+        </span>
       </p>
 
       {erro && <Mensagem tipo="erro">{erro}</Mensagem>}
@@ -337,19 +376,18 @@ export function Usuarios() {
         </div>
       )}
 
-      <div className="cartao">
+      <div className="cartao cartao-tabela">
         {carregando ? (
           <Carregando texto="Carregando usuários..." />
         ) : usuarios.length === 0 ? (
-          <p className="texto-suave">Nenhum usuário cadastrado.</p>
+          <p className="texto-suave vazio">Nenhum usuário cadastrado.</p>
         ) : (
           <TabelaRolavel nome="Usuários cadastrados">
-            <table>
+            <table className="tabela-usuarios">
               <caption className="sr-only">Usuários cadastrados</caption>
               <thead>
                 <tr>
-                  <th scope="col">Nome</th>
-                  <th scope="col">E-mail</th>
+                  <th scope="col">Usuário</th>
                   <th scope="col">Perfil</th>
                   <th scope="col">Situação</th>
                   <th scope="col">
@@ -358,57 +396,115 @@ export function Usuarios() {
                 </tr>
               </thead>
               <tbody>
-                {usuarios.map((usuario) => (
-                  <tr key={usuario.id}>
-                    <td>
-                      {usuario.nome}
-                      {usuario.id === eu?.id && <span className="texto-suave"> (você)</span>}
-                    </td>
-                    <td>{usuario.email}</td>
-                    <td>{ROTULOS_PERFIL[usuario.perfil]}</td>
-                    <td>
-                      {usuario.ativo ? (
-                        <span className="selo selo-ok">Ativo</span>
-                      ) : (
-                        <span className="selo selo-critico">Inativo</span>
-                      )}
-                    </td>
-                    <td>
-                      <div className="grupo-botoes">
-                        <button
-                          type="button"
-                          className="botao botao-secundario"
-                          aria-label={`Editar ${usuario.nome}`}
-                          onClick={() => abrir(usuario)}
-                        >
-                          Editar
-                        </button>
-                        <button
-                          type="button"
-                          className="botao botao-secundario"
-                          aria-label={`${usuario.ativo ? "Desativar" : "Reativar"} ${usuario.nome}`}
-                          disabled={processando}
-                          onClick={() =>
-                            usuario.ativo
-                              ? setConfirmacao({ tipo: "desativar", usuario })
-                              : alternarAtivo(usuario)
-                          }
-                        >
-                          {usuario.ativo ? "Desativar" : "Reativar"}
-                        </button>
-                        <button
-                          type="button"
-                          className="botao botao-secundario"
-                          aria-label={`Redefinir a senha de ${usuario.nome}`}
-                          disabled={processando}
-                          onClick={() => setConfirmacao({ tipo: "redefinir", usuario })}
-                        >
-                          Redefinir senha
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {usuarios.map((usuario) => {
+                  const souEu = usuario.id === eu?.id;
+                  return (
+                    <tr key={usuario.id}>
+                      <td>
+                        <div className="usuario-celula">
+                          <span className="avatar-claro" aria-hidden="true">
+                            {usuario.nome.trim().charAt(0).toLocaleUpperCase("pt-BR")}
+                          </span>
+                          <div className="item-identidade">
+                            <span className="usuario-nome">
+                              {usuario.nome}
+                              {souEu && <span className="texto-suave"> (você)</span>}
+                            </span>
+                            <span className="texto-medio usuario-email">{usuario.email}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span className="etiqueta">{ROTULOS_PERFIL[usuario.perfil]}</span>
+                      </td>
+                      <td>
+                        {usuario.ativo ? (
+                          <span className="selo selo-ok">
+                            <Check size={12} strokeWidth={3} aria-hidden="true" />
+                            Ativo
+                          </span>
+                        ) : (
+                          <span className="selo selo-neutro">Inativo</span>
+                        )}
+                      </td>
+                      <td>
+                        <div className="acoes-linha">
+                          <button
+                            type="button"
+                            className="botao-contorno botao-pequeno"
+                            aria-label={`Editar ${usuario.nome}`}
+                            onClick={() => abrir(usuario)}
+                          >
+                            Editar
+                          </button>
+                          <div className="menu-acoes" ref={menuAberto === usuario.id ? areaMenu : undefined}>
+                            <button
+                              type="button"
+                              className="botao-icone botao-mais"
+                              aria-label={`Mais ações para ${usuario.nome}`}
+                              aria-expanded={menuAberto === usuario.id}
+                              onClick={() => setMenuAberto(menuAberto === usuario.id ? null : usuario.id)}
+                            >
+                              <MoreHorizontal size={18} strokeWidth={2} aria-hidden="true" />
+                            </button>
+                            {menuAberto === usuario.id && (
+                              <ul className="menu-acoes-opcoes">
+                                <li>
+                                  <button
+                                    type="button"
+                                    aria-label={`Redefinir a senha de ${usuario.nome}`}
+                                    disabled={processando}
+                                    onClick={() => {
+                                      setMenuAberto(null);
+                                      setConfirmacao({ tipo: "redefinir", usuario });
+                                    }}
+                                  >
+                                    <KeyRound size={16} aria-hidden="true" />
+                                    Redefinir senha
+                                  </button>
+                                </li>
+                                <li>
+                                  {souEu ? (
+                                    <p className="menu-acoes-nota">
+                                      Você não pode desativar o próprio usuário.
+                                    </p>
+                                  ) : usuario.ativo ? (
+                                    <button
+                                      type="button"
+                                      className="perigo"
+                                      aria-label={`Desativar ${usuario.nome}`}
+                                      disabled={processando}
+                                      onClick={() => {
+                                        setMenuAberto(null);
+                                        setConfirmacao({ tipo: "desativar", usuario });
+                                      }}
+                                    >
+                                      <Ban size={16} aria-hidden="true" />
+                                      Desativar usuário
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      aria-label={`Reativar ${usuario.nome}`}
+                                      disabled={processando}
+                                      onClick={() => {
+                                        setMenuAberto(null);
+                                        alternarAtivo(usuario);
+                                      }}
+                                    >
+                                      <RotateCcw size={16} aria-hidden="true" />
+                                      Reativar usuário
+                                    </button>
+                                  )}
+                                </li>
+                              </ul>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </TabelaRolavel>

@@ -53,8 +53,8 @@ describe("página de pastilhas", () => {
     iniciarSessao(usuarioOperador);
     const { usuario } = await renderizarPastilhas();
 
+    // a busca filtra enquanto se digita, sem botão
     await usuario.type(screen.getByLabelText("Buscar por código ou descrição"), "wnmg");
-    await usuario.click(screen.getByRole("button", { name: "Buscar" }));
 
     await waitFor(() => expect(within(screen.getByRole("table")).getAllByRole("row")).toHaveLength(2));
     expect(screen.getByText("WNMG 080408-TF")).toBeInTheDocument();

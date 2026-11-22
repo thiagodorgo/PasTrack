@@ -45,6 +45,7 @@
 | [roteiro-demo.md](roteiro-demo.md)                               | Roteiro da demonstração de 10 minutos, com preparo, tempos e perguntas prováveis.                                   |
 | [decisoes/](decisoes/README.md)                                  | Decisões de arquitetura, do ADR-0001 ao ADR-0008.                                                                   |
 | [imagens/](imagens/)                                             | Capturas das telas: login, painel, pastilhas, movimentações, saldo insuficiente, alertas, usuários e acesso negado. |
+| [marca/](marca/)                                                 | Logo, símbolo e ícone do PasTrack em SVG e PNG, com cores, tipografia e cuidados de uso.                            |
 | [tests/results/README.md](../tests/results/README.md)            | Estrutura e protocolo dos resultados de testes versionados.                                                         |
 | [testes/evidencias/](testes/evidencias/)                         | Evidências de execuções manuais, como a implantação em clone limpo com backup e restauração.                        |
 | [tests/results/HISTORICO.md](../tests/results/HISTORICO.md)      | Histórico das execuções registradas. A primeira é a `2026-09-14_fb30118`.                                           |

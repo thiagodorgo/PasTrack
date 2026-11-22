@@ -8,6 +8,12 @@ import { tratarErros } from "./middlewares/erros";
 import { atribuirRequestId } from "./middlewares/request-id";
 import { rotas } from "./routes";
 
+/**
+ * Aplicação Express da API, sem abrir porta: o server.ts chama o listen e os testes usam a mesma
+ * instância pelo supertest. A ordem dos middlewares importa: request id e log de acesso primeiro,
+ * depois cabeçalhos de segurança, CORS, Cache-Control: no-store em /api, corpo JSON de até 100 kB e
+ * as rotas em /api. O que não casa com nenhuma rota recebe 404 em JSON, e o tratarErros fica por último.
+ */
 export const app = express();
 
 app.disable("x-powered-by");

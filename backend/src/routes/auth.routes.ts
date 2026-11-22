@@ -6,6 +6,12 @@ import { limitarLogin, limitarPorUsuario, limitarTrocaDeSenha } from "../middlew
 import { validar } from "../middlewares/validar";
 import { loginSchema, trocarSenhaSchema } from "../schemas/auth.schema";
 
+/**
+ * Rotas de /api/auth. Ficam antes do exigirSenhaAtualizada, porque servem ao login e à troca de senha.
+ * - POST /login: pública, com limite de tentativas por e-mail e IP (limitarLogin).
+ * - GET /me: usuário autenticado.
+ * - PATCH /senha: usuário autenticado; só a senha atual errada conta no limitarTrocaDeSenha.
+ */
 export const authRotas = Router();
 
 authRotas.post("/login", limitarLogin, validar({ body: loginSchema }), capturar(authController.login));

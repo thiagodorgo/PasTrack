@@ -7,6 +7,11 @@ import { mensagemDeErro } from "../services/api";
 import { buscarResumo } from "../services/painel";
 import type { ResumoPainel } from "../types";
 
+/**
+ * Tela inicial: cartões com o total de pastilhas, os itens críticos e os alertas abertos, gráfico de
+ * saldo x estoque mínimo dos itens críticos e as últimas movimentações. Tudo vem de uma única chamada a
+ * GET /api/painel/resumo. O cartão de itens críticos conta a lista recebida, que a API limita a 20.
+ */
 export function Painel() {
   const [resumo, setResumo] = useState<ResumoPainel | null>(null);
   const [erro, setErro] = useState("");

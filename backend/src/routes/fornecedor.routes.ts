@@ -10,6 +10,11 @@ import {
   criarFornecedorSchema,
 } from "../schemas/fornecedor.schema";
 
+/**
+ * Rotas de /api/fornecedores, montadas depois do autenticar e do exigirSenhaAtualizada.
+ * - GET / e GET /:id: qualquer perfil autenticado.
+ * - POST / e PUT /:id: permissão gerenciarFornecedores (ADMINISTRADOR, GESTOR e COMPRADOR).
+ */
 export const fornecedorRotas = Router();
 
 // a permissão vem antes da validação: quem não pode alterar recebe 403 sem ver as regras do corpo

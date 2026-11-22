@@ -6,6 +6,11 @@ import { validar } from "../middlewares/validar";
 import { idParam } from "../schemas/comum.schema";
 import { consultaFabricantesSchema, fabricanteSchema } from "../schemas/fabricante.schema";
 
+/**
+ * Rotas de /api/fabricantes, montadas depois do autenticar e do exigirSenhaAtualizada.
+ * - GET / e GET /:id: qualquer perfil autenticado.
+ * - POST / e PUT /:id: permissão gerenciarFabricantes (ADMINISTRADOR e GESTOR).
+ */
 export const fabricanteRotas = Router();
 
 // a permissão vem antes da validação: quem não pode alterar recebe 403 sem ver as regras do corpo

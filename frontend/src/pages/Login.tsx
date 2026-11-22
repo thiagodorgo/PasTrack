@@ -5,6 +5,11 @@ import { Mensagem } from "../components/Mensagem";
 import { useAuth } from "../contexts/AuthContext";
 import { mensagemDeErro } from "../services/api";
 
+/**
+ * Tela de login. Depois de entrar, vai para o painel, ou para /alterar-senha quando o usuário ainda usa
+ * uma senha temporária. Mostra o aviso de sessão expirada quando chega com location.state.motivo igual a
+ * "sessao-expirada", estado posto pelo Protegido ou pelo AuthContext quando a API responde 401.
+ */
 export function Login() {
   const { entrar } = useAuth();
   const navegar = useNavigate();

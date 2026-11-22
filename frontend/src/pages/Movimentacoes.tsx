@@ -15,6 +15,11 @@ const QUANTIDADE_MAXIMA = 1_000_000;
 const TAMANHO_DO_DOCUMENTO = 100;
 const TAMANHO_DA_OBSERVACAO = 500;
 
+/**
+ * Registro de entradas e saídas e histórico de movimentações. O tipo SAIDA só aparece para quem tem
+ * registrarSaida; o COMPRADOR vê apenas a entrada. A ENTRADA exige fornecedor. Depois de cada registro,
+ * mostra o saldo atual do item e recarrega o histórico e os saldos das pastilhas.
+ */
 export function Movimentacoes() {
   const { pode } = useAuth();
   const podeRegistrarSaida = pode("registrarSaida");

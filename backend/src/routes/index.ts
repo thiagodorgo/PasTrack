@@ -12,6 +12,12 @@ import { pastilhaRotas } from "./pastilha.routes";
 import { saudeRotas } from "./saude.routes";
 import { usuarioRotas } from "./usuario.routes";
 
+/**
+ * Roteador montado em /api pelo app.ts. Define a ordem de proteção: limite por IP, as rotas montadas
+ * antes da autenticação (/health e /auth, em que só o login é público e /me e /senha declaram o próprio
+ * autenticar) e depois autenticação, limite por usuário e troca de senha obrigatória para todo o resto.
+ * A permissão de cada ação fica no arquivo de rotas do recurso.
+ */
 export const rotas = Router();
 
 // limite por IP antes de tudo, inclusive do autenticar, que consulta o banco a cada requisição:

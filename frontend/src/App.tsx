@@ -19,6 +19,11 @@ const Usuarios = lazy(() => import("./pages/Usuarios").then((m) => ({ default: m
 const SemPermissao = lazy(() => import("./pages/SemPermissao").then((m) => ({ default: m.SemPermissao })));
 const NaoEncontrado = lazy(() => import("./pages/NaoEncontrado").then((m) => ({ default: m.NaoEncontrado })));
 
+/**
+ * Rotas da aplicação. /login é pública. /alterar-senha e as telas dentro do Layout passam pelo
+ * Protegido, que leva ao login sem sessão e à troca de senha quando ela está pendente. /usuarios exige
+ * gerenciarUsuarios. Qualquer outro endereço cai em NaoEncontrado, dentro do Layout.
+ */
 export function App() {
   return (
     // o AuthProvider fica dentro do roteador: ao expirar a sessão, ele navega até o login

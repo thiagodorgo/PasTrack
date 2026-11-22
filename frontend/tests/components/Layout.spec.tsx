@@ -61,13 +61,26 @@ describe("Layout", () => {
     expect(screen.getByRole("link", { name: "Painel" })).not.toHaveAttribute("aria-current");
   });
 
-  it("mostra o nome e o perfil do usuário no cabeçalho", () => {
+  it("mostra o nome, o perfil e a inicial do usuário no rodapé do menu", () => {
     renderizarLayout(usuarioGestor);
 
-    const cabecalho = screen.getByRole("banner");
-    expect(within(cabecalho).getByText("Maria Souza")).toBeInTheDocument();
+    const botaoUsuario = screen.getByRole("button", { name: /Maria Souza/ });
+    expect(within(botaoUsuario).getByText("Maria Souza")).toBeInTheDocument();
+    expect(within(botaoUsuario).getByText("M")).toHaveAttribute("aria-hidden", "true");
     // o rótulo "Perfil:" existe só para leitores de tela, junto do nome do perfil
-    expect(within(cabecalho).getByText("Gestor")).toHaveTextContent("Perfil: Gestor");
+    expect(within(botaoUsuario).getByText("Gestor")).toHaveTextContent("Perfil: Gestor");
+    expect(botaoUsuario).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("button", { name: "Sair" })).not.toBeInTheDocument();
+  });
+
+  it("o menu do usuário fecha com Esc", async () => {
+    const { usuario } = renderizarLayout(usuarioGestor);
+
+    await usuario.click(screen.getByRole("button", { name: /Maria Souza/ }));
+    expect(screen.getByRole("link", { name: "Alterar senha" })).toBeInTheDocument();
+    await usuario.keyboard("{Escape}");
+
+    expect(screen.queryByRole("link", { name: "Alterar senha" })).not.toBeInTheDocument();
   });
 
   it("o link de pular leva o foco ao conteúdo principal", async () => {
@@ -83,6 +96,7 @@ describe("Layout", () => {
   it("Alterar senha leva à tela de troca de senha", async () => {
     const { usuario } = renderizarLayout(usuarioGestor);
 
+    await usuario.click(screen.getByRole("button", { name: /Maria Souza/ }));
     await usuario.click(screen.getByRole("link", { name: "Alterar senha" }));
 
     expect(await screen.findByText("Tela de troca de senha")).toBeInTheDocument();
@@ -91,6 +105,7 @@ describe("Layout", () => {
   it("Sair encerra a sessão e leva ao login", async () => {
     const { usuario } = renderizarLayout(usuarioGestor);
 
+    await usuario.click(screen.getByRole("button", { name: /Maria Souza/ }));
     await usuario.click(screen.getByRole("button", { name: "Sair" }));
 
     expect(await screen.findByText("Tela de login")).toBeInTheDocument();

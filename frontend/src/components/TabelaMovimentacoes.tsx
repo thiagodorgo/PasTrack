@@ -1,12 +1,13 @@
+import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { TabelaRolavel } from "./TabelaRolavel";
 import type { Movimentacao } from "../types";
-import { formatarDataHora, formatarQuantidade } from "../utils/formato";
+import { formatarDataHora, formatarDataRelativa, formatarQuantidade } from "../utils/formato";
 
 interface TabelaMovimentacoesProps {
   movimentacoes: Movimentacao[];
   /** Título da tabela, lido pelos leitores de tela na legenda (caption). */
   legenda: string;
-  /** Inclui as colunas de fornecedor, documento e observação. */
+  /** Inclui a coluna de documento e fornecedor (a observação aparece ao passar o mouse). */
   detalhada?: boolean;
   /** Texto mostrado quando não há movimentações. */
   mensagemVazia?: string;
@@ -25,37 +26,49 @@ export function TabelaMovimentacoes({
 
   return (
     <TabelaRolavel nome={legenda}>
-      <table>
+      <table className="tabela-movimentacoes">
         <caption className="sr-only">{legenda}</caption>
         <thead>
           <tr>
             <th scope="col">Data</th>
             <th scope="col">Tipo</th>
             <th scope="col">Pastilha</th>
-            <th scope="col">Qtde</th>
-            {detalhada && <th scope="col">Fornecedor</th>}
+            <th scope="col" className="numero">
+              Qtde
+            </th>
+            {detalhada && <th scope="col">Documento / Fornecedor</th>}
             <th scope="col">Responsável</th>
-            {detalhada && <th scope="col">Documento</th>}
-            {detalhada && <th scope="col">Observação</th>}
           </tr>
         </thead>
         <tbody>
-          {movimentacoes.map((m) => (
-            <tr key={m.id}>
-              <td>{formatarDataHora(m.dataHora)}</td>
-              <td>
-                <span className={m.tipo === "ENTRADA" ? "selo selo-entrada" : "selo selo-saida"}>
-                  {m.tipo === "ENTRADA" ? "Entrada" : "Saída"}
-                </span>
-              </td>
-              <td>{m.pastilha.codigo}</td>
-              <td>{formatarQuantidade(m.quantidade, m.pastilha.unidade)}</td>
-              {detalhada && <td>{m.fornecedor?.nome ?? "-"}</td>}
-              <td>{m.usuario.nome}</td>
-              {detalhada && <td>{m.documento ?? "-"}</td>}
-              {detalhada && <td>{m.observacao ?? "-"}</td>}
-            </tr>
-          ))}
+          {movimentacoes.map((m) => {
+            const entrada = m.tipo === "ENTRADA";
+            const Icone = entrada ? ArrowDownLeft : ArrowUpRight;
+            const origem = [m.documento, m.fornecedor?.nome].filter(Boolean).join(" · ") || "-";
+            return (
+              <tr key={m.id}>
+                <td className="texto-medio celula-data" title={formatarDataHora(m.dataHora)}>
+                  {formatarDataRelativa(m.dataHora)}
+                </td>
+                <td>
+                  <span className={entrada ? "selo selo-entrada" : "selo selo-saida"}>
+                    <Icone size={12} strokeWidth={2.5} aria-hidden="true" />
+                    {entrada ? "Entrada" : "Saída"}
+                  </span>
+                </td>
+                <td className="celula-codigo">{m.pastilha.codigo}</td>
+                <td className={entrada ? "numero qtde qtde-entrada" : "numero qtde"}>
+                  {formatarQuantidade(m.quantidade, m.pastilha.unidade)}
+                </td>
+                {detalhada && (
+                  <td className="texto-forte" title={m.observacao ?? undefined}>
+                    {origem}
+                  </td>
+                )}
+                <td className="texto-suave">{m.usuario.nome}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </TabelaRolavel>

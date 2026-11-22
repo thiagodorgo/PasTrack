@@ -1,10 +1,12 @@
-import { TabelaRolavel } from "../components/TabelaRolavel";
+import { Info } from "lucide-react";
 import { type FormEvent, useEffect, useRef, useState } from "react";
+import { TabelaRolavel } from "../components/TabelaRolavel";
 import { Carregando } from "../components/Carregando";
 import { Mensagem } from "../components/Mensagem";
 import { useAuth } from "../contexts/AuthContext";
 import { camposDoErro, mensagemDeErro } from "../services/api";
 import { atualizarFabricante, criarFabricante, listarFabricantes } from "../services/cadastros";
+import { listarPastilhas } from "../services/pastilhas";
 import type { Fabricante } from "../types";
 
 /** "novo" abre o formulário em branco; um fabricante abre o mesmo formulário preenchido. */
@@ -32,8 +34,18 @@ export function Fabricantes() {
       .finally(() => setCarregando(false));
   }
 
+  // quantas pastilhas cada fabricante tem; se a lista não carregar, a contagem só não aparece
+  const [pastilhasPorFabricante, setPastilhasPorFabricante] = useState<Map<number, number> | null>(null);
+
   useEffect(() => {
     carregar();
+    listarPastilhas()
+      .then((lista) => {
+        const contagem = new Map<number, number>();
+        for (const p of lista) contagem.set(p.fabricante.id, (contagem.get(p.fabricante.id) ?? 0) + 1);
+        setPastilhasPorFabricante(contagem);
+      })
+      .catch(() => undefined);
   }, []);
 
   // o formulário recebe o foco assim que abre, para quem usa teclado ou leitor de tela
@@ -90,8 +102,17 @@ export function Fabricantes() {
 
   return (
     <>
-      <div className="cabecalho-pagina">
-        <h1>Fabricantes</h1>
+      <header className="cabecalho-pagina">
+        <div>
+          <h1>Fabricantes</h1>
+          {!carregando && (
+            <p className="subtitulo">
+              {fabricantes.length} {fabricantes.length === 1 ? "fabricante" : "fabricantes"}
+              {pastilhasPorFabricante &&
+                ` · ${[...pastilhasPorFabricante.values()].reduce((a, b) => a + b, 0)} pastilhas no catálogo`}
+            </p>
+          )}
+        </div>
         {podeGerenciar && (
           <button
             ref={botaoNovo}
@@ -100,11 +121,20 @@ export function Fabricantes() {
             aria-expanded={formulario !== null}
             onClick={() => (formulario ? fechar() : abrir("novo"))}
           >
-            {formulario ? "Fechar" : "Novo fabricante"}
+            {formulario ? (
+              "Fechar"
+            ) : (
+              <>
+                <span aria-hidden="true">+</span> Novo fabricante
+              </>
+            )}
           </button>
         )}
-      </div>
-      <p className="texto-suave">Marcas das pastilhas. Cada pastilha pertence a um fabricante.</p>
+      </header>
+      <p className="aviso-info">
+        <Info size={16} strokeWidth={2} aria-hidden="true" />
+        <span>Marcas das pastilhas. Cada pastilha pertence a um fabricante.</span>
+      </p>
 
       {erro && <Mensagem tipo="erro">{erro}</Mensagem>}
       {sucesso && <Mensagem tipo="sucesso">{sucesso}</Mensagem>}
@@ -143,18 +173,18 @@ export function Fabricantes() {
         </form>
       )}
 
-      <div className="cartao">
+      <div className="cartao cartao-tabela">
         {carregando ? (
           <Carregando texto="Carregando fabricantes..." />
         ) : fabricantes.length === 0 ? (
-          <p className="texto-suave">Nenhum fabricante cadastrado.</p>
+          <p className="texto-suave vazio">Nenhum fabricante cadastrado.</p>
         ) : (
           <TabelaRolavel nome="Fabricantes cadastrados">
-            <table>
+            <table className="tabela-fabricantes">
               <caption className="sr-only">Fabricantes cadastrados</caption>
               <thead>
                 <tr>
-                  <th scope="col">Nome</th>
+                  <th scope="col">Fabricante</th>
                   {podeGerenciar && (
                     <th scope="col">
                       <span className="sr-only">Ações</span>
@@ -163,23 +193,44 @@ export function Fabricantes() {
                 </tr>
               </thead>
               <tbody>
-                {fabricantes.map((fabricante) => (
-                  <tr key={fabricante.id}>
-                    <td>{fabricante.nome}</td>
-                    {podeGerenciar && (
+                {fabricantes.map((fabricante) => {
+                  const total = pastilhasPorFabricante?.get(fabricante.id) ?? 0;
+                  return (
+                    <tr key={fabricante.id}>
                       <td>
-                        <button
-                          type="button"
-                          className="botao botao-secundario"
-                          aria-label={`Editar ${fabricante.nome}`}
-                          onClick={() => abrir(fabricante)}
-                        >
-                          Editar
-                        </button>
+                        <div className="usuario-celula">
+                          <span className="avatar-claro" aria-hidden="true">
+                            {fabricante.nome.trim().charAt(0).toLocaleUpperCase("pt-BR")}
+                          </span>
+                          <div className="item-identidade">
+                            <span className="usuario-nome">{fabricante.nome}</span>
+                            {pastilhasPorFabricante && (
+                              <span className="texto-medio usuario-email">
+                                {total === 0
+                                  ? "Nenhuma pastilha"
+                                  : `${total} ${total === 1 ? "pastilha" : "pastilhas"}`}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </td>
-                    )}
-                  </tr>
-                ))}
+                      {podeGerenciar && (
+                        <td>
+                          <div className="acoes-linha">
+                            <button
+                              type="button"
+                              className="botao-contorno botao-pequeno"
+                              aria-label={`Editar ${fabricante.nome}`}
+                              onClick={() => abrir(fabricante)}
+                            >
+                              Editar
+                            </button>
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </TabelaRolavel>

@@ -28,11 +28,12 @@ test.describe("ciclo do estoque", () => {
     const pastilha = await criarPastilha(`E2E-ENTRADA-${Date.now()}`, 0);
 
     await page.goto("/movimentacoes");
-    await page.getByLabel("Tipo").selectOption("ENTRADA");
+    await page.getByRole("button", { name: "Nova movimentação" }).click();
+    await page.getByRole("button", { name: "Entrada", exact: true }).click();
     await page.getByLabel("Pastilha").selectOption(String(pastilha.id));
     await page.getByLabel("Quantidade").fill("7");
     await page.getByLabel("Fornecedor").selectOption({ index: 1 });
-    await page.getByLabel("Documento (NF, OS...)").fill("NF-E2E");
+    await page.getByLabel("Nº da nota fiscal (NF)").fill("NF-E2E");
     await page.getByRole("button", { name: /Registrar/ }).click();
 
     await expect(page.getByRole("status")).toContainText("Saldo atual do item: 7");
@@ -48,7 +49,8 @@ test.describe("ciclo do estoque", () => {
     const pastilha = await criarPastilha(`E2E-SALDO-${Date.now()}`, 0);
 
     await page.goto("/movimentacoes");
-    await page.getByLabel("Tipo").selectOption("SAIDA");
+    await page.getByRole("button", { name: "Nova movimentação" }).click();
+    await page.getByRole("button", { name: "Saída", exact: true }).click();
     await page.getByLabel("Pastilha").selectOption(String(pastilha.id));
     await page.getByLabel("Quantidade").fill("5");
     await page.getByRole("button", { name: /Registrar/ }).click();
@@ -65,7 +67,8 @@ test.describe("ciclo do estoque", () => {
     await expect(page.getByRole("row", { name: new RegExp(pastilha.codigo) })).toContainText("Aberto");
 
     await page.goto("/movimentacoes");
-    await page.getByLabel("Tipo").selectOption("ENTRADA");
+    await page.getByRole("button", { name: "Nova movimentação" }).click();
+    await page.getByRole("button", { name: "Entrada", exact: true }).click();
     await page.getByLabel("Pastilha").selectOption(String(pastilha.id));
     await page.getByLabel("Quantidade").fill("10");
     await page.getByLabel("Fornecedor").selectOption({ index: 1 });
